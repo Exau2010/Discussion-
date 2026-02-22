@@ -5,13 +5,19 @@ const http = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
-app.use(express.static(__dirname));
+
+// Sert directement les fichiers à la racine
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.get("/chat.html", (req, res) => res.sendFile(path.join(__dirname, "chat.html")));
+app.get("/style.css", (req, res) => res.sendFile(path.join(__dirname, "style.css")));
+app.get("/script.js", (req, res) => res.sendFile(path.join(__dirname, "script.js")));
 
 /* ======================
    MongoDB
@@ -37,7 +43,6 @@ const Message = mongoose.model("Message", new mongoose.Schema({
 /* ======================
    AUTH API
 ====================== */
-// Inscription
 app.post("/api/register", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: "Champs manquants" });
@@ -51,7 +56,6 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// Connexion
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
@@ -67,11 +71,9 @@ app.post("/api/login", async (req, res) => {
    Socket.IO
 ====================== */
 io.on("connection", async (socket) => {
-  // Envoyer l'historique
   const messages = await Message.find().sort({ createdAt: 1 }).limit(50);
   socket.emit("history", messages);
 
-  // Join
   socket.on("join", (username) => {
     socket.username = username;
     io.emit("message", {
@@ -80,19 +82,12 @@ io.on("connection", async (socket) => {
     });
   });
 
-  // Message
   socket.on("message", async (text) => {
     if (!socket.username) return;
-
-    const msg = await Message.create({
-      user: socket.username,
-      text
-    });
-
+    const msg = await Message.create({ user: socket.username, text });
     io.emit("message", msg);
   });
 
-  // Disconnect
   socket.on("disconnect", () => {
     if (socket.username) {
       io.emit("message", {
@@ -107,6 +102,4 @@ io.on("connection", async (socket) => {
    PORT
 ====================== */
 const PORT = process.env.PORT || 10000;
-server.listen(PORT, () => {
-  console.log("Serveur lancé sur le port " + PORT);
-});
+server.listen(PORT, () => console.log("Serveur lancé sur le port " + PORT));
