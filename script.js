@@ -53,11 +53,9 @@ function sendMessage() {
 
 function logout() {
   const user = localStorage.getItem("user");
-  if (user) {
-    socket.emit("disconnectUser");
-  }
+  if (user) socket.emit("disconnectUser");
   localStorage.removeItem("user");
-  window.location.href = "index.html";
+  window.location.href = "/"; // ← redirection vers la route principale
 }
 
 // Affichage des messages
