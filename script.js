@@ -51,6 +51,16 @@ function sendMessage() {
   input.value = "";
 }
 
+function logout() {
+  const user = localStorage.getItem("user");
+  if (user) {
+    socket.emit("disconnectUser");
+  }
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
+}
+
+// Affichage des messages
 socket.on("history", msgs => msgs.forEach(showMessage));
 socket.on("message", showMessage);
 
@@ -60,4 +70,4 @@ function showMessage(m) {
   div.innerText = m.user + " : " + m.text;
   document.getElementById("messages").appendChild(div);
   document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
-    }
+}
