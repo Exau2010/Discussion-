@@ -40,6 +40,7 @@ async function login() {
 if (document.getElementById("user")) {
   const user = localStorage.getItem("user") || "Invité";
   document.getElementById("user").innerText = user;
+  socket.emit("setUser", user); // stocker pseudo côté serveur
 }
 
 function sendMessage() {
@@ -55,7 +56,7 @@ function logout() {
   const user = localStorage.getItem("user");
   if (user) socket.emit("disconnectUser");
   localStorage.removeItem("user");
-  window.location.href = "/"; // ← redirection vers la route principale
+  window.location.href = "index.html"; // redirection sûre
 }
 
 // Affichage des messages
