@@ -11,7 +11,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
-app.use(express.static("__dirname")); // sert index.html, chat.html, style.css, script.js
+app.use(express.static(__dirname));
 
 /* ======================
    MongoDB
