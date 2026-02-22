@@ -1,97 +1,72 @@
-require("dotenv").config();
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const path = require("path");
-
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
-
-app.use(express.json());
-
-// Routes pour servir les fichiers HTML/CSS/JS
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/index.html", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/chat.html", (req, res) => res.sendFile(path.join(__dirname, "chat.html")));
-app.get("/style.css", (req, res) => res.sendFile(path.join(__dirname, "style.css")));
-app.get("/script.js", (req, res) => res.sendFile(path.join(__dirname, "script.js")));
-
-/* ===== MongoDB ===== */
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connecté"))
-  .catch(err => console.error("Erreur MongoDB :", err));
-
-/* ===== Schemas ===== */
-const User = mongoose.model("User", new mongoose.Schema({
-  username: { type: String, unique: true },
-  password: String
-}));
-
-const Message = mongoose.model("Message", new mongoose.Schema({
-  user: String,
-  text: String,
-  createdAt: { type: Date, default: Date.now }
-}));
+const socket = io();
 
 /* ===== AUTH ===== */
-// Inscription
-app.post("/api/register", async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) return res.status(400).json({ error: "Champs manquants" });
+async function register() {
+  const username = document.getElementById("pseudo").value;
+  const password = document.getElementById("password").value;
 
-  try {
-    const hash = await bcrypt.hash(password, 10);
-    await User.create({ username, password: hash });
-    res.json({ success: true });
-  } catch {
-    res.status(400).json({ error: "Utilisateur déjà existant" });
-  }
-});
+  if (!username || !password) return alert("Veuillez remplir tous les champs");
 
-// Connexion
-app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
-  if (!user) return res.status(400).json({ error: "Compte inexistant" });
-
-  const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(400).json({ error: "Mot de passe incorrect" });
-
-  res.json({ success: true, username });
-});
-
-/* ===== Socket.IO ===== */
-io.on("connection", async (socket) => {
-
-  // Historique des messages
-  const messages = await Message.find().sort({ createdAt: 1 }).limit(50);
-  const history = messages.map(m => ({ user: m.user, text: m.text }));
-  socket.emit("history", history);
-
-  // Stocker le pseudo côté serveur
-  socket.on("setUser", username => {
-    socket.username = username;
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
   });
 
-  // Message reçu
-  socket.on("message", async (data) => {
-    const { user, text } = data;
-    if (!user || !text) return;
+  const data = await res.json();
+  alert(data.error || "Compte créé, connecte-toi");
+}
 
-    const msg = await Message.create({ user, text });
-    io.emit("message", { user: msg.user, text: msg.text });
+async function login() {
+  const username = document.getElementById("pseudo").value;
+  const password = document.getElementById("password").value;
+
+  if (!username || !password) return alert("Veuillez remplir tous les champs");
+
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
   });
 
-  // Déconnexion volontaire
-  socket.on("disconnectUser", () => {
-    const user = socket.username || "Invité";
-    io.emit("message", { user: "Système", text: `${user} s'est déconnecté` });
-  });
-});
+  const data = await res.json();
+  if (data.error) return alert(data.error);
 
-/* ===== PORT ===== */
-const PORT = process.env.PORT || 10000;
-server.listen(PORT, () => console.log("Serveur lancé sur le port " + PORT));
+  localStorage.setItem("user", data.username);
+  window.location.href = "chat.html";
+}
+
+/* ===== CHAT ===== */
+if (document.getElementById("user")) {
+  const user = localStorage.getItem("user") || "Invité";
+  document.getElementById("user").innerText = user;
+  socket.emit("setUser", user);
+}
+
+function sendMessage() {
+  const input = document.getElementById("message");
+  if (!input.value) return;
+
+  const user = localStorage.getItem("user") || "Invité";
+  socket.emit("message", { user, text: input.value });
+  input.value = "";
+}
+
+function logout() {
+  const user = localStorage.getItem("user");
+  if (user) socket.emit("disconnectUser");
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
+}
+
+// Affichage des messages
+socket.on("history", msgs => msgs.forEach(showMessage));
+socket.on("message", showMessage);
+
+function showMessage(m) {
+  const div = document.createElement("div");
+  div.className = "message";
+  div.innerText = m.user + " : " + m.text;
+  document.getElementById("messages").appendChild(div);
+  document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+              }
