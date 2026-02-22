@@ -13,7 +13,7 @@ const io = new Server(server);
 
 app.use(express.json());
 
-// Sert directement les fichiers à la racine
+// Sert les fichiers directement depuis la racine
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/chat.html", (req, res) => res.sendFile(path.join(__dirname, "chat.html")));
 app.get("/style.css", (req, res) => res.sendFile(path.join(__dirname, "style.css")));
@@ -71,30 +71,21 @@ app.post("/api/login", async (req, res) => {
    Socket.IO
 ====================== */
 io.on("connection", async (socket) => {
+  // Envoyer l'historique des 50 derniers messages
   const messages = await Message.find().sort({ createdAt: 1 }).limit(50);
   socket.emit("history", messages);
 
-  socket.on("join", (username) => {
-    socket.username = username;
-    io.emit("message", {
-      user: "Système",
-      text: `${username} a rejoint le chat`
-    });
-  });
+  // Reçoit les messages du client
+  socket.on("message", async (data) => {
+    const { user, text } = data;
+    if (!user || !text) return;
 
-  socket.on("message", async (text) => {
-    if (!socket.username) return;
-    const msg = await Message.create({ user: socket.username, text });
-    io.emit("message", msg);
+    const msg = await Message.create({ user, text });
+    io.emit("message", { user: msg.user, text: msg.text });
   });
 
   socket.on("disconnect", () => {
-    if (socket.username) {
-      io.emit("message", {
-        user: "Système",
-        text: `${socket.username} a quitté le chat`
-      });
-    }
+    // Optionnel : tu peux émettre un message système si tu veux
   });
 });
 
