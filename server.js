@@ -71,9 +71,11 @@ app.post("/api/login", async (req, res) => {
    Socket.IO
 ====================== */
 io.on("connection", async (socket) => {
-  // Envoyer l'historique des 50 derniers messages
+
+  // Envoyer l'historique converti en objets simples
   const messages = await Message.find().sort({ createdAt: 1 }).limit(50);
-  socket.emit("history", messages);
+  const history = messages.map(m => ({ user: m.user, text: m.text }));
+  socket.emit("history", history);
 
   // Reçoit les messages du client
   socket.on("message", async (data) => {
@@ -84,9 +86,12 @@ io.on("connection", async (socket) => {
     io.emit("message", { user: msg.user, text: msg.text });
   });
 
-  socket.on("disconnect", () => {
-    // Optionnel : tu peux émettre un message système si tu veux
+  // Déconnexion volontaire
+  socket.on("disconnectUser", () => {
+    const user = socket.username || "Invité";
+    io.emit("message", { user: "Système", text: `${user} s'est déconnecté` });
   });
+
 });
 
 /* ======================
