@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config(); // pour local et Render
 
 const express = require("express");
 const http = require("http");
@@ -11,17 +11,17 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static("__dirname")); // sert index.html, chat.html, style.css, script.js
 
 /* ======================
    MongoDB
 ====================== */
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connecté"))
-  .catch(err => console.error("Erreur MongoDB", err));
+  .catch(err => console.error("Erreur MongoDB :", err));
 
 /* ======================
-   SCHEMAS
+   Schemas
 ====================== */
 const User = mongoose.model("User", new mongoose.Schema({
   username: { type: String, unique: true },
@@ -37,10 +37,10 @@ const Message = mongoose.model("Message", new mongoose.Schema({
 /* ======================
    AUTH API
 ====================== */
+// Inscription
 app.post("/api/register", async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password)
-    return res.status(400).json({ error: "Champs manquants" });
+  if (!username || !password) return res.status(400).json({ error: "Champs manquants" });
 
   try {
     const hash = await bcrypt.hash(password, 10);
@@ -51,9 +51,9 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+// Connexion
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
-
   const user = await User.findOne({ username });
   if (!user) return res.status(400).json({ error: "Compte inexistant" });
 
@@ -64,12 +64,14 @@ app.post("/api/login", async (req, res) => {
 });
 
 /* ======================
-   SOCKET.IO
+   Socket.IO
 ====================== */
 io.on("connection", async (socket) => {
+  // Envoyer l'historique
   const messages = await Message.find().sort({ createdAt: 1 }).limit(50);
   socket.emit("history", messages);
 
+  // Join
   socket.on("join", (username) => {
     socket.username = username;
     io.emit("message", {
@@ -78,6 +80,7 @@ io.on("connection", async (socket) => {
     });
   });
 
+  // Message
   socket.on("message", async (text) => {
     if (!socket.username) return;
 
@@ -88,9 +91,22 @@ io.on("connection", async (socket) => {
 
     io.emit("message", msg);
   });
+
+  // Disconnect
+  socket.on("disconnect", () => {
+    if (socket.username) {
+      io.emit("message", {
+        user: "Système",
+        text: `${socket.username} a quitté le chat`
+      });
+    }
+  });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () =>
-  console.log("Serveur lancé sur le port " + PORT)
-);
+/* ======================
+   PORT
+====================== */
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, () => {
+  console.log("Serveur lancé sur le port " + PORT);
+});
