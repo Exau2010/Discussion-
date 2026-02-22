@@ -1,5 +1,4 @@
-require("dotenv").config(); // pour local et Render
-
+require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -13,23 +12,19 @@ const io = new Server(server);
 
 app.use(express.json());
 
-// Sert les fichiers directement depuis la racine
+// Routes pour servir les fichiers HTML/CSS/JS
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/index.html", (req, res) => res.sendFile(path.join(__dirname, "index.html"))); // route pour Render
+app.get("/index.html", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/chat.html", (req, res) => res.sendFile(path.join(__dirname, "chat.html")));
 app.get("/style.css", (req, res) => res.sendFile(path.join(__dirname, "style.css")));
 app.get("/script.js", (req, res) => res.sendFile(path.join(__dirname, "script.js")));
 
-/* ======================
-   MongoDB
-====================== */
+/* ===== MongoDB ===== */
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connecté"))
   .catch(err => console.error("Erreur MongoDB :", err));
 
-/* ======================
-   Schemas
-====================== */
+/* ===== Schemas ===== */
 const User = mongoose.model("User", new mongoose.Schema({
   username: { type: String, unique: true },
   password: String
@@ -41,9 +36,8 @@ const Message = mongoose.model("Message", new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 }));
 
-/* ======================
-   AUTH API
-====================== */
+/* ===== AUTH ===== */
+// Inscription
 app.post("/api/register", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: "Champs manquants" });
@@ -57,6 +51,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+// Connexion
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
@@ -68,22 +63,20 @@ app.post("/api/login", async (req, res) => {
   res.json({ success: true, username });
 });
 
-/* ======================
-   Socket.IO
-====================== */
+/* ===== Socket.IO ===== */
 io.on("connection", async (socket) => {
 
-  // Envoyer l'historique converti en objets simples
+  // Historique des messages
   const messages = await Message.find().sort({ createdAt: 1 }).limit(50);
   const history = messages.map(m => ({ user: m.user, text: m.text }));
   socket.emit("history", history);
 
-  // Stocker le pseudo si fourni
+  // Stocker le pseudo côté serveur
   socket.on("setUser", username => {
     socket.username = username;
   });
 
-  // Reçoit les messages du client
+  // Message reçu
   socket.on("message", async (data) => {
     const { user, text } = data;
     if (!user || !text) return;
@@ -97,11 +90,8 @@ io.on("connection", async (socket) => {
     const user = socket.username || "Invité";
     io.emit("message", { user: "Système", text: `${user} s'est déconnecté` });
   });
-
 });
 
-/* ======================
-   PORT
-====================== */
+/* ===== PORT ===== */
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => console.log("Serveur lancé sur le port " + PORT));
