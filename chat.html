@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="chat-body">
+
+<header class="chat-header">
+  <span id="user"></span>
+</header>
+
+<div id="messages" class="chat-messages"></div>
+
+<div class="chat-input">
+  <input id="message" placeholder="Message...">
+  <button onclick="sendMessage()">➤</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+</body>
+  </html>
