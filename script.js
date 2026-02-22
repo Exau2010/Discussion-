@@ -40,13 +40,14 @@ async function login() {
 if (document.getElementById("user")) {
   const user = localStorage.getItem("user") || "Invité";
   document.getElementById("user").innerText = user;
-  socket.emit("join", user);
 }
 
 function sendMessage() {
   const input = document.getElementById("message");
   if (!input.value) return;
-  socket.emit("message", input.value);
+
+  const user = localStorage.getItem("user") || "Invité";
+  socket.emit("message", { user, text: input.value });
   input.value = "";
 }
 
@@ -59,4 +60,4 @@ function showMessage(m) {
   div.innerText = m.user + " : " + m.text;
   document.getElementById("messages").appendChild(div);
   document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
-}
+    }
