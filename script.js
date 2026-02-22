@@ -40,7 +40,7 @@ async function login() {
 if (document.getElementById("user")) {
   const user = localStorage.getItem("user") || "Invité";
   document.getElementById("user").innerText = user;
-  socket.emit("setUser", user); // stocker pseudo côté serveur
+  socket.emit("setUser", user);
 }
 
 function sendMessage() {
@@ -56,7 +56,7 @@ function logout() {
   const user = localStorage.getItem("user");
   if (user) socket.emit("disconnectUser");
   localStorage.removeItem("user");
-  window.location.href = "index.html"; // redirection sûre
+  window.location.href = "index.html";
 }
 
 // Affichage des messages
@@ -69,4 +69,4 @@ function showMessage(m) {
   div.innerText = m.user + " : " + m.text;
   document.getElementById("messages").appendChild(div);
   document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
-}
+                                           }
