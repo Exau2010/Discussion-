@@ -15,6 +15,7 @@ app.use(express.json());
 
 // Sert les fichiers directement depuis la racine
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.get("/index.html", (req, res) => res.sendFile(path.join(__dirname, "index.html"))); // route pour Render
 app.get("/chat.html", (req, res) => res.sendFile(path.join(__dirname, "chat.html")));
 app.get("/style.css", (req, res) => res.sendFile(path.join(__dirname, "style.css")));
 app.get("/script.js", (req, res) => res.sendFile(path.join(__dirname, "script.js")));
@@ -76,6 +77,11 @@ io.on("connection", async (socket) => {
   const messages = await Message.find().sort({ createdAt: 1 }).limit(50);
   const history = messages.map(m => ({ user: m.user, text: m.text }));
   socket.emit("history", history);
+
+  // Stocker le pseudo si fourni
+  socket.on("setUser", username => {
+    socket.username = username;
+  });
 
   // Reçoit les messages du client
   socket.on("message", async (data) => {
