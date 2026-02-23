@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Profil public</title></head>
+<body>
+<h2>Profil public</h2>
+<p>Pseudo : <span id="publicUser"></span></p>
+<p>Statut : <span id="publicStatus"></span></p>
+<button onclick="sendFriendRequest(document.getElementById('publicUser').innerText)">Ajouter ami</button>
+<a href="home.html">⬅ Retour</a>
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const username = params.get("username");
+document.getElementById("publicUser").innerText = username;
+fetch(`/api/user/${username}`).then(r=>r.json()).then(u=>{
+  document.getElementById("publicStatus").innerText = u.online ? "🟢 En ligne" : "⚪ Hors ligne";
+});
+</script>
+</body>
+  </html>
