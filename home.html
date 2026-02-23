@@ -2,19 +2,23 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Accueil</title>
+<title>Accueil - ChatApp</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <header>
-  <h2>Bienvenue, <span id="user"></span></h2>
+  <span id="user"></span>
+  <button onclick="goHome()">Accueil</button>
+  <button onclick="window.location.href='profile.html'">Mon Profil</button>
   <button onclick="logout()">Déconnexion</button>
 </header>
 
-<section>
-  <h3>Utilisateurs connectés :</h3>
-  <ul id="userList"></ul>
+<section class="container">
+  <h3>Utilisateurs</h3>
+  <ul id="userList">
+    <!-- Les utilisateurs connectés / hors ligne seront ajoutés ici par script.js -->
+  </ul>
 </section>
 
 <script src="/socket.io/socket.io.js"></script>
