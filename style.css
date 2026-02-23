@@ -1,3 +1,6 @@
+/* =========================
+   GLOBAL
+========================= */
 body {
     margin: 0;
     font-family: Cambria, sans-serif;
@@ -6,7 +9,14 @@ body {
     text-align: center;
 }
 
-/* ===== NAVIGATION & HEADER ===== */
+h2 {
+    margin-top: 30px;
+    color: #fff;
+}
+
+/* =========================
+   NAVIGATION / HEADER
+========================= */
 header, nav {
     padding: 10px;
     background: rgba(200, 200, 200, 0.2);
@@ -15,7 +25,9 @@ header, nav {
     margin: 10px;
 }
 
-/* ===== FORMULAIRES ===== */
+/* =========================
+   INPUTS & BUTTONS
+========================= */
 input {
     padding: 10px;
     border-radius: 10px;
@@ -33,13 +45,28 @@ button {
     background-color: #0d3f6c;
     color: white;
     cursor: pointer;
+    transition: 0.2s;
 }
 
 button:hover {
     background-color: #105099;
 }
 
-/* ===== CHAT ===== */
+/* =========================
+   LINKS
+========================= */
+a {
+    color: #ffe;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   CHAT
+========================= */
 #messages {
     width: 90%;
     height: 400px;
@@ -71,7 +98,9 @@ button:hover {
     border-radius: 5px;
 }
 
-/* ===== LISTE UTILISATEURS ===== */
+/* =========================
+   LISTE UTILISATEURS
+========================= */
 #users, #friendRequests, #searchResults {
     margin: 10px auto;
     width: 90%;
@@ -81,17 +110,9 @@ button:hover {
     text-align: left;
 }
 
-/* ===== LIENS ===== */
-a {
-    color: #ffe;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* ===== RESPONSIVE ===== */
+/* =========================
+   RESPONSIVE
+========================= */
 @media(max-width: 600px){
     input {
         width: 80%;
@@ -100,4 +121,4 @@ a:hover {
     #messages, #users, #friendRequests, #searchResults {
         width: 95%;
     }
-}
+        }
