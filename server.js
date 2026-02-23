@@ -10,14 +10,14 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
-app.use(express.static("."));
+app.use(express.static(".")); // pas de dossier public, fichiers à la racine
 
-// ===== MONGODB =====
+// ===== MongoDB =====
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connecté"))
   .catch(err => console.error(err));
 
-// ===== MODELS =====
+// ===== Modèles =====
 const User = mongoose.model("User", new mongoose.Schema({
   username: { type: String, unique: true },
   password: String,
@@ -31,7 +31,7 @@ const Message = mongoose.model("Message", new mongoose.Schema({
   createdAt: { type: Date, default: Date.now, expires: 7*24*60*60 } // expire après 7 jours
 }));
 
-// ===== INSCRIPTION =====
+// ===== Inscription =====
 app.post("/api/register", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.json({ error: "Champs manquants" });
@@ -44,7 +44,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// ===== CONNEXION =====
+// ===== Connexion =====
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
@@ -54,18 +54,27 @@ app.post("/api/login", async (req, res) => {
   res.json({ success: true });
 });
 
-// ===== SOCKET.IO =====
+// ===== Socket.IO =====
 io.on("connection", (socket) => {
+
   socket.on("join", async (username) => {
     socket.username = username;
     await User.updateOne({ username }, { online: true });
+
+    // envoyer la liste des utilisateurs connectés
     const users = await User.find({}, "username online");
     io.emit("users", users);
 
-    const messages = await Message.find({
-      $or: [{ from: username }, { to: username }]
-    }).sort({ createdAt: 1 });
+    // envoyer historique messages
+    const messages = await Message.find({ $or: [{ from: username }, { to: username }] })
+                                .sort({ createdAt: 1 });
     socket.emit("history", messages);
+  });
+
+  socket.on("message", async ({ to, text }) => {
+    if (!socket.username) return;
+    const msg = await Message.create({ from: socket.username, to, text });
+    io.emit("message", msg); // chat global
   });
 
   socket.on("disconnect", async () => {
@@ -75,13 +84,6 @@ io.on("connection", (socket) => {
     io.emit("users", users);
   });
 
-  socket.on("message", async ({ to, text }) => {
-    if (!socket.username) return;
-    const msg = await Message.create({ from: socket.username, to, text });
-    const recipientSocket = Array.from(io.sockets.sockets.values()).find(s => s.username === to);
-    if (recipientSocket) recipientSocket.emit("newMessage", msg);
-    socket.emit("messageSent", msg);
-  });
 });
 
 const PORT = process.env.PORT || 3000;
