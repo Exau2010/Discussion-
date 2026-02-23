@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
-app.use(express.static(".")); // pas de dossier public, fichiers à la racine
+app.use(express.static(".")); // fichiers à la racine
 
 // ===== MongoDB =====
 mongoose.connect(process.env.MONGODB_URI)
@@ -67,14 +67,17 @@ io.on("connection", (socket) => {
 
     // envoyer historique messages
     const messages = await Message.find({ $or: [{ from: username }, { to: username }] })
-                                .sort({ createdAt: 1 });
-    socket.emit("history", messages);
+                                .sort({ createdAt: 1 })
+                                .lean();
+    socket.emit("history", messages.map(m => ({ from: m.from, text: m.text })));
   });
 
   socket.on("message", async ({ to, text }) => {
     if (!socket.username) return;
     const msg = await Message.create({ from: socket.username, to, text });
-    io.emit("message", msg); // chat global
+
+    // envoyer uniquement {from, text} pour que le front fonctionne
+    io.emit("message", { from: msg.from, text: msg.text });
   });
 
   socket.on("disconnect", async () => {
