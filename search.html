@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>Recherche</title>
-<link rel="stylesheet" href="style.css"></head>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Recherche utilisateurs</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
-<h2>Recherche d'utilisateurs</h2>
-<input id="searchInput" placeholder="Pseudo">
-<button onclick="searchUser()">Rechercher</button>
-<div id="searchResults"></div>
-<br><a href="home.html">⬅ Retour</a>
+<header>
+  <span id="user"></span>
+  <button onclick="goHome()">Accueil</button>
+  <button onclick="logout()">Déconnexion</button>
+</header>
+
+<section>
+  <input type="text" id="searchInput" placeholder="Chercher un utilisateur">
+  <ul id="searchResults"></ul>
+</section>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
 </body>
