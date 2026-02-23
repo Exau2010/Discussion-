@@ -1,97 +1,120 @@
 require("dotenv").config();
 const express = require("express");
 const http = require("http");
-const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const path = require("path");
+const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
+app.use(express.static(".")); // fichiers à la racine
 
-// Routes pour servir les fichiers HTML/CSS/JS
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/index.html", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/chat.html", (req, res) => res.sendFile(path.join(__dirname, "chat.html")));
-app.get("/style.css", (req, res) => res.sendFile(path.join(__dirname, "style.css")));
-app.get("/script.js", (req, res) => res.sendFile(path.join(__dirname, "script.js")));
-
-/* ===== MongoDB ===== */
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connecté"))
-  .catch(err => console.error("Erreur MongoDB :", err));
+  .catch(err => console.error(err));
 
-/* ===== Schemas ===== */
+// ===== MODELS =====
+
+// Messages expirent automatiquement après 7 jours (TTL)
+const MessageSchema = new mongoose.Schema({
+  from: String,
+  to: String,
+  text: String,
+  createdAt: { type: Date, default: Date.now, expires: 7*24*60*60 } // expire après 7 jours
+});
+const Message = mongoose.model("Message", MessageSchema);
+
 const User = mongoose.model("User", new mongoose.Schema({
   username: { type: String, unique: true },
-  password: String
+  password: String,
+  online: { type: Boolean, default: false }
 }));
 
-const Message = mongoose.model("Message", new mongoose.Schema({
-  user: String,
-  text: String,
+const FriendRequest = mongoose.model("FriendRequest", new mongoose.Schema({
+  from: String,
+  to: String,
+  status: { type: String, default: "pending" },
   createdAt: { type: Date, default: Date.now }
 }));
 
-/* ===== AUTH ===== */
-// Inscription
-app.post("/api/register", async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) return res.status(400).json({ error: "Champs manquants" });
-
-  try {
-    const hash = await bcrypt.hash(password, 10);
-    await User.create({ username, password: hash });
-    res.json({ success: true });
-  } catch {
-    res.status(400).json({ error: "Utilisateur déjà existant" });
-  }
-});
-
-// Connexion
+// ===== AUTH =====
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
-  if (!user) return res.status(400).json({ error: "Compte inexistant" });
-
+  if (!user) return res.json({ error: "Compte inexistant" });
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(400).json({ error: "Mot de passe incorrect" });
-
-  res.json({ success: true, username });
+  if (!ok) return res.json({ error: "Mot de passe incorrect" });
+  res.json({ success: true });
 });
 
-/* ===== Socket.IO ===== */
-io.on("connection", async (socket) => {
+// ===== RECHERCHE UTILISATEUR =====
+app.get("/api/search", async (req, res) => {
+  const { q } = req.query;
+  const users = await User.find({ username: { $regex: q, $options: "i" } }, "username online");
+  res.json(users);
+});
 
-  // Historique des messages
-  const messages = await Message.find().sort({ createdAt: 1 }).limit(50);
-  const history = messages.map(m => ({ user: m.user, text: m.text }));
-  socket.emit("history", history);
+// ===== PROFIL PUBLIC =====
+app.get("/api/user/:username", async (req, res) => {
+  const u = await User.findOne({ username: req.params.username }, "username online");
+  if (!u) return res.status(404).json({ error: "Utilisateur introuvable" });
+  res.json(u);
+});
 
-  // Stocker le pseudo côté serveur
-  socket.on("setUser", username => {
+// ===== SOCKET.IO =====
+io.on("connection", (socket) => {
+  socket.on("join", async (username) => {
     socket.username = username;
+    await User.updateOne({ username }, { online: true });
+    const users = await User.find({}, "username online");
+    io.emit("users", users);
+
+    const pending = await FriendRequest.find({ to: username, status: "pending" });
+    socket.emit("friendRequests", pending);
+
+    // Envoyer les messages récents (7 derniers jours seulement)
+    const messages = await Message.find({
+      $or: [{ from: username }, { to: username }]
+    }).sort({ createdAt: 1 });
+    socket.emit("history", messages);
   });
 
-  // Message reçu
-  socket.on("message", async (data) => {
-    const { user, text } = data;
-    if (!user || !text) return;
-
-    const msg = await Message.create({ user, text });
-    io.emit("message", { user: msg.user, text: msg.text });
+  socket.on("disconnect", async () => {
+    if (!socket.username) return;
+    await User.updateOne({ username: socket.username }, { online: false });
+    const users = await User.find({}, "username online");
+    io.emit("users", users);
   });
 
-  // Déconnexion volontaire
-  socket.on("disconnectUser", () => {
-    const user = socket.username || "Invité";
-    io.emit("message", { user: "Système", text: `${user} s'est déconnecté` });
+  socket.on("message", async ({ to, text }) => {
+    if (!socket.username) return;
+    const msg = await Message.create({ from: socket.username, to, text });
+    const recipientSocket = Array.from(io.sockets.sockets.values()).find(s => s.username === to);
+    if (recipientSocket) recipientSocket.emit("newMessage", msg);
+    socket.emit("messageSent", msg);
+  });
+
+  socket.on("friendRequest", async ({ to }) => {
+    if (!socket.username) return;
+    const exists = await FriendRequest.findOne({ from: socket.username, to, status: "pending" });
+    if (exists) return;
+    const req = await FriendRequest.create({ from: socket.username, to });
+    const recipientSocket = Array.from(io.sockets.sockets.values()).find(s => s.username === to);
+    if (recipientSocket) recipientSocket.emit("friendRequests", [req]);
+  });
+
+  socket.on("friendResponse", async ({ id, accept }) => {
+    const req = await FriendRequest.findById(id);
+    if (!req) return;
+    req.status = accept ? "accepted" : "rejected";
+    await req.save();
+    const senderSocket = Array.from(io.sockets.sockets.values()).find(s => s.username === req.from);
+    if (senderSocket) senderSocket.emit("friendResponse", req);
   });
 });
 
-/* ===== PORT ===== */
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log("Serveur lancé sur le port " + PORT));
