@@ -2,24 +2,78 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JEXREY Chat</title>
+<style>
+  body {
+    align-items: center;
+ text-align: center;
+  background: linear-gradient(135deg, #109070, #108099);
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  font-family: Cambria, sans-serif;
+  }
+  
+  header {
+  background: rgba(250, 250, 250, 0.4);
+  padding: 20px;
+  wrap: 20px;
+  color: white;
+  font-weight: bold;
+  border-radius: 20px;
+  }
+  
+  header button {
+    background: none;
+    margin-left: 30px;
+    border: none;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .chat-input {
+    background: rgba(200, 200, 200, 0.4);
+    margin-top: 15px;
+    padding: 20px;
+    border-radius: 20px;
+  }
+  
+  .chat-input input {
+    outline: none;
+    border: none;
+    background: none;
+    color: #108099;
+    font-weight: bold;
+  }
+  
+  .chat-input button {
+    background: none;
+    padding: 5px;
+    border-radius: 5px;
+    color: #108099;
+    border: 2px solid #108099;
+  }
+  
+  .chat-input button:hover {
+    background: #108099;
+    color: white;
+  }
+</style>
 </head>
 <body>
+
 <header>
-  <span id="user"></span>
-  <button onclick="goHome()">Accueil</button>
+  Chat avec <span id="toUser"></span>
+  <button onclick="window.location.href='home.html'">Accueil</button>
   <button onclick="logout()">Déconnexion</button>
 </header>
 
-<h3>Chat avec <span id="toUser"></span></h3>
-
-<div id="messages" class="chat-messages"></div>
+<div id="messages" class="chat-messages" style="height: 500px; overflow-y: scroll; border: none; padding: 10px; border-radius: 20px; margin-top: 15px; background: rgba(200, 200, 200, 0.4); color: #106089;"></div>
 
 <div class="chat-input">
-  <input id="message" placeholder="Message...">
-  <button id="sendBtn">➤</button>
+  <input id="message" placeholder="Écrire un message..." />
+  <button id="sendBtn">Envoyer</button>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
