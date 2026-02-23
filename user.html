@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>Profil public</title>
-<link rel="stylesheet" href="style.css"></head>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Profil Utilisateur</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
-<h2>Profil public</h2>
-<p>Pseudo : <span id="publicUser"></span></p>
-<p>Statut : <span id="publicStatus"></span></p>
-<button onclick="sendFriendRequest(document.getElementById('publicUser').innerText)">Ajouter ami</button>
-<a href="home.html">⬅ Retour</a>
+<header>
+  <span id="user"></span>
+  <button onclick="goHome()">Accueil</button>
+  <button onclick="logout()">Déconnexion</button>
+</header>
+
+<section>
+  <h3>Profil de <span id="profileUsername"></span></h3>
+  <p>Pseudo : <span id="profileUsernameDetail"></span></p>
+  <p>Status : <span id="profileStatus"></span></p>
+  <button id="startChatBtn">Envoyer un message</button>
+</section>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
-<script>
-const params = new URLSearchParams(window.location.search);
-const username = params.get("username");
-document.getElementById("publicUser").innerText = username;
-fetch(`/api/user/${username}`).then(r=>r.json()).then(u=>{
-  document.getElementById("publicStatus").innerText = u.online ? "🟢 En ligne" : "⚪ Hors ligne";
-});
-</script>
 </body>
-  </html>
+    </html>
