@@ -1,25 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion Chat</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<html>
+<head><meta charset="UTF-8"><title>Connexion</title></head>
 <body>
-  <nav><h2>JEXREY Chat</h2></nav>
-
-  <section id="login">
-    <div class="connect">
-      <h3>Inscrivez-vous / Connectez-vous</h3>
-      <input id="pseudo" placeholder="Pseudo">
-      <input id="password" placeholder="Mot de passe" type="password">
-      <input id="e-mail" placeholder="E-mail (optionnel)">
-      <button onclick="register()">S’inscrire</button>
-      <button onclick="login()">Se connecter</button>
-    </div>
-  </section>
-
-  <script src="script.js"></script>
+<h2>Connexion</h2>
+<input id="username" placeholder="Pseudo">
+<input id="password" type="password" placeholder="Mot de passe">
+<button onclick="login()">Se connecter</button>
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
 </body>
-        </html>
+                          </html>
