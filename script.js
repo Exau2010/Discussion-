@@ -1,34 +1,13 @@
 const socket = io();
 
 // ===== AUTH =====
-async function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const res = await fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  });
-  const data = await res.json();
-  if (data.error) return alert(data.error);
-  localStorage.setItem("user", username);
-  window.location.href = "chat.html";
+if (!localStorage.getItem("user")) {
+  window.location.href = "index.html"; // redirige si pas connecté
 }
 
-async function register() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  if (!username || !password) return alert("Remplis tous les champs !");
-  const res = await fetch("/api/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  });
-  const data = await res.json();
-  if (data.error) return alert(data.error);
-  alert("Compte créé ! Tu peux maintenant te connecter.");
-  window.location.href = "index.html";
-}
+// afficher le nom
+const user = localStorage.getItem("user");
+document.getElementById("user").innerText = user;
 
 // ===== LOGOUT =====
 function logout() {
@@ -36,14 +15,19 @@ function logout() {
   window.location.href = "index.html";
 }
 
-// ===== CHAT =====
-if (document.getElementById("user")) {
-  const user = localStorage.getItem("user");
-  document.getElementById("user").innerText = user;
-  socket.emit("join", user);
-}
+// ===== Socket.IO =====
+socket.emit("join", user);
 
 // envoyer un message
+const sendBtn = document.getElementById("sendBtn");
+sendBtn.addEventListener("click", sendMessage);
+
+// envoyer avec Entrée
+const messageInput = document.getElementById("message");
+messageInput.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+
 function sendMessage() {
   const input = document.getElementById("message");
   if (!input.value) return;
@@ -51,7 +35,7 @@ function sendMessage() {
   input.value = "";
 }
 
-// afficher les messages
+// ===== Affichage messages =====
 socket.on("history", msgs => msgs.forEach(showMessage));
 socket.on("message", showMessage);
 
@@ -60,4 +44,8 @@ function showMessage(m) {
   div.className = "message";
   div.innerText = m.from + " : " + m.text;
   document.getElementById("messages").appendChild(div);
-}
+
+  // scroller vers le bas
+  const container = document.getElementById("messages");
+  container.scrollTop = container.scrollHeight;
+  }
