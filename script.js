@@ -43,6 +43,7 @@ if (document.getElementById("user")) {
   socket.emit("join", user);
 }
 
+// envoyer un message
 function sendMessage() {
   const input = document.getElementById("message");
   if (!input.value) return;
@@ -50,7 +51,7 @@ function sendMessage() {
   input.value = "";
 }
 
-// Affichage des messages
+// afficher les messages
 socket.on("history", msgs => msgs.forEach(showMessage));
 socket.on("message", showMessage);
 
@@ -59,4 +60,4 @@ function showMessage(m) {
   div.className = "message";
   div.innerText = m.from + " : " + m.text;
   document.getElementById("messages").appendChild(div);
-              }
+}
