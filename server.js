@@ -1,93 +1,62 @@
-require("dotenv").config();
-const express = require("express");
-const http = require("http");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const { Server } = require("socket.io");
+const socket = io();
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
-
-app.use(express.json());
-app.use(express.static(".")); // fichiers à la racine
-
-// ===== MongoDB =====
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connecté"))
-  .catch(err => console.error(err));
-
-// ===== Modèles =====
-const User = mongoose.model("User", new mongoose.Schema({
-  username: { type: String, unique: true },
-  password: String,
-  online: { type: Boolean, default: false }
-}));
-
-const Message = mongoose.model("Message", new mongoose.Schema({
-  from: String,
-  to: String,
-  text: String,
-  createdAt: { type: Date, default: Date.now, expires: 7*24*60*60 } // expire après 7 jours
-}));
-
-// ===== Inscription =====
-app.post("/api/register", async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) return res.json({ error: "Champs manquants" });
-  try {
-    const hash = await bcrypt.hash(password, 10);
-    await User.create({ username, password: hash });
-    res.json({ success: true });
-  } catch (err) {
-    res.json({ error: "Utilisateur déjà existant" });
-  }
-});
-
-// ===== Connexion =====
-app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
-  if (!user) return res.json({ error: "Compte inexistant" });
-  const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.json({ error: "Mot de passe incorrect" });
-  res.json({ success: true });
-});
-
-// ===== Socket.IO =====
-io.on("connection", (socket) => {
-
-  socket.on("join", async (username) => {
-    socket.username = username;
-    await User.updateOne({ username }, { online: true });
-
-    // envoyer la liste des utilisateurs connectés
-    const users = await User.find({}, "username online");
-    io.emit("users", users);
-
-    // envoyer historique messages
-    const messages = await Message.find({ $or: [{ from: username }, { to: username }] })
-                                .sort({ createdAt: 1 })
-                                .lean();
-    socket.emit("history", messages.map(m => ({ from: m.from, text: m.text })));
+// ===== AUTH =====
+async function login() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
   });
+  const data = await res.json();
+  if (data.error) return alert(data.error);
+  localStorage.setItem("user", username);
+  window.location.href = "chat.html";
+}
 
-  socket.on("message", async ({ to, text }) => {
-    if (!socket.username) return;
-    const msg = await Message.create({ from: socket.username, to, text });
-
-    // envoyer uniquement {from, text} pour que le front fonctionne
-    io.emit("message", { from: msg.from, text: msg.text });
+async function register() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  if (!username || !password) return alert("Remplis tous les champs !");
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
   });
+  const data = await res.json();
+  if (data.error) return alert(data.error);
+  alert("Compte créé ! Tu peux maintenant te connecter.");
+  window.location.href = "index.html";
+}
 
-  socket.on("disconnect", async () => {
-    if (!socket.username) return;
-    await User.updateOne({ username: socket.username }, { online: false });
-    const users = await User.find({}, "username online");
-    io.emit("users", users);
-  });
+// ===== LOGOUT =====
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
+}
 
-});
+// ===== CHAT =====
+if (document.getElementById("user")) {
+  const user = localStorage.getItem("user");
+  document.getElementById("user").innerText = user;
+  socket.emit("join", user);
+}
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log("Serveur lancé sur le port " + PORT));
+function sendMessage() {
+  const input = document.getElementById("message");
+  if (!input.value) return;
+  socket.emit("message", { to: "all", text: input.value });
+  input.value = "";
+}
+
+// ===== Affichage messages =====
+socket.on("history", msgs => msgs.forEach(showMessage));
+socket.on("message", showMessage);
+
+function showMessage(m) {
+  const div = document.createElement("div");
+  div.className = "message";
+  div.innerText = m.from + " : " + m.text;
+  document.getElementById("messages").appendChild(div);
+                          }
