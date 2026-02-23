@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Accueil</title></head>
+<body>
+<h2>Bienvenue <span id="user"></span></h2>
+<a href="chat.html">💬 Chat</a><br>
+<a href="profile.html">👤 Profil</a><br>
+<a href="search.html">🔎 Recherche</a><br>
+<button onclick="logout()">🚪 Déconnexion</button>
+
+<h3>Utilisateurs</h3><div id="users"></div>
+<h3>Demandes d'amis</h3><div id="friendRequests"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+</body>
+  </html>
