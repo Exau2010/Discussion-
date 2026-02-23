@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>Profil</title>
-<link rel="stylesheet" href="style.css"></head>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Profil</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
-<h2>Profil de <span id="user"></span></h2>
-<p>Statut : En ligne/offline</p>
-<a href="home.html">⬅ Retour</a>
-<script src="/socket.io/socket.io.js"></script>
+<header>
+  <span id="user"></span>
+  <button onclick="goHome()">Accueil</button>
+  <button onclick="logout()">Déconnexion</button>
+</header>
+
+<section>
+  <h3>Profil de <span id="profileUser"></span></h3>
+  <p>Pseudo : <span id="profileUsername"></span></p>
+</section>
+
 <script src="script.js"></script>
 </body>
-</html>
+                                                </html>
