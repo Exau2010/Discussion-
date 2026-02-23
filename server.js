@@ -28,7 +28,7 @@ const Message = mongoose.model("Message", new mongoose.Schema({
   from: String,
   to: String,
   text: String,
-  createdAt: { type: Date, default: Date.now, expires: 7*24*60*60 } // messages expirent après 7 jours
+  createdAt: { type: Date, default: Date.now, expires: 7*24*60*60 } // expire après 7 jours
 }));
 
 // ===== Inscription =====
@@ -39,7 +39,7 @@ app.post("/api/register", async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
     await User.create({ username, password: hash });
     res.json({ success: true });
-  } catch (err) {
+  } catch {
     res.json({ error: "Utilisateur déjà existant" });
   }
 });
@@ -57,38 +57,24 @@ app.post("/api/login", async (req, res) => {
 // ===== Socket.IO =====
 io.on("connection", (socket) => {
 
-  // Quand un utilisateur rejoint
   socket.on("join", async (username) => {
     socket.username = username;
     await User.updateOne({ username }, { online: true });
 
-    // envoyer la liste des utilisateurs connectés
-    const users = await User.find({}, "username online");
-    io.emit("users", users);
-
-    // envoyer l'historique des messages sous forme simple {from, text}
+    // historique messages
     const messages = await Message.find().sort({ createdAt: 1 }).lean();
-    const simpleMsgs = messages.map(m => ({ from: m.from, text: m.text }));
-    socket.emit("history", simpleMsgs);
+    socket.emit("history", messages.map(m => ({ from: m.from, text: m.text })));
   });
 
-  // Quand un utilisateur envoie un message
   socket.on("message", async ({ to, text }) => {
     if (!socket.username) return;
-
-    // sauvegarde dans la DB
     await Message.create({ from: socket.username, to, text });
-
-    // envoi à tous les clients un objet simple
     io.emit("message", { from: socket.username, text });
   });
 
-  // Quand un utilisateur se déconnecte
   socket.on("disconnect", async () => {
     if (!socket.username) return;
     await User.updateOne({ username: socket.username }, { online: false });
-    const users = await User.find({}, "username online");
-    io.emit("users", users);
   });
 });
 
