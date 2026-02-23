@@ -1,27 +1,14 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Chat</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="chat-body">
-
-<header class="chat-header">
-  <span id="user"></span>
-  <button onclick="logout()" style="float:right; margin-right:10px; border:none; border-radius:5px; padding:5px 10px; cursor:pointer;">
-    Déconnexion
-  </button>
-</header>
-
-<div id="messages" class="chat-messages"></div>
-
-<div class="chat-input">
-  <input id="message" placeholder="Message...">
-  <button onclick="sendMessage()">➤</button>
-</div>
-
+<html>
+<head><meta charset="UTF-8"><title>Chat</title></head>
+<body>
+<h3>Chat</h3>
+<input id="chatWith" placeholder="Destinataire">
+<div id="messages"></div>
+<input id="message" placeholder="Message">
+<button onclick="sendMessage()">Envoyer</button>
+<br><br><a href="home.html">⬅ Retour</a>
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
 </body>
-  </html>
+                                        </html>
