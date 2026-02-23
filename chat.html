@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Chat</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Chat</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body class="chat-body">
-
-<header class="chat-header">
+<body>
+<header>
   <span id="user"></span>
-  <button onclick="logout()" style="float:right;">Déconnexion</button>
+  <button onclick="goHome()">Accueil</button>
+  <button onclick="logout()">Déconnexion</button>
 </header>
+
+<h3>Chat avec <span id="toUser"></span></h3>
 
 <div id="messages" class="chat-messages"></div>
 
