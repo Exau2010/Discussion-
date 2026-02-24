@@ -93,19 +93,4 @@ io.on("connection", socket=>{
     });
 });
 
-// Supprimer un compte + tous ses messages
-app.delete("/api/deleteAccount", async (req,res)=>{
-    const { username } = req.body;
-    if(!username) return res.status(400).json({ error: "Username manquant" });
-
-    try {
-        await Message.deleteMany({ $or: [{ from: username }, { to: username }] });
-        await User.deleteOne({ username });
-        res.json({ success: true });
-    } catch(err){
-        console.error(err);
-        res.status(500).json({ error: "Erreur serveur" });
-    }
-});
-
 server.listen(process.env.PORT||3000, ()=>console.log("Serveur lancé"));
