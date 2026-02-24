@@ -3,27 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JEXREY Chat</title>
+<title>Chat individuel</title>
+
 <style>
   body {
     align-items: center;
- text-align: center;
-  background: linear-gradient(135deg, #109070, #108099);
-  min-height: 100vh;
-  background-size: cover;
-  background-position: center;
-  font-family: Cambria, sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #109070, #108099);
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    font-family: Cambria, sans-serif;
   }
-  
+
   header {
-  background: rgba(250, 250, 250, 0.4);
-  padding: 20px;
-  wrap: 20px;
-  color: white;
-  font-weight: bold;
-  border-radius: 20px;
+    background: rgba(250, 250, 250, 0.4);
+    padding: 20px;
+    color: white;
+    font-weight: bold;
+    border-radius: 20px;
   }
-  
+
   header button {
     background: none;
     margin-left: 30px;
@@ -31,36 +31,68 @@
     color: white;
     font-weight: bold;
   }
-  
+
   .chat-input {
     background: rgba(200, 200, 200, 0.4);
     margin-top: 15px;
     padding: 20px;
     border-radius: 20px;
   }
-  
+
   .chat-input input {
     outline: none;
     border: none;
     background: none;
     color: #108099;
     font-weight: bold;
+    width: 70%;
   }
-  
+
   .chat-input button {
     background: none;
-    padding: 5px;
+    padding: 5px 10px;
     border-radius: 5px;
     color: #108099;
     border: 2px solid #108099;
+    cursor: pointer;
   }
-  
+
   .chat-input button:hover {
     background: #108099;
     color: white;
   }
+
+  /* ===== Messages ===== */
+  .chat-messages {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .message {
+    max-width: 70%;
+    padding: 10px 14px;
+    margin: 6px 0;
+    border-radius: 15px;
+    font-weight: bold;
+    word-wrap: break-word;
+  }
+
+  .message.me {
+    align-self: flex-start;
+    background: rgba(16, 96, 137, 0.85);
+    color: white;
+    border-bottom-left-radius: 0;
+  }
+
+  .message.other {
+    align-self: flex-end;
+    background: rgba(255, 255, 255, 0.6);
+    color: #106089;
+    border-bottom-right-radius: 0;
+  }
 </style>
 </head>
+
 <body>
 
 <header>
@@ -69,14 +101,17 @@
   <button onclick="logout()">Déconnexion</button>
 </header>
 
-<div id="messages" class="chat-messages" style="height: 500px; overflow-y: scroll; border: none; padding: 10px; border-radius: 20px; margin-top: 15px; background: rgba(200, 200, 200, 0.4); color: #106089;"></div>
+<div id="messages" class="chat-messages"
+     style="height:500px; overflow-y:auto; padding:10px; border-radius:20px;
+     margin-top:15px; background:rgba(200,200,200,0.4);">
+</div>
 
 <div class="chat-input">
-  <input id="message" placeholder="Écrire un message..." />
+  <input id="message" placeholder="Écrire un message..." autocomplete="off">
   <button id="sendBtn">Envoyer</button>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
 </body>
-  </html>
+    </html>
