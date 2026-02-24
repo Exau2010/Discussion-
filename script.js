@@ -3,49 +3,88 @@ const socket = io();
 const user = localStorage.getItem("user");
 const toUser = localStorage.getItem("toUser");
 
-document.getElementById("toUser").innerText = toUser;
-
-// rejoindre la room privée
-socket.emit("joinPrivate", { user, toUser });
-
-// afficher un message
-function showMessage(m) {
-  const div = document.createElement("div");
-  div.classList.add("message");
-
-  if (m.from === user) {
-    div.classList.add("me");
-  } else {
-    div.classList.add("other");
-  }
-
-  div.innerText = m.text;
-  document.getElementById("messages").appendChild(div);
-  document.getElementById("messages").scrollTop =
-    document.getElementById("messages").scrollHeight;
+// sécurité minimale
+if (!user) {
+  window.location.href = "index.html";
 }
 
-// réception message
+// afficher le nom du destinataire
+if (document.getElementById("toUser")) {
+  document.getElementById("toUser").innerText = toUser;
+}
+
+// rejoindre le chat privé
+socket.emit("joinPrivate", { user, toUser });
+
+/* ===========================
+   AFFICHAGE MESSAGE (FIX)
+=========================== */
+function showMessage(m) {
+  const div = document.createElement("div");
+
+  // 🔥 CLASSES FORCÉES (corrige le problème)
+  if (m.from === user) {
+    div.className = "message me";
+  } else {
+    div.className = "message other";
+  }
+
+  div.textContent = m.text;
+
+  const container = document.getElementById("messages");
+  container.appendChild(div);
+
+  // scroll automatique
+  container.scrollTop = container.scrollHeight;
+}
+
+/* ===========================
+   RECEPTION MESSAGE
+=========================== */
 socket.on("privateMessage", (m) => {
   showMessage(m);
 });
 
-// envoi message
-document.getElementById("sendBtn").onclick = () => {
-  const input = document.getElementById("message");
+/* ===========================
+   ENVOI MESSAGE
+=========================== */
+const sendBtn = document.getElementById("sendBtn");
+const input = document.getElementById("message");
+
+function sendMessage() {
   const text = input.value.trim();
+  if (!text) return;
 
-  if (text === "") return;
+  const msg = {
+    from: user,
+    to: toUser,
+    text: text
+  };
 
-  const msg = { from: user, to: toUser, text };
   socket.emit("privateMessage", msg);
+
+  // afficher immédiatement le message envoyé
   showMessage(msg);
 
   input.value = "";
-};
+}
 
-// déconnexion
+if (sendBtn) {
+  sendBtn.addEventListener("click", sendMessage);
+}
+
+if (input) {
+  input.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  });
+}
+
+/* ===========================
+   DECONNEXION
+=========================== */
 function logout() {
   localStorage.clear();
   window.location.href = "index.html";
-            }
+}
