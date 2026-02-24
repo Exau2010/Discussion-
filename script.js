@@ -1,90 +1,118 @@
 const socket = io();
 
+// ===== Auth & navigation =====
+if(!localStorage.getItem("user") && !window.location.href.includes("index.html")){
+    window.location.href="index.html";
+}
 const user = localStorage.getItem("user");
-const toUser = localStorage.getItem("toUser");
+if(document.getElementById("user")) document.getElementById("user").innerText = user;
 
-// sécurité minimale
-if (!user) {
-  window.location.href = "index.html";
+function logout(){
+    localStorage.removeItem("user");
+    localStorage.removeItem("toUser");
+    localStorage.removeItem("selectedUser");
+    window.location.href="index.html";
 }
 
-// afficher le nom du destinataire
-if (document.getElementById("toUser")) {
-  document.getElementById("toUser").innerText = toUser;
+function goHome(){ window.location.href="home.html"; }
+
+// ===== Connexion / inscription =====
+async function login(){
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const res = await fetch("/api/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(data.error) return alert(data.error);
+    localStorage.setItem("user", username);
+    window.location.href="home.html";
 }
 
-// rejoindre le chat privé
-socket.emit("joinPrivate", { user, toUser });
-
-/* ===========================
-   AFFICHAGE MESSAGE (FIX)
-=========================== */
-function showMessage(m) {
-  const div = document.createElement("div");
-
-  // 🔥 CLASSES FORCÉES (corrige le problème)
-  if (m.from === user) {
-    div.className = "message me";
-  } else {
-    div.className = "message other";
-  }
-
-  div.textContent = m.text;
-
-  const container = document.getElementById("messages");
-  container.appendChild(div);
-
-  // scroll automatique
-  container.scrollTop = container.scrollHeight;
+async function register(){
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const res = await fetch("/api/register",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(data.error) return alert(data.error);
+    alert("Compte créé !");
+    window.location.href="index.html";
 }
 
-/* ===========================
-   RECEPTION MESSAGE
-=========================== */
-socket.on("privateMessage", (m) => {
-  showMessage(m);
-});
-
-/* ===========================
-   ENVOI MESSAGE
-=========================== */
-const sendBtn = document.getElementById("sendBtn");
-const input = document.getElementById("message");
-
-function sendMessage() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  const msg = {
-    from: user,
-    to: toUser,
-    text: text
-  };
-
-  socket.emit("privateMessage", msg);
-
-  // afficher immédiatement le message envoyé
-  showMessage(msg);
-
-  input.value = "";
+// ===== Home page : liste utilisateurs =====
+if(document.getElementById("userList")){
+    socket.emit("getUsers"); 
+    socket.on("users", users=>{
+        const list = document.getElementById("userList");
+        list.innerHTML="";
+        users.filter(u=>u.username!==user).forEach(u=>{
+            const li=document.createElement("li");
+            li.innerText = u.username + (u.online ? " (en ligne)" : " (hors ligne)");
+            li.addEventListener("click", ()=>{
+                localStorage.setItem("selectedUser", u.username);
+                window.location.href="user.html";
+            });
+            list.appendChild(li);
+        });
+    });
 }
 
-if (sendBtn) {
-  sendBtn.addEventListener("click", sendMessage);
+// ===== User profile page =====
+if(document.getElementById("profileUsername")){
+    const profileUser = localStorage.getItem("selectedUser");
+    document.getElementById("profileUsername").innerText = profileUser;
+    document.getElementById("profileUsernameDetail").innerText = profileUser;
+
+    socket.emit("getUserStatus", profileUser);
+    socket.on("userStatus", data=>{
+        if(data.username === profileUser){
+            document.getElementById("profileStatus").innerText = data.online ? "En ligne" : "Hors ligne";
+        }
+    });
+
+    document.getElementById("startChatBtn").addEventListener("click", ()=>{
+        localStorage.setItem("toUser", profileUser);
+        window.location.href="chat.html";
+    });
 }
 
-if (input) {
-  input.addEventListener("keyup", (e) => {
-    if (e.key === "Enter") {
-      sendMessage();
+// ===== Chat individuel =====
+if(document.getElementById("toUser")){
+    const toUser = localStorage.getItem("toUser");
+    document.getElementById("toUser").innerText = toUser;
+
+    socket.emit("join", user);
+
+    const sendBtn = document.getElementById("sendBtn");
+    sendBtn.addEventListener("click", sendMessage);
+    const messageInput = document.getElementById("message");
+    messageInput.addEventListener("keyup",(e)=>{if(e.key==="Enter") sendMessage();});
+
+    function sendMessage(){
+        const input=document.getElementById("message");
+        if(!input.value) return;
+        socket.emit("privateMessage",{from:user,to:toUser,text:input.value});
+        input.value="";
     }
-  });
-}
 
-/* ===========================
-   DECONNEXION
-=========================== */
-function logout() {
-  localStorage.clear();
-  window.location.href = "index.html";
-}
+    socket.on("privateMessage", m=>{
+        if(m.from===user||m.from===toUser) showMessage(m);
+    });
+
+    socket.on("history", msgs=>msgs.forEach(m=>{
+        if(m.from===user||m.from===toUser) showMessage(m);
+    }));
+
+    function showMessage(m){
+        const div=document.createElement("div");
+        div.innerText = m.from+" : "+m.text;
+        document.getElementById("messages").appendChild(div);
+        document.getElementById("messages").scrollTop=document.getElementById("messages").scrollHeight;
+    }
+   }
