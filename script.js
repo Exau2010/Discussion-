@@ -1,163 +1,100 @@
 const socket = io();
+const user = localStorage.getItem("user");
 
-// ===== Auth & navigation =====
-if (!localStorage.getItem("user") && !window.location.href.includes("index.html")) {
-    window.location.href = "index.html";
+// Redirection si non connecté
+if (!user) location.href = "index.html";
+
+if (document.getElementById("toUser")) {
+  const toUser = localStorage.getItem("toUser");
+  document.getElementById("toUser").innerText = toUser;
+
+  socket.emit("join", user);
+  socket.emit("getHistory", { user, toUser });
+
+  const msgInput = document.getElementById("message");
+  const sendBtn = document.getElementById("sendBtn");
+  let typingTimeout;
+
+  sendBtn.onclick = sendMessage;
+  msgInput.onkeyup = e => e.key === "Enter" && sendMessage();
+
+  // ===== Indication "en train d’écrire" =====
+  msgInput.oninput = () => {
+    socket.emit("typing", { from: user, to: toUser });
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      socket.emit("stopTyping", { from: user, to: toUser });
+    }, 1500);
+  };
+
+  function sendMessage() {
+    if (!msgInput.value) return;
+    socket.emit("privateMessage", {
+      from: user,
+      to: toUser,
+      text: msgInput.value
+    });
+    msgInput.value = "";
+  }
+
+  // ===== Réception messages =====
+  socket.on("privateMessage", showMessage);
+  socket.on("history", msgs => msgs.forEach(showMessage));
+
+  // ===== Typing events =====
+  socket.on("typing", d => {
+    if (d.from === toUser)
+      document.getElementById("typingStatus").innerText =
+        `${toUser} est en train d’écrire...`;
+  });
+
+  socket.on("stopTyping", () => {
+    document.getElementById("typingStatus").innerText = "";
+  });
+
+  // ===== Vu =====
+  socket.on("seen", d => {
+    document.querySelectorAll(".seen").forEach(e => {
+      e.innerText = "Vu à " + new Date().toLocaleTimeString().slice(0,5);
+    });
+  });
+
+  // ===== Suppression =====
+  socket.on("deleteMessage", id => {
+    const el = document.getElementById("msg-" + id);
+    if (el) el.remove();
+  });
+
+  // ===== Affichage message =====
+  function showMessage(m) {
+    if (m.from !== user && m.from !== toUser) return;
+
+    const div = document.createElement("div");
+    div.id = "msg-" + m.id;
+    div.classList.add("message");
+    div.classList.add(m.from === user ? "sent" : "received");
+
+    div.innerHTML = `
+      <b>${m.from}</b> : ${m.text}
+      <br>
+      <small class="seen">${m.from === user && m.seen ? "Vu à " + m.time : ""}</small>
+      ${m.from === user ? `<button onclick="deleteMsg(${m.id})">🗑️</button>` : ""}
+    `;
+
+    document.getElementById("messages").appendChild(div);
+    document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+
+    // Marquer comme vu si reçu
+    if (m.from === toUser) socket.emit("seen", { from: toUser, to: user });
+  }
 }
 
-const user = localStorage.getItem("user");
-if (document.getElementById("user")) {
-    document.getElementById("user").innerText = user;
+function deleteMsg(id) {
+  socket.emit("deleteMessage", id);
 }
 
 function logout() {
-    localStorage.removeItem("user");
-    localStorage.removeItem("toUser");
-    localStorage.removeItem("selectedUser");
-    window.location.href = "index.html";
-}
-
-function goHome() {
-    window.location.href = "home.html";
-}
-
-// ===== Connexion =====
-async function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-    });
-
-    const data = await res.json();
-    if (data.error) return alert(data.error);
-
-    localStorage.setItem("user", username);
-    window.location.href = "home.html";
-}
-
-// ===== Inscription =====
-async function register() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    const res = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-    });
-
-    const data = await res.json();
-    if (data.error) return alert(data.error);
-
-    alert("Compte créé !");
-    window.location.href = "index.html";
-}
-
-// ===== HOME : liste des utilisateurs =====
-if (document.getElementById("userList")) {
-    socket.emit("getUsers");
-
-    socket.on("users", users => {
-        const list = document.getElementById("userList");
-        list.innerHTML = "";
-
-        users
-            .filter(u => u.username !== user)
-            .forEach(u => {
-                const li = document.createElement("li");
-                li.innerText = u.username + (u.online ? " (en ligne)" : " (hors ligne)");
-                li.onclick = () => {
-                    localStorage.setItem("selectedUser", u.username);
-                    window.location.href = "user.html";
-                };
-                list.appendChild(li);
-            });
-    });
-}
-
-// ===== PAGE USER =====
-if (document.getElementById("profileUsername")) {
-    const profileUser = localStorage.getItem("selectedUser");
-
-    document.getElementById("profileUsername").innerText = profileUser;
-    document.getElementById("profileUsernameDetail").innerText = profileUser;
-
-    socket.emit("getUserStatus", profileUser);
-
-    socket.on("userStatus", data => {
-        if (data.username === profileUser) {
-            document.getElementById("profileStatus").innerText =
-                data.online ? "En ligne" : "Hors ligne";
-        }
-    });
-
-    document.getElementById("startChatBtn").onclick = () => {
-        localStorage.setItem("toUser", profileUser);
-        window.location.href = "chat.html";
-    };
-}
-
-// ===== CHAT PRIVÉ =====
-if (document.getElementById("toUser")) {
-    const toUser = localStorage.getItem("toUser");
-    document.getElementById("toUser").innerText = toUser;
-
-    socket.emit("join", user);
-
-    const sendBtn = document.getElementById("sendBtn");
-    const messageInput = document.getElementById("message");
-
-    sendBtn.onclick = sendMessage;
-    messageInput.addEventListener("keyup", e => {
-        if (e.key === "Enter") sendMessage();
-    });
-
-    function sendMessage() {
-        const text = messageInput.value.trim();
-        if (!text) return;
-
-        socket.emit("privateMessage", {
-            from: user,
-            to: toUser,
-            text
-        });
-
-        messageInput.value = "";
-    }
-
-    socket.on("privateMessage", m => {
-        if (m.from === user || m.from === toUser) {
-            showMessage(m);
-        }
-    });
-
-    socket.on("history", msgs => {
-        msgs.forEach(m => {
-            if (m.from === user || m.from === toUser) {
-                showMessage(m);
-            }
-        });
-    });
-
-    // ===== AFFICHAGE DES MESSAGES (CORRIGÉ) =====
-    function showMessage(m) {
-        const div = document.createElement("div");
-        div.classList.add("message");
-
-        if (m.from === user) {
-            div.classList.add("sent");       // → DROITE
-            div.innerText = m.text;
-        } else {
-            div.classList.add("received");   // ← GAUCHE
-            div.innerText = m.from + " : " + m.text;
-        }
-
-        const messages = document.getElementById("messages");
-        messages.appendChild(div);
-        messages.scrollTop = messages.scrollHeight;
-    }
-                            }
+  localStorage.removeItem("user");
+  localStorage.removeItem("toUser");
+  window.location.href = "index.html";
+              }
