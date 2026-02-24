@@ -98,3 +98,28 @@ function logout() {
   localStorage.removeItem("toUser");
   window.location.href = "index.html";
               }
+
+async function deleteAccount() {
+    if(!confirm("Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible.")) return;
+
+    const user = localStorage.getItem("user");
+    if(!user) return;
+
+    try {
+        const res = await fetch("/api/deleteAccount", {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ username: user })
+        });
+        const data = await res.json();
+        if(data.success) {
+            alert("Votre compte a été supprimé !");
+            logout();
+        } else {
+            alert("Erreur : " + data.error);
+        }
+    } catch(e) {
+        alert("Erreur lors de la suppression du compte.");
+        console.error(e);
+    }
+    }
