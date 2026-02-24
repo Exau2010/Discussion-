@@ -7,8 +7,8 @@ if (document.getElementById("toUser")) {
   const toUser = localStorage.getItem("toUser");
   document.getElementById("toUser").innerText = toUser;
 
-  socket.emit("join", user);
-  socket.emit("getHistory", { user, toUser });
+  // Rejoindre le chat individuel
+  socket.emit("joinPrivate", { user, toUser });
 
   const msgInput = document.getElementById("message");
   const sendBtn = document.getElementById("sendBtn");
@@ -35,9 +35,11 @@ if (document.getElementById("toUser")) {
     msgInput.value = "";
   }
 
+  // Afficher tous les messages
   socket.on("privateMessage", showMessage);
   socket.on("history", msgs => msgs.forEach(showMessage));
 
+  // Typing indicator
   socket.on("typing", d => {
     if (d.from === toUser)
       document.getElementById("typingStatus").innerText =
@@ -59,8 +61,9 @@ if (document.getElementById("toUser")) {
     if (el) el.remove();
   });
 
-  function showMessage(m) {
-    if (m.from !== user && m.from !== toUser) return;
+  function showMessage(m){
+    // Messages sortants ou entrants
+    if (!((m.from === user && m.to === toUser) || (m.from === toUser && m.to === user))) return;
 
     const div = document.createElement("div");
     div.id = "msg-" + m.id;
@@ -89,4 +92,4 @@ function logout() {
   localStorage.removeItem("user");
   localStorage.removeItem("toUser");
   window.location.href = "index.html";
-}
+              }
