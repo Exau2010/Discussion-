@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feed 40 vidéos</title>
+
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: black;
+}
+.feed {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+.video {
+  height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+}
+.cover {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.play {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  color: white;
+}
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
+</head>
+<body>
+
+<div class="feed">
+
+<!-- ==== 40 vidéos intégrées ==== -->
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/Ii3dBAKHn3M?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/Ii3dBAKHn3M/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/ZNFM9pgo1xs?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/ZNFM9pgo1xs/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/ZyEvunpDrfg?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/ZyEvunpDrfg/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/GM6yxs1C1gU?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/GM6yxs1C1gU/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/z2k6NEEcWPM?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/z2k6NEEcWPM/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/ICyO172az44?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/ICyO172az44/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/OQS9sjczeKA?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/OQS9sjczeKA/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/7M1dey3gqH8?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/7M1dey3gqH8/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/hiRRkyg8800?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/hiRRkyg8800/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/5QwxoXZJUfY?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/5QwxoXZJUfY/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/rBtC1wltWy8?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/rBtC1wltWy8/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/4c0907PWLhA?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/4c0907PWLhA/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/LtB8Q6Tz9bA?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/LtB8Q6Tz9bA/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/KHgs7IYA7tY?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/KHgs7IYA7tY/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/d7pMOr8ZsIQ?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/d7pMOr8ZsIQ/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/q7r5BB55de0?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/q7r5BB55de0/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/E0j_qldnA8U?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/E0j_qldnA8U/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/T-Rt1xmfUcA?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/T-Rt1xmfUcA/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/oHeKKuCYj64?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/oHeKKuCYj64/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/O1S8WzwLPlM?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/O1S8WzwLPlM/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Les 20 suivantes suivent exactement le même pattern -->
+
+<!-- Vidéo 21 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/sV2Urhs2nfU?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/sV2Urhs2nfU/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 22 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/9bZkp7q19f0?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 23 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/rl0c3mhhH2c?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/rl0c3mhhH2c/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 24 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/3tmd-ClpJxA?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/3tmd-ClpJxA/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 25 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/z2Ud4a4vYFI?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/z2Ud4a4vYFI/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 26 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/cd5wUPcZA2o?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/cd5wUPcZA2o/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 27 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/7QUtEmBT_-w?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/7QUtEmBT_-w/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 28 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/K4TOrB7at0Y?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/K4TOrB7at0Y/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 29 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/IUP2jFm2Mws?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/IUP2jFm2Mws/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 30 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/8ZcmTl_1ER8?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/8ZcmTl_1ER8/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 31 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/YS9tx2cQK0Y?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/YS9tx2cQK0Y/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 32 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/3RUy6HCKsu4?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/3RUy6HCKsu4/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 33 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/GM6yxs1C1gU?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/GM6yxs1C1gU/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 34 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/7K6B4R9Ce0M?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/7K6B4R9Ce0M/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 35 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/qNbqi0h9wsw?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/qNbqi0h9wsw/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 36 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/7S1mMSX4pO8?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/7S1mMSX4pO8/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 37 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/TZDZzNUYU1c?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/TZDZzNUYU1c/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 38 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/8ZcmTl_1ER8?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/8ZcmTl_1ER8/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 39 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/3tmd-ClpJxA?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/3tmd-ClpJxA/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+<!-- Vidéo 40 -->
+<div class="video">
+  <div class="cover" onclick="play(this,'https://www.youtube.com/embed/YS9tx2cQK0Y?autoplay=1&mute=0')"
+       style="background-image:url('https://img.youtube.com/vi/YS9tx2cQK0Y/maxresdefault.jpg')"><div class="play">▶</div></div>
+</div>
+
+</div>
+
+<script>
+function play(el, src) {
+  el.outerHTML = `<iframe src="${src}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+}
+</script>
+
+</body>
+</html>
