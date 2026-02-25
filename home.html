@@ -3,88 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JEXREY home</title>
+<title>Accueil - ChatApp</title>
 <style>
   body {
     align-items: center;
-    text-align: center;
-    background: linear-gradient(135deg, #109070, #108099);
-    min-height: 100vh;
-    background-size: cover;
-    background-position: center;
-    font-family: Cambria, sans-serif;
+ text-align: center;
+  background: linear-gradient(135deg, #109070, #108099);
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  font-family: Cambria, sans-serif;
   }
-
+  
   header {
-    background: rgba(250, 250, 250, 0.4);
-    padding: 20px;
-    color: white;
-    font-weight: bold;
-    border-radius: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: rgba(250, 250, 250, 0.4);
+  padding: 20px;
+  wrap: 20px;
+  color: white;
+  font-weight: bold;
+  border-radius: 20px;
   }
-
+  
   header button {
     background: none;
     border: none;
     color: white;
     font-weight: bold;
-    cursor: pointer;
-    margin-left: 10px;
   }
-
+  
   #user {
     font-weight: bold;
     color: #109070;
   }
-
+  
   .container {
     margin-top: 20px;
     border-radius: 20px;
     background: rgba(200, 200, 200, 0.4);
     color: white;
     padding: 10px;
-    width: 90%;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
+    overflow-y: auto;
+    white-space: nowrap;
   }
-
+  
   .container ul {
     padding: 10px;
+    margin-top: 10px;
     border-radius: 10px;
     background: rgba(200, 200, 200, 0.4);
-    list-style: none;
+    overflow-y: auto;
+  }
+  
+  iframe {
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 100%;
+    border-radius: 20px;
+    height: 200px;
+    background: rgba(200, 200, 200, 0.5);
+    border: none;
+  }
+  
+  .DA {
+    margin-top: 10px;
+  }
+  
+  
+  .DA header {
+    display: flex;
+    gap: 70%;
+  }
+  
+  .DA label {
+    display: none;
+  }
+  
+  .DA #un {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 10px;
+  }
+  
+  .DA #deux {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 10px;
+    
+  }
+  
+  .DA #trois {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 10px;
+    
+  }
+  
+  .DA #quatre {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 10px;
+    
+  }
+  
+  .DA #cinq {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 10px;
+  }
+  
+  .DA #six {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 10px;
   }
 
-  .deleteBtn {
-    margin-top: 15px;
-    padding: 10px 15px;
-    border: 2px solid red;
-    border-radius: 10px;
-    color: red;
-    background: none;
-    cursor: pointer;
-    font-weight: bold;
-  }
+.short {
+  margin-top: 20px;
+  width: 100%;
+  align-items: center;
+}
 
-  .deleteBtn:hover {
-    background: red;
-    color: white;
-  }
+.short a {
+  text-decoration: none;
+  color: #106099;
+  border: 1px solid #106099;
+  padding: 10px;
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.short a:hover {
+  background: #106099;
+  color: white;
+}
+
+.short a:focus {
+  background: #106099;
+  color: white;
+}
+  
+  
+  
 </style>
 </head>
 <body>
 
 <header>
   <span id="user"></span>
-  <div>
-    <button onclick="window.location.href='home.html'">Accueil</button>
-    <button onclick="window.location.href='profile.html'">Mon Profil</button>
-    <button onclick="logout()">Déconnexion</button>
-  </div>
+  <button onclick="window.location.href='home.html'">Accueil</button>
+  <button onclick="window.location.href='profile.html'">Mon Profil</button>
+  <button onclick="logout()">Déconnexion</button>
 </header>
 
 <section class="container">
@@ -92,11 +162,348 @@
   <ul id="userList">
     <!-- Liste remplie par script.js -->
   </ul>
-
-  <button class="deleteBtn" onclick="deleteAccount()">Supprimer mon compte</button>
 </section>
+
+<div class="DA">
+  <header>Vos Film<text id="one" onclick="one()">🎥</text><label onclick="a()" id="a">😁</label></header>
+  <div id="un">
+    <!-- Film d’action complet (VF) disponible sur YouTube -->
+<iframe src="https://www.youtube.com/embed/BolZUd-z8f4" loading="lazy" allowfullscreen></iframe> <!-- Jusqu’à la dernière balle – Film d’action complet en français 1 -->
+
+<!-- Scène / clip de film d’action (extrait long) -->
+<iframe src="https://www.youtube.com/embed/VjP8LarF-B8" loading="lazy" allowfullscreen></iframe> <!-- Action movie scene / clip / extrait d’un film en français 2 -->
+
+<!-- Film d’action complet disponible en français -->
+<iframe src="https://www.youtube.com/embed/3ZnlxZh2sdU" loading="lazy" allowfullscreen></iframe> <!-- Le Braquage de Sang – Film complet en français 3 -->
+
+<iframe 
+src="https://www.youtube.com/embed/hiRRkyg8800"
+title="Extraction 2 - Bande‑annonce officielle VF"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+<iframe
+src="https://www.youtube.com/embed/1UfwzT2pKk4"
+title="John Wick: Chapitre 4 - Extrait VF"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+  
+  </div>
+</div>
+<div class="DA">
+  <header>Cartoons<text id="two" onclick="two()">🎥</text><label onclick="be()" id="be">😁</label></header>
+  <div id="deux">
+    <iframe src="https://www.youtube.com/embed/Qa7S6rUQsNc" loading="lazy" allowfullscreen></iframe> <!-- Phinéas et Ferb | Le Voiture – épisode entier en Français (VF) 0 -->
+    <iframe width="560" height="315"
+src="https://www.youtube.com/embed/-p8Bon7MMJk"
+title="Miraculous World : Tokyo, Stellar Force - Bande-annonce officielle"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe><iframe width="560" height="315"
+src="https://www.youtube.com/embed/WPDeu32HWZg"
+title="Danger Force | Les 5 premières minutes (VF)"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/yXcMwf3l_8E"
+title="Miraculous | Bande annonce officielle Saison 6 (VF)"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/wIZ7ViQyO-c"
+title="Extrait Bienvenue chez les Louds (VF – scène drôle)"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+    
+    
+  </div>
+</div>
+
+<div class="DA">
+  <header>•Animés<text id="three" onclick="three()">🎥</text><label onclick="ce()" id="ce">😁</label></header>
+  <div id="trois">
+    <iframe 
+src="https://www.youtube.com/embed/qecfFh3d5N4"
+title="Naruto – Bande‑annonce VF"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture‑in‑picture"
+allowfullscreen></iframe>
+<iframe 
+src="https://www.youtube.com/embed/4UJmRd9_g9g"
+title="Classroom of the Elite – Trailer FR (sous‑titres)"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture‑in‑picture"
+allowfullscreen></iframe>
+<iframe
+src="https://www.youtube.com/embed/Yek1lMKQ4lQ"
+title="Fire Force – Bande‑annonce officielle FR"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe><iframe 
+src="https://www.youtube.com/embed/v6WeOYtoyKI"
+title="Bloom Into You – Trailer anime (FR – sous‑titres)"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+<iframe 
+src="https://www.youtube.com/embed/ys9xkF2fO9U"
+title="My Dress‑Up Darling – Bande‑annonce officielle FR"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+    
+    
+    
+  </div>
+</div>
+<div class="DA">
+  <header>Télenovela<text id="four" onclick="four()">🎥</text><label onclick="de()" id="de">😁</label></header>
+  <div id="quatre">
+    <iframe src="https://www.youtube.com/embed/n-tDVCPivR0" loading="lazy" allowfullscreen></iframe> <!-- L'Héritière 👑 (Novela complète en français – épisode principal) 1 -->
+    <iframe src="https://www.youtube.com/embed/mNYGg2AWv4Q" loading="lazy" allowfullscreen></iframe> <!-- Terre de Passions - Épisode 1 en VF 5 -->
+    <!-- Épisode complet en français (non-YouTube, Dailymotion) -->
+    <iframe src="https://www.dailymotion.com/embed/video/x6w5zz9" loading="lazy" allowfullscreen></iframe> <!-- El Diablo épisode 1 VF disponible sur Dailymotion 5 -->
+    
+    <iframe
+src="https://www.youtube.com/embed/IUP2jFm2Mws"
+title="Une Vie Rêvée - Erkenci Kuş Épisode 1 (Version Longue) VF"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/92ORUVxPYMw"
+title="Fatmagül - Extrait / Colage VF"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+    
+    
+  </div>
+</div>
+<div class="DA">
+  <header>Humour<text id="five" onclick="five()">🎥</text><label onclick="e()" id="e">😁</label></header>
+  <div id="cinq">
+    <iframe width="560" height="315" 
+src="https://www.youtube.com/embed/0Un7lu3mfPE" 
+title="Les meilleurs sketchs d’Alban Ivanov - Compilation humour" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+allowfullscreen></iframe>
+<iframe width="560" height="315" 
+src="https://www.youtube.com/embed/DMdc7CH6H64" 
+title="BEST OF - Humour STAND UP #2" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<iframe width="560" height="315" 
+src="https://www.youtube.com/embed/es6zuqxiq0k" 
+title="Les meilleurs sketchs de Gad Elmaleh - Compilation" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+allowfullscreen></iframe>
+<iframe width="560" height="315" 
+src="https://www.youtube.com/embed/HC1fKHTvwHo" 
+title="BEST OF - Humour STAND UP #1" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+allowfullscreen></iframe>
+<iframe width="560" height="315" 
+src="https://www.youtube.com/embed/Ry7C8_pO1ws" 
+title="Compilation humour Jeff Panacloc" 
+frameborder="0" 
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+allowfullscreen></iframe>
+
+    
+    
+  </div>
+</div>
+
+<div class="DA">
+  <header>Gospels<text id="sex" onclick="sex()">🎥</text><label onclick="ef()" id="ef">😁</label></header>
+  <div id="six">
+    <iframe src="https://www.youtube.com/embed/YRNu-_TjfEU" loading="lazy" allowfullscreen></iframe> <!-- B‑RIGHT – Avant le temps (clip officiel) 0 -->
+    <iframe width="560" height="315"
+src="https://www.youtube.com/embed/z3SM16xrsys"
+title="YAHWEH SE MANIFESTERA - Sara Ellen"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/v7bl_p87KMQ"
+title="Calling My Name [I'm A Soldier] - Moses Bliss / Ebuka Songs"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+    <iframe src="https://www.youtube.com/embed/iqVBsi4JZ9A"
+title="Yahweh se manifestera (Oasis Ministry) - Sandra Kouame"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+
+<iframe  src="https://www.youtube.com/embed/vtQ0PWOYWMo"
+title="Moses Bliss - Umbrella (Official Video)"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
+
+    
+    
+  </div>
+</div>
+
+<div class="short">
+  <a href="short.html">Voir les shorts</a>
+</div>
+
+
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
+<script>
+
+  /* fonction 1 */
+  const un = document.getElementById("un").style.display = "none";
+  function one(){
+    const un = document.getElementById("un");
+    const a = document.getElementById("a");
+    const one = document.getElementById("one");
+    
+    un.style.display = "block";
+    one.style.display = "none";
+    a.style.display = "block";
+    
+  }
+  
+  function a(){
+    const un = document.getElementById("un");
+    const a = document.getElementById("a");
+    const one = document.getElementById("one");
+    
+    un.style.display = "none";
+    one.style.display = "block";
+    a.style.display = "none";
+  }
+  
+  /* fonction 2 */
+  const deux = document.getElementById("deux").style.display = "none";
+  function two(){
+    const deux = document.getElementById("deux");
+    const be = document.getElementById("be");
+    const two = document.getElementById("two");
+    
+    deux.style.display = "block";
+    two.style.display = "none";
+    be.style.display = "block";
+    
+  }
+  
+  function be(){
+    const deux = document.getElementById("deux");
+    const be = document.getElementById("be");
+    const two = document.getElementById("two");
+    
+    deux.style.display = "none";
+    two.style.display = "block";
+    be.style.display = "none";
+  }
+  
+  /* fonction 3 */
+  const trois = document.getElementById("trois").style.display = "none";
+  function three(){
+    const trois = document.getElementById("trois");
+    const ce = document.getElementById("ce");
+    const three = document.getElementById("three");
+    
+    trois.style.display = "block";
+    three.style.display = "none";
+    ce.style.display = "block";
+    
+  }
+  
+  function ce(){
+    const trois = document.getElementById("trois");
+    const ce = document.getElementById("ce");
+    const three = document.getElementById("three");
+    
+    trois.style.display = "none";
+    three.style.display = "block";
+    ce.style.display = "none";
+  }
+  
+  /* fonction 4 */
+  const quatre = document.getElementById("quatre").style.display = "none";
+  function four(){
+    const quatre = document.getElementById("quatre");
+    const de = document.getElementById("de");
+    const four = document.getElementById("four");
+    
+    quatre.style.display = "block";
+    four.style.display = "none";
+    de.style.display = "block";
+    
+  }
+  
+  function de(){
+    const quatre = document.getElementById("quatre");
+    const de = document.getElementById("de");
+    const four = document.getElementById("four");
+    
+    quatre.style.display = "none";
+    four.style.display = "block";
+    de.style.display = "none";
+  }
+  
+  /* fonction 5 */
+  const cinq = document.getElementById("cinq").style.display = "none";
+  function five(){
+    const cinq = document.getElementById("cinq");
+    const e = document.getElementById("e");
+    const five = document.getElementById("five");
+    
+    cinq.style.display = "block";
+    five.style.display = "none";
+    e.style.display = "block";
+    
+  }
+  
+  function e(){
+    const cinq = document.getElementById("cinq");
+    const e = document.getElementById("e");
+    const five = document.getElementById("five");
+    
+    cinq.style.display = "none";
+    five.style.display = "block";
+    e.style.display = "none";
+  }
+  
+  /* fonction 6 */
+  const six = document.getElementById("six").style.display = "none";
+  function sex(){
+    const six = document.getElementById("six");
+    const ef = document.getElementById("ef");
+    const sex = document.getElementById("sex");
+    
+    six.style.display = "block";
+    sex.style.display = "none";
+    ef.style.display = "block";
+    
+  }
+  
+  function ef(){
+    const six = document.getElementById("six");
+    const ef = document.getElementById("ef");
+    const sex = document.getElementById("sex");
+    
+    six.style.display = "none";
+    sex.style.display = "block";
+    ef.style.display = "none";
+  }
+</script>
 </body>
   </html>
