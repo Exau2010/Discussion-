@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JEXREY Users</title>
+<title>Profil Utilisateur</title>
 <style>
   body {
     align-items: center;
@@ -42,6 +42,7 @@
     border-radius: 20px;
     background: rgba(200, 200, 200, 0.4);
     color: white;
+    display: flex;
     padding: 10px;
   }
   
@@ -50,6 +51,8 @@
     padding: 5px;
     border-radius: 5px;
     color: #109070;
+    height: 45px;
+    margin-left: 15px;
     border: 2px solid #109070;
 
   }
@@ -62,6 +65,25 @@
   
   section h3{
     color: #109070;
+    display: none;
+  }
+  
+  section #profileStatus{
+    margin-bottom: 15px;
+    color: #80808080;
+  }
+  
+  section .nom {
+    display: grid;
+    height: 160px;
+    margin-left: 0;
+  }
+  
+  section .nom #profileUsernameDetail{
+    font-size: 23px;
+    margin-left: 5px;
+    color: #109080;
+    font-weight: bold;
   }
   
   .indispo {
@@ -76,6 +98,22 @@
   .indispo h2{
     transform: skew(-40deg);
   }
+  section iframe{
+    width: 160px;
+    height: 160px;
+    border: none;
+    background: rgba(200, 200, 200, 0.4);
+    border-radius: 20px;
+  }
+  
+  section input {
+    border-radius: 50%;
+    height: 20px;
+    width: 30px;
+    position: relative;
+    right: 30px;
+    top: 150px;
+  }
 </style>
 </head>
 <body>
@@ -86,10 +124,14 @@
 </header>
 
 <section>
+  <iframe id=""></iframe>
+  <input type="image" id="profileimage">
   <h3>Profil de <span id="profileUsername"></span></h3>
-  <p>Pseudo : <span id="profileUsernameDetail"></span></p>
-  <p>Status : <span id="profileStatus"></span></p>
-  <button id="startChatBtn">Envoyer un message</button>
+  <div class="nom">
+    <p><span id="profileUsernameDetail">Exaucé</span></p>
+    <p><span id="profileStatus">hors</span></p>
+    <button id="startChatBtn">Envoyer un message</button>
+  </div>
 </section>
 
 <div class="indispo">
