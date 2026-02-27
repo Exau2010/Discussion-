@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
-app.use(express.static(".")); // fichiers à la racine
+app.use(express.static("."));
 
 // ===== MongoDB =====
 mongoose.connect(process.env.MONGODB_URI)
@@ -25,18 +25,19 @@ const User = mongoose.model("User", new mongoose.Schema({
 }));
 
 const Message = mongoose.model("Message", new mongoose.Schema({
-  id: Number,
   from: String,
   to: String,
   text: String,
   seen: { type: Boolean, default: false },
   time: String,
-  createdAt: { type: Date, default: Date.now, expires: 7 * 24 * 60 * 60 }
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 7 * 24 * 60 * 60 // 7 jours
+  }
 }));
 
 // ===== API =====
-
-// Inscription
 app.post("/api/register", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password)
@@ -51,7 +52,6 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// Connexion
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -78,6 +78,7 @@ io.on("connection", socket => {
     const users = await User.find({}, "username online");
     io.emit("users", users);
 
+    // Historique
     const messages = await Message.find({
       $or: [{ from: username }, { to: username }]
     }).sort({ createdAt: 1 }).lean();
@@ -90,13 +91,13 @@ io.on("connection", socket => {
   // =========================
   socket.on("privateMessage", async msg => {
 
-    // Sécurité anti-usurpation
+    // Sécurité : pas d’usurpation
     if (msg.from !== socket.username) return;
 
     const saved = await Message.create(msg);
 
     io.sockets.sockets.forEach(s => {
-      if (s.username === msg.from || s.username === msg.to) {
+      if (s.username === saved.from || s.username === saved.to) {
         s.emit("privateMessage", saved);
       }
     });
@@ -122,18 +123,25 @@ io.on("connection", socket => {
   });
 
   // =========================
-  // MESSAGE VU
+  // MESSAGE VU (PAR MESSAGE)
   // =========================
   socket.on("seen", async data => {
 
-    await Message.updateMany(
-      { from: data.from, to: data.to, seen: false },
-      { seen: true }
-    );
+    const msg = await Message.findById(data.messageId);
+    if (!msg) return;
+
+    // seul le destinataire peut marquer vu
+    if (msg.to !== socket.username) return;
+
+    msg.seen = true;
+    await msg.save();
 
     io.sockets.sockets.forEach(s => {
-      if (s.username === data.to) {
-        s.emit("seen", data);
+      if (s.username === msg.from) {
+        s.emit("seen", {
+          messageId: msg._id,
+          time: new Date().toLocaleTimeString().slice(0, 5)
+        });
       }
     });
   });
@@ -141,19 +149,19 @@ io.on("connection", socket => {
   // =========================
   // SUPPRESSION MESSAGE
   // =========================
-  socket.on("deleteMessage", async id => {
+  socket.on("deleteMessage", async messageId => {
 
-    const msg = await Message.findOne({ id });
+    const msg = await Message.findById(messageId);
     if (!msg) return;
 
     // seul l’expéditeur peut supprimer
     if (msg.from !== socket.username) return;
 
-    await Message.deleteOne({ id });
+    await Message.findByIdAndDelete(messageId);
 
     io.sockets.sockets.forEach(s => {
       if (s.username === msg.from || s.username === msg.to) {
-        s.emit("deleteMessage", id);
+        s.emit("deleteMessage", messageId);
       }
     });
   });
