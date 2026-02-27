@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
-app.use(express.static("."));
+app.use(express.static(".")); // tous les fichiers sont dans la racine
 
 // ===== MongoDB =====
 mongoose.connect(process.env.MONGODB_URI)
@@ -28,20 +28,15 @@ const Message = mongoose.model("Message", new mongoose.Schema({
   from: String,
   to: String,
   text: String,
-  seen: { type: Boolean, default: false },
-  time: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    expires: 7 * 24 * 60 * 60 // 7 jours
-  }
+  createdAt: { type: Date, default: Date.now, expires: 7*24*60*60 } // expire 7 jours
 }));
 
 // ===== API =====
+
+// Inscription
 app.post("/api/register", async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password)
-    return res.json({ error: "Champs manquants" });
+  if (!username || !password) return res.json({ error: "Champs manquants" });
 
   try {
     const hash = await bcrypt.hash(password, 10);
@@ -52,9 +47,9 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+// Connexion
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
-
   const user = await User.findOne({ username });
   if (!user) return res.json({ error: "Compte inexistant" });
 
@@ -67,115 +62,58 @@ app.post("/api/login", async (req, res) => {
 // ===== Socket.IO =====
 io.on("connection", socket => {
 
-  // =========================
-  // JOIN
-  // =========================
+  // Utilisateur rejoint
   socket.on("join", async username => {
     socket.username = username;
 
+    // Marquer l'utilisateur en ligne
     await User.updateOne({ username }, { online: true });
 
+    // Envoyer liste des utilisateurs à tous
     const users = await User.find({}, "username online");
     io.emit("users", users);
 
-    // Historique
+    // Historique des messages avec l'utilisateur
     const messages = await Message.find({
       $or: [{ from: username }, { to: username }]
     }).sort({ createdAt: 1 }).lean();
 
-    socket.emit("history", messages);
+    socket.emit("history", messages.map(m => ({
+      from: m.from,
+      to: m.to,
+      text: m.text
+    })));
   });
 
-  // =========================
-  // MESSAGE PRIVÉ
-  // =========================
-  socket.on("privateMessage", async msg => {
+  // Liste des utilisateurs (refresh)
+  socket.on("getUsers", async () => {
+    const users = await User.find({}, "username online");
+    socket.emit("users", users);
+  });
 
-    // Sécurité : pas d’usurpation
-    if (msg.from !== socket.username) return;
+  // Message privé
+  socket.on("privateMessage", async ({ from, to, text }) => {
+    const msg = await Message.create({ from, to, text });
 
-    const saved = await Message.create(msg);
-
+    // Envoyer le message aux deux utilisateurs (expéditeur + destinataire)
     io.sockets.sockets.forEach(s => {
-      if (s.username === saved.from || s.username === saved.to) {
-        s.emit("privateMessage", saved);
+      if (s.username === from || s.username === to) {
+        s.emit("privateMessage", { from, to, text });
       }
     });
   });
 
-  // =========================
-  // TYPING
-  // =========================
-  socket.on("typing", data => {
-    io.sockets.sockets.forEach(s => {
-      if (s.username === data.to) {
-        s.emit("typing", data);
-      }
-    });
+  // Statut d’un utilisateur
+  socket.on("getUserStatus", async username => {
+    const u = await User.findOne({ username }, "username online");
+    if (u) socket.emit("userStatus", { username: u.username, online: u.online });
   });
 
-  socket.on("stopTyping", data => {
-    io.sockets.sockets.forEach(s => {
-      if (s.username === data.to) {
-        s.emit("stopTyping", data);
-      }
-    });
-  });
-
-  // =========================
-  // MESSAGE VU (PAR MESSAGE)
-  // =========================
-  socket.on("seen", async data => {
-
-    const msg = await Message.findById(data.messageId);
-    if (!msg) return;
-
-    // seul le destinataire peut marquer vu
-    if (msg.to !== socket.username) return;
-
-    msg.seen = true;
-    await msg.save();
-
-    io.sockets.sockets.forEach(s => {
-      if (s.username === msg.from) {
-        s.emit("seen", {
-          messageId: msg._id,
-          time: new Date().toLocaleTimeString().slice(0, 5)
-        });
-      }
-    });
-  });
-
-  // =========================
-  // SUPPRESSION MESSAGE
-  // =========================
-  socket.on("deleteMessage", async messageId => {
-
-    const msg = await Message.findById(messageId);
-    if (!msg) return;
-
-    // seul l’expéditeur peut supprimer
-    if (msg.from !== socket.username) return;
-
-    await Message.findByIdAndDelete(messageId);
-
-    io.sockets.sockets.forEach(s => {
-      if (s.username === msg.from || s.username === msg.to) {
-        s.emit("deleteMessage", messageId);
-      }
-    });
-  });
-
-  // =========================
-  // DECONNEXION
-  // =========================
+  // Utilisateur déconnecte
   socket.on("disconnect", async () => {
     if (!socket.username) return;
 
-    await User.updateOne(
-      { username: socket.username },
-      { online: false }
-    );
+    await User.updateOne({ username: socket.username }, { online: false });
 
     const users = await User.find({}, "username online");
     io.emit("users", users);
@@ -184,6 +122,4 @@ io.on("connection", socket => {
 
 // ===== PORT =====
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () =>
-  console.log(`Serveur lancé sur le port ${PORT}`)
-);
+server.listen(PORT, () => console.log(`Serveur lancé sur le port ${PORT}`));
