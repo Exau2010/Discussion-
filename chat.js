@@ -13,15 +13,14 @@ if (document.getElementById("toUser")) {
 
   const msgInput = document.getElementById("message");
   const sendBtn = document.getElementById("sendBtn");
-  const typingStatus = document.createElement("div");
-  typingStatus.id = "typingStatus";
-  document.body.insertBefore(typingStatus, document.getElementById("messages"));
+  const typingStatus = document.getElementById("typingStatus");
   let typingTimeout;
 
-  // ===== Envoi message =====
+  // Envoi message
   sendBtn.onclick = sendMessage;
-  msgInput.onkeyup = e => { if(e.key==="Enter") sendMessage(); }
+  msgInput.onkeyup = e => { if (e.key === "Enter") sendMessage(); };
 
+  // Événement "en train d'écrire"
   msgInput.oninput = () => {
     socket.emit("typing", { from: user, to: toUser });
     clearTimeout(typingTimeout);
@@ -33,80 +32,96 @@ if (document.getElementById("toUser")) {
   function sendMessage() {
     const text = msgInput.value.trim();
     if (!text) return;
+
     const msg = {
-      id: Date.now(),
       from: user,
       to: toUser,
       text,
       seen: false,
-      time: new Date().toLocaleTimeString().slice(0,5)
+      time: new Date().toLocaleTimeString().slice(0, 5)
     };
+
     socket.emit("privateMessage", msg);
     msgInput.value = "";
   }
 
-  // ===== Réception messages =====
+  // Réception des messages privés
   socket.on("privateMessage", m => showMessage(m));
 
-  // Charger l'historique
-  socket.emit("getHistory", { user, toUser });
-  socket.on("history", msgs => {
-    msgs.forEach(m => showMessage(m));
-  });
+  // Historique
+  socket.on("history", msgs => msgs.forEach(m => showMessage(m)));
 
   // Typing indicator
   socket.on("typing", d => {
-    if(d.from === toUser) typingStatus.innerText = `${toUser} est en train d’écrire...`;
+    if (d.from === toUser)
+      typingStatus.innerText = `${toUser} est en train d’écrire...`;
   });
+
   socket.on("stopTyping", d => {
-    if(d.from === toUser) typingStatus.innerText = "";
+    if (d.from === toUser) typingStatus.innerText = "";
   });
 
-  // Message vu
+  // Message vu (retour serveur)
   socket.on("seen", d => {
-    document.querySelectorAll(".seen").forEach(e => {
-      e.innerText = "Vu à " + new Date().toLocaleTimeString().slice(0,5);
-    });
+    const el = document.querySelector(`#msg-${d.messageId} .seen`);
+    if (el) el.innerText = "Vu à " + d.time;
   });
 
-  // Suppression
+  // Suppression de message
   socket.on("deleteMessage", id => {
     const el = document.getElementById("msg-" + id);
-    if(el) el.remove();
+    if (el) el.remove();
   });
 
-  // ===== Affichage messages =====
-  function showMessage(m){
-    if ((m.from === user && m.to === toUser) || (m.from === toUser && m.to === user)) {
+  // Fonction d'affichage
+  function showMessage(m) {
+    if (
+      (m.from === user && m.to === toUser) ||
+      (m.from === toUser && m.to === user)
+    ) {
       const div = document.createElement("div");
-      div.id = "msg-" + m.id;
+      div.id = "msg-" + m._id;
       div.classList.add("message");
-      div.classList.add(m.from === user ? "sent" : "received"); // messages à gauche/droite
+      div.classList.add(m.from === user ? "sent" : "received");
+
       div.innerHTML = `
         <b>${m.from}</b> : ${m.text}
         <br>
-        <small class="seen">${m.from === user && m.seen ? "Vu à " + m.time : ""}</small>
-        ${m.from === user ? `<button onclick="deleteMsg(${m.id})">🗑️</button>` : ""}
+        <small class="seen">
+          ${m.from === user && m.seen ? "Vu à " + m.time : ""}
+        </small>
+        ${
+          m.from === user
+            ? `<button onclick="deleteMsg('${m._id}')">🗑️</button>`
+            : ""
+        }
       `;
-      const container = document.getElementById("messages");
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
 
-      // Marquer comme vu si message reçu
-      if(m.from === toUser) socket.emit("seen", { from: toUser, to: user });
+      document.getElementById("messages").appendChild(div);
+      document.getElementById("messages").scrollTop =
+        document.getElementById("messages").scrollHeight;
+
+      // Marquer comme vu UNIQUEMENT si la page est active
+      if (
+        m.from === toUser &&
+        document.visibilityState === "visible"
+      ) {
+        socket.emit("seen", {
+          messageId: m._id
+        });
+      }
     }
   }
-
 }
 
-// ===== Supprimer un message =====
-function deleteMsg(id){
+// Supprimer un message
+function deleteMsg(id) {
   socket.emit("deleteMessage", id);
 }
 
-// ===== Déconnexion =====
+// Déconnexion
 function logout() {
   localStorage.removeItem("user");
   localStorage.removeItem("toUser");
-  window.location.href="index.html";
-}
+  window.location.href = "index.html";
+    }
