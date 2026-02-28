@@ -1,7 +1,7 @@
 {
-  "name": "chat-app",
+  "name": "JEXREY.app",
   "version": "1.0.0",
-  "description": "Chat en ligne avec authentification et MongoDB",
+  "description": "Chat en ligne ",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -11,6 +11,7 @@
     "socket.io": "^4.7.2",
     "mongoose": "^8.1.0",
     "dotenv": "^16.4.0",
-    "bcrypt": "^5.1.0"
+    "bcrypt": "^5.1.0",
+    "multer": "^1.4.5"
   }
-}
+  }
