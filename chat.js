@@ -1,107 +1,124 @@
-const socket = io({ query: { username: localStorage.getItem("user") } });
-
+const token = localStorage.getItem("token");
 const user = localStorage.getItem("user");
+if (!token) location.href = "index.html";
 
-if (!user) location.href = "index.html";
+const socket = io({
+  auth: { token }
+});
 
-if (document.getElementById("toUser")) {
-  const toUser = localStorage.getItem("toUser");
-  document.getElementById("toUser").innerText = toUser;
+const toUser = localStorage.getItem("toUser");
+socket.emit("join", toUser);
 
-  // Rejoindre le chat
-  socket.emit("join", user);
+const msgInput = document.getElementById("message");
+const imgInput = document.getElementById("imageInput");
+const messages = document.getElementById("messages");
+const typingStatus = document.getElementById("typingStatus");
 
-  const msgInput = document.getElementById("message");
-  const sendBtn = document.getElementById("sendBtn");
-  const typingStatus = document.getElementById("typingStatus");
-  let typingTimeout;
+let typingTimeout;
 
-  // Envoi message
-  sendBtn.onclick = sendMessage;
-  msgInput.onkeyup = e => { if(e.key==="Enter") sendMessage(); }
+/* ===== Typing ===== */
 
-  // Événement "en train d'écrire"
-  msgInput.oninput = () => {
-    socket.emit("typing", { from: user, to: toUser });
-    clearTimeout(typingTimeout);
-    typingTimeout = setTimeout(() => {
-      socket.emit("stopTyping", { from: user, to: toUser });
-    }, 1500);
-  };
+msgInput.oninput = () => {
+  socket.emit("typing", toUser);
 
-  function sendMessage() {
-    const text = msgInput.value.trim();
-    if (!text) return;
-    const msg = {
-      id: Date.now(),
-      from: user,
-      to: toUser,
-      text,
-      seen: false,
-      time: new Date().toLocaleTimeString().slice(0,5)
-    };
-    socket.emit("privateMessage", msg);
-    msgInput.value = "";
-  }
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    socket.emit("stopTyping", toUser);
+  }, 1500);
+};
 
-  // Réception des messages privés
-  socket.on("privateMessage", m => showMessage(m));
+/* ===== Envoi message ===== */
 
-  // Historique
-  socket.on("history", msgs => msgs.forEach(m => showMessage(m)));
+async function sendMessage() {
 
-  // Typing indicator
-  socket.on("typing", d => {
-    if(d.from === toUser) typingStatus.innerText = `${toUser} est en train d’écrire...`;
-  });
-  socket.on("stopTyping", d => {
-    if(d.from === toUser) typingStatus.innerText = "";
-  });
+  const text = msgInput.value.trim();
+  let image = null;
 
-  // Message vu
-  socket.on("seen", d => {
-    document.querySelectorAll(".seen").forEach(e => {
-      e.innerText = "Vu à " + new Date().toLocaleTimeString().slice(0,5);
+  if (imgInput.files[0]) {
+
+    const formData = new FormData();
+    formData.append("image", imgInput.files[0]);
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      headers: { Authorization: token },
+      body: formData
     });
-  });
 
-  // Suppression de message
-  socket.on("deleteMessage", id => {
-    const el = document.getElementById("msg-" + id);
-    if(el) el.remove();
-  });
-
-  // Fonction d'affichage
-  function showMessage(m){
-    if ((m.from === user && m.to === toUser) || (m.from === toUser && m.to === user)) {
-      const div = document.createElement("div");
-      div.id = "msg-" + m.id;
-      div.classList.add("message");
-      div.classList.add(m.from === user ? "sent" : "received");
-      div.innerHTML = `
-        <b>${m.from}</b> : ${m.text}
-        <br>
-        <small class="seen">${m.from === user && m.seen ? "Vu à " + m.time : ""}</small>
-        ${m.from === user ? `<button onclick="deleteMsg(${m.id})">🗑️</button>` : ""}
-      `;
-      document.getElementById("messages").appendChild(div);
-      document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
-
-      // Marquer comme vu si message reçu
-      if(m.from === toUser) socket.emit("seen", { from: toUser, to: user });
-    }
+    const data = await res.json();
+    image = data.image;
   }
 
+  if (!text && !image) return;
+
+  socket.emit("privateMessage", {
+    to: toUser,
+    text,
+    image
+  });
+
+  msgInput.value = "";
+  imgInput.value = "";
 }
 
-// Supprimer un message
-function deleteMsg(id){
-  socket.emit("deleteMessage", id);
-}
+/* ===== Réception ===== */
 
-// Déconnexion
-function logout() {
-  localStorage.removeItem("user");
-  localStorage.removeItem("toUser");
-  window.location.href="index.html";
-}
+socket.on("history", msgs => msgs.forEach(showMessage));
+socket.on("privateMessage", showMessage);
+
+socket.on("typing", u => {
+  typingStatus.innerText = u + " est en train d'écrire...";
+});
+
+socket.on("stopTyping", () => {
+  typingStatus.innerText = "";
+});
+
+socket.on("seen", () => {
+  document.querySelectorAll(".sent .status")
+    .forEach(e => e.innerText = "Vu");
+});
+
+socket.on("deleteMessage", id => {
+  const el = document.getElementById("msg-" + id);
+  if (el) el.remove();
+});
+
+/* ===== Affichage ===== */
+
+function showMessage(m) {
+
+  const div = document.createElement("div");
+  div.id = "msg-" + m._id;
+  div.className = "message " + (m.from === user ? "sent" : "received");
+
+  div.innerHTML = `
+    ${m.text ? `<p>${m.text}</p>` : ""}
+    ${m.image ? `<a href="${m.image}" download><img src="${m.image}" width="150"></a>` : ""}
+    <small class="status">${m.seen && m.from === user ? "Vu" : ""}</small>
+  `;
+
+  let pressTimer;
+
+  div.addEventListener("mousedown", () => {
+    pressTimer = setTimeout(() => {
+      if (m.from === user) socket.emit("deleteMessage", m._id);
+    }, 700);
+  });
+
+  div.addEventListener("mouseup", () => clearTimeout(pressTimer));
+  div.addEventListener("mouseleave", () => clearTimeout(pressTimer));
+
+  div.addEventListener("touchstart", () => {
+    pressTimer = setTimeout(() => {
+      if (m.from === user) socket.emit("deleteMessage", m._id);
+    }, 700);
+  });
+
+  div.addEventListener("touchend", () => clearTimeout(pressTimer));
+
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+
+  if (m.from === toUser) socket.emit("seen", toUser);
+  }
