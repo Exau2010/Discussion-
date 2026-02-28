@@ -121,4 +121,4 @@ function showMessage(m) {
   messages.scrollTop = messages.scrollHeight;
 
   if (m.from === toUser) socket.emit("seen", toUser);
-  }
+                                   }
