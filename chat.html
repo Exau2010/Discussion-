@@ -1,144 +1,208 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chat individuel</title>
-<style>
-  body {
-    font-family: Cambria, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    background: linear-gradient(135deg, #109070, #108099);
-    min-height: 100vh;
+<!DOCTYPE html>  
+<html lang="fr">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+<title>Chat individuel</title>  
+
+<style>  
+/* ---- TON STYLE ORIGINAL (INCHANGÉ) ---- */
+body {  
+  font-family: Cambria, sans-serif;  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  text-align: center;  
+  background: linear-gradient(135deg, #109070, #108099);  
+  min-height: 100vh;  
+}  
+
+header {  
+  width: 95%;  
+  background: rgba(250, 250, 250, 0.4);  
+  padding: 15px;  
+  margin-top: 15px;  
+  border-radius: 20px;  
+  color: white;  
+  font-weight: bold;  
+  display: flex;  
+  justify-content: space-between;  
+  align-items: center;  
+}  
+
+header button {  
+  background: none;  
+  border: none;  
+  color: white;  
+  font-weight: bold;  
+  cursor: pointer;  
+  margin-left: 10px;  
+}  
+
+#messages {  
+  display: flex;  
+  flex-direction: column;  
+  gap: 10px;  
+  width: 95%;  
+  height: 500px;  
+  overflow-y: scroll;  
+  border-radius: 20px;  
+  margin-top: 15px;  
+  padding: 10px;  
+  background: rgba(200, 200, 200, 0.4);  
+}  
+
+.message {  
+  padding: 8px 12px;  
+  border-radius: 15px;  
+  max-width: 70%;  
+  word-wrap: break-word;  
+  color: white;  
+}  
+
+.sent {  
+  align-self: flex-start;  
+  background-color: #105070;  
+}  
+
+.received {  
+  align-self: flex-end;  
+  background-color: #108099;  
+}  
+
+.chat-input {  
+  width: 95%;  
+  display: flex;  
+  margin-top: 15px;  
+  background: rgba(200, 200, 200, 0.4);  
+  border-radius: 20px;  
+  padding: 10px;  
+}  
+
+.chat-input input {  
+  flex: 1;  
+  padding: 10px;  
+  border-radius: 15px;  
+  border: none;  
+  outline: none;  
+  background: none;  
+  color: #108099;  
+  font-weight: bold;  
+}  
+
+.chat-input button {  
+  margin-left: 10px;  
+  border: 2px solid #108099;  
+  background: none;  
+  color: #108099;  
+  padding: 10px 15px;  
+  border-radius: 15px;  
+  cursor: pointer;  
+}  
+
+.chat-input button:hover {  
+  background: #108099;  
+  color: white;  
+}  
+
+.typing {  
+  font-size: 13px;  
+  color: gray;  
+  margin-top: 5px;  
+  font-style: italic;  
+  width: 95%;  
+  text-align: left;  
+}  
+
+.seen {  
+  font-size: 10px;  
+  color: #eee;  
+}  
+
+/* ---- AJOUTS SANS MODIFIER TON STYLE ---- */
+
+.message img {
+  max-width: 200px;
+  border-radius: 10px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+</style>  
+</head>  
+
+<body>  
+
+<header>  
+  <div>Chat avec <span id="toUser"></span></div>  
+  <div>  
+    <button onclick="window.location.href='home.html'">Accueil</button>  
+    <button onclick="logout()">Déconnexion</button>  
+  </div>  
+</header>  
+
+<div id="messages"></div>  
+<div id="typingStatus" class="typing"></div>  
+
+<div class="chat-input">  
+  <input id="message" placeholder="Écrire un message..." autocomplete="off" />  
+
+  <!-- Bouton image -->
+  <input type="file" id="imageInput" accept="image/*" class="hidden" />
+  <button onclick="document.getElementById('imageInput').click()">📷</button>
+
+  <button id="sendBtn">Envoyer</button>  
+</div>  
+
+<script src="/socket.io/socket.io.js"></script>  
+
+<script>
+/* ---- SECURITE : vérification token ---- */
+const token = localStorage.getItem("token");
+if (!token) {
+  window.location.href = "index.html";
+}
+
+/* ---- Déconnexion ---- */
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "index.html";
+}
+
+/* ---- Téléchargement image ---- */
+document.addEventListener("click", function(e) {
+  if (e.target.tagName === "IMG") {
+    const link = document.createElement("a");
+    link.href = e.target.src;
+    link.download = "image_chat.png";
+    link.click();
   }
+});
 
-  header {
-    width: 95%;
-    background: rgba(250, 250, 250, 0.4);
-    padding: 15px;
-    margin-top: 15px;
-    border-radius: 20px;
-    color: white;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* ---- Suppression message par appui long ---- */
+let pressTimer;
+
+document.addEventListener("mousedown", function(e) {
+  if (e.target.classList.contains("message")) {
+    pressTimer = window.setTimeout(() => {
+      if (confirm("Supprimer ce message ?")) {
+        const messageId = e.target.dataset.id;
+        socket.emit("deleteMessage", messageId);
+      }
+    }, 800);
   }
+});
 
-  header button {
-    background: none;
-    border: none;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    margin-left: 10px;
-  }
+document.addEventListener("mouseup", function() {
+  clearTimeout(pressTimer);
+});
+</script>
 
-  #messages {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 95%;
-    height: 500px;
-    overflow-y: scroll;
-    border-radius: 20px;
-    margin-top: 15px;
-    padding: 10px;
-    background: rgba(200, 200, 200, 0.4);
-  }
+<script src="chat.js"></script> 
+  
 
-  .message {
-    padding: 8px 12px;
-    border-radius: 15px;
-    max-width: 70%;
-    word-wrap: break-word;
-    color: white;
-  }
-
-  /* Messages envoyés = gauche */
-  .sent {
-    align-self: flex-start;
-    background-color: #105070;
-  }
-
-  /* Messages reçus = droite */
-  .received {
-    align-self: flex-end;
-    background-color: #108099;
-  }
-
-  .chat-input {
-    width: 95%;
-    display: flex;
-    margin-top: 15px;
-    background: rgba(200, 200, 200, 0.4);
-    border-radius: 20px;
-    padding: 10px;
-  }
-
-  .chat-input input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 15px;
-    border: none;
-    outline: none;
-    background: none;
-    color: #108099;
-    font-weight: bold;
-  }
-
-  .chat-input button {
-    margin-left: 10px;
-    border: 2px solid #108099;
-    background: none;
-    color: #108099;
-    padding: 10px 15px;
-    border-radius: 15px;
-    cursor: pointer;
-  }
-
-  .chat-input button:hover {
-    background: #108099;
-    color: white;
-  }
-
-  .typing {
-    font-size: 13px;
-    color: gray;
-    margin-top: 5px;
-    font-style: italic;
-    width: 95%;
-    text-align: left;
-  }
-
-  .seen {
-    font-size: 10px;
-    color: #eee;
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <div>Chat avec <span id="toUser"></span></div>
-  <div>
-    <button onclick="window.location.href='home.html'">Accueil</button>
-    <button onclick="logout()">Déconnexion</button>
-  </div>
-</header>
-
-<div id="messages"></div>
-<div id="typingStatus" class="typing"></div>
-
-<div class="chat-input">
-  <input id="message" placeholder="Écrire un message..." />
-  <button id="sendBtn">Envoyer</button>
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="chat.js"></script>
-</body>
+</body>  
   </html>
