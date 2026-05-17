@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta name="description" content="discussion, réseau">
+<meta name="keywords" content="JEXREY">
+<meta name="author" content="Exau_christ">
+<link rel="icon" type="image/jpg" sizes="16x16" href="jexrey.jpg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JEXREY — Accueil</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #080a0c;
+    --surface: rgba(255,255,255,0.04);
+    --surface2: rgba(255,255,255,0.07);
+    --border:  rgba(255,255,255,0.08);
+    --accent:  #00e5a0;
+    --accent2: #00b4d8;
+    --text:    #e8eaed;
+    --muted:   #6b7280;
+    --online:  #22c55e;
+    --offline: #4b5563;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 60% at 5% 10%, rgba(0,180,216,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 50% at 95% 90%, rgba(0,229,160,0.06) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: rgba(10,12,15,0.95);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 8px;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    backdrop-filter: blur(20px);
+  }
+
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+
+  .sidebar-brand {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .sidebar-close {
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 20px; padding: 4px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .sidebar-close:hover { color: var(--text); background: var(--surface); }
+
+  /* Profile card in sidebar */
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .sidebar-profile:hover { border-color: var(--accent); }
+
+  .sidebar-avatar {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background-image: url("bk.png");
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+
+  .sidebar-profile-info { flex: 1; min-width: 0; }
+
+  .sidebar-profile-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sidebar-profile-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .sidebar-nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .nav-item.active {
+    background: rgba(0,229,160,0.08);
+    color: var(--accent);
+    border-color: rgba(0,229,160,0.2);
+  }
+
+  .nav-item img {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .nav-item:hover img, .nav-item.active img { opacity: 1; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sidebar-stats {
+    display: flex;
+    gap: 16px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+
+  .stat { text-align: center; flex: 1; }
+  .stat-value { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .btn-logout {
+    width: 100%;
+    padding: 12px;
+    background: none;
+    border: 1px solid rgba(255,77,109,0.25);
+    border-radius: 12px;
+    color: #ff4d6d;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-logout:hover { background: rgba(255,77,109,0.08); border-color: #ff4d6d; }
+
+  /* Overlay */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 90;
+    display: none;
+    backdrop-filter: blur(4px);
+  }
+
+  .overlay.show { display: block; }
+
+  /* ===== HEADER ===== */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: rgba(8,10,12,0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+    z-index: 80;
+  }
+
+  .header-brand {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .header-brand img { width: 28px; height: 28px; border-radius: 6px; margin-right: 10px; vertical-align: middle; }
+
+  .menu-btn {
+    background: none; border: none;
+    color: var(--text); cursor: pointer;
+    padding: 8px;
+    border-radius: 10px;
+    transition: background 0.2s;
+    display: flex; align-items: center;
+  }
+
+  .menu-btn:hover { background: var(--surface); }
+
+  .menu-btn svg { width: 20px; height: 20px; }
+
+  .search-wrap {
+    flex: 1;
+    max-width: 340px;
+    position: relative;
+    margin-left: auto;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,160,0.1);
+  }
+
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 15px;
+    pointer-events: none;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  main {
+    margin-top: 64px;
+    margin-right: 280px;
+    flex: 1;
+    padding: 24px;
+    min-height: calc(100vh - 64px);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* My status / story bar */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 24px;
+  }
+
+  .my-avatar {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .my-avatar .avatar-img {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background-image: url("bk.png");
+    background-size: cover;
+    background-position: center;
+    background-color: #1a1a2e;
+    border: 2px solid var(--accent);
+  }
+
+  .add-story-btn {
+    position: absolute;
+    bottom: -4px; right: -4px;
+    width: 20px; height: 20px;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    color: var(--bg);
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .status-info { flex: 1; }
+
+  .status-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+
+  .status-sub { font-size: 12px; color: var(--muted); }
+
+  .compose-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #080a0c;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .compose-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,229,160,0.3); }
+
+  /* Section title */
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* Users grid */
+  .users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    list-style: none;
+  }
+
+  .user-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .user-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .user-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,229,160,0.15);
+  }
+
+  .user-card:hover::before { opacity: 0.04; }
+
+  .user-card > * { position: relative; z-index: 1; }
+
+  .user-card-avatar {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    background-image: url("bk.png");
+    background-size: cover;
+    background-position: center;
+    background-color: #1a2a2a;
+    position: relative;
+  }
+
+  .status-dot {
+    position: absolute;
+    bottom: 2px; right: 2px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+
+  #userList .pro {
+    background-image: url("bk.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100px;
+    height: 95px;
+    border-radius: 50%;
+
+  }
+
+  #userList {
+    display: grid;
+    font-size: 11px;
+    text-align: center;
+    gap: 20px;
+    text-shadow: inset 0 10px 10px black;
+    text-decoration: smooth;
+    display: flex;
+  }
+
+  #userList .pro {
+    margin-left: 20px;
+    cursor: pointer;
+  }
+
+  #userList .pro .li {
+    background: rgba(0,229,160,0.6);
+    border: 2px solid rgba(3, 78, 56, 0.8);
+    padding: 5px;
+    margin-top: 100%;
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  #userList .pro button {
+    display: none;
+  }
+
+  .status-dot.online { background: var(--online); }
+  .status-dot.offline { background: var(--offline); }
+
+  .user-card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  .user-card-status {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .user-card-status.online { color: var(--online); }
+
+  .user-card .profile-btn {
+    width: 100%;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .user-card:hover .profile-btn {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ===== RIGHT PANEL (notifications) ===== */
+  .right-panel {
+    position: fixed;
+    right: 0; top: 64px; bottom: 0;
+    width: 280px;
+    background: rgba(10,12,15,0.9);
+    border-left: 1px solid var(--border);
+    padding: 20px 16px;
+    backdrop-filter: blur(20px);
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    z-index: 70;
+  }
+
+  .right-panel::-webkit-scrollbar { display: none; }
+
+  .panel-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .notif-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .notif-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
+
+  /* ===== POST COMPOSER (modal) ===== */
+  .composer-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .composer-modal.open { display: flex; }
+
+  .composer-modal .modal-bg {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+  }
+
+  .composer-box {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 580px;
+    background: #0f1115;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .composer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .composer-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .composer-close {
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 20px; padding: 4px 8px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .composer-close:hover { background: var(--surface); color: var(--text); }
+
+  .composer-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+    margin-bottom: 16px;
+  }
+
+  .composer-textarea:focus { border-color: var(--accent); }
+  .composer-textarea::placeholder { color: var(--muted); }
+
+  .composer-palettes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .palette-swatch {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .palette-swatch:hover { transform: scale(1.15); border-color: white; }
+
+  .composer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .composer-types {
+    display: flex;
+    gap: 8px;
+  }
+
+  .type-btn {
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .type-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .publish-btn {
+    padding: 11px 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #080a0c;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .publish-btn:hover { box-shadow: 0 6px 20px rgba(0,229,160,0.35); }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .right-panel { width: 240px; }
+    main { margin-right: 240px; }
+  }
+
+  @media (max-width: 768px) {
+    .right-panel { display: none; }
+    main { margin-right: 0; }
+    .users-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  }
+
+  @media (max-width: 480px) {
+    main { padding: 16px; }
+    .users-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Overlay for sidebar -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-brand">JEXREY</span>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+
+  <div class="sidebar-profile" onclick="window.location.href='user.html'">
+    <div class="sidebar-avatar"></div>
+    <div class="sidebar-profile-info">
+      <div class="sidebar-profile-name" id="user"></div>
+      <div class="sidebar-profile-sub">Voir mon profil</div>
+    </div>
+  </div>
+
+  <div class="sidebar-stats">
+    <div class="stat">
+      <div class="stat-value" id="ami">133</div>
+      <div class="stat-label">Amis</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="pub">15</div>
+      <div class="stat-label">Pubs</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item active" onclick="window.location.href='home.html'">
+      <img src="icone accueil.png" alt=""> Accueil
+    </a>
+    <a class="nav-item" onclick="window.location.href='chat.html'">
+      <img src="icone msg.png" alt=""> Messages
+    </a>
+    <a class="nav-item">
+      <img src="icone para.png" alt=""> Paramètres
+    </a>
+    <a class="nav-item" onclick="window.location.href='short.html'">
+      <img src="icone short.png" alt=""> Shorts
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">Se déconnecter</button>
+  </div>
+</aside>
+
+<!-- HEADER -->
+<header>
+  <button class="menu-btn" onclick="openSidebar()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <span class="header-brand">
+    <img src="jexrey.jpg" alt="logo">JEXREY
+  </span>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="search" list="mylist" type="text" placeholder="Rechercher un profil...">
+    <datalist id="mylist"></datalist>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="my-avatar" onclick="window.location.href='user.html'">
+      <div class="avatar-img"></div>
+      <div class="add-story-btn" onclick="openComposer(event)">+</div>
+    </div>
+    <div class="status-info">
+      <div class="status-name" id="user1"></div>
+      <div class="status-sub">Partagez une actualité avec vos amis</div>
+    </div>
+    <button class="compose-btn" onclick="openComposer()">+ Publier</button>
+  </div>
+
+  <div class="section-title">Membres de la communauté</div>
+
+  <ul class="users-grid" id="userList"></ul>
+</main>
+
+<!-- RIGHT PANEL -->
+<aside class="right-panel">
+  <div class="panel-title">🔔 Notifications</div>
+  <div class="notif-empty">
+    <div class="notif-icon">🔔</div>
+    Aucune notification
+  </div>
+</aside>
+
+<!-- COMPOSER MODAL -->
+<div class="composer-modal" id="composerModal">
+  <div class="modal-bg" onclick="closeComposer()"></div>
+  <div class="composer-box">
+    <div class="composer-header">
+      <h3>Nouvelle publication</h3>
+      <button class="composer-close" onclick="closeComposer()">✕</button>
+    </div>
+    <textarea class="composer-textarea" id="txtnews" placeholder="Partagez quelque chose avec la communauté..."></textarea>
+    <div class="composer-palettes">
+      <div class="palette-swatch" style="background:#0765b3" onclick="setBg('#0765b3')"></div>
+      <div class="palette-swatch" style="background:#ca07a0" onclick="setBg('#ca07a0')"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#0fdb53,#0aaaaf)" onclick="setBg('linear-gradient(135deg,#0fdb53,#0aaaaf)')"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#034190,#163445)" onclick="setBg('linear-gradient(135deg,#034190,#163445)')"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#FFC107,#FF8C00)" onclick="setBg('linear-gradient(135deg,#FFC107,#FF8C00)')"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#FFFF00,#F7DC6F)" onclick="setBg('linear-gradient(135deg,#FFFF00,#F7DC6F)')"></div>
+    </div>
+    <div class="composer-actions">
+      <div class="composer-types">
+        <button class="type-btn">📷 Image</button>
+        <button class="type-btn">🎥 Vidéo</button>
+      </div>
+      <button class="publish-btn" onclick="send()">Publier</button>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+<script>
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+function openComposer(e) {
+  if(e) e.stopPropagation();
+  document.getElementById('composerModal').classList.add('open');
+}
+function closeComposer() {
+  document.getElementById('composerModal').classList.remove('open');
+}
+function setBg(color) {
+  document.getElementById('txtnews').style.background = color;
+}
+function send() {
+  closeComposer();
+}
+function supp() {}
+function body() {}
+function txt() {}
+function img() {}
+function iv() {}
+function ip() {}
+</script>
+</body>
+</html>
