@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta name="description" content="discussion, réseau">
+<meta name="description" content="JEXREY, discussion, réseau">
 <meta name="keywords" content="JEXREY">
-<meta name="author" content="Exau_christ">
+<meta name="author" content="JEXREY">
 <link rel="icon" type="image/jpg" sizes="16x16" href="jexrey.jpg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.1">
@@ -385,6 +385,9 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     list-style: none;
   }
 
@@ -454,8 +457,7 @@
   #userList {    
     display: grid;
     font-size: 11px;
-    text-align: center;  
-    display: flex;
+    text-align: center;    
     overflow-x: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
