@@ -164,7 +164,11 @@
   }
 
   .messages-area::-webkit-scrollbar { display: none; }
-  #messages { display: contents; }
+  #messages{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+   }
 
   /* Individual message */
   .msg {
