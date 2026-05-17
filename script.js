@@ -170,9 +170,34 @@ if(document.getElementById("toUser")){
     }));
     
     function showMessage(m){
-        const div=document.createElement("div");
-        div.innerText = m.from+" : "+m.text;
-        document.getElementById("messages").appendChild(div);
-        document.getElementById("messages").scrollTop=document.getElementById("messages").scrollHeight;
+
+    const messages = document.getElementById("messages");
+    const messagesArea = document.getElementById("messages-area");
+
+    const msg = document.createElement("div");
+    msg.className = "msg " + (m.from === user ? "me" : "them");
+
+    const avatar = document.createElement("div");
+    avatar.className = "msg-avatar";
+
+    const content = document.createElement("div");
+
+    const sender = document.createElement("div");
+    sender.className = "msg-sender";
+    sender.innerText = m.from;
+
+    const bubble = document.createElement("div");
+    bubble.className = "msg-bubble";
+    bubble.innerText = m.text;
+
+    content.appendChild(sender);
+    content.appendChild(bubble);
+
+    msg.appendChild(avatar);
+    msg.appendChild(content);
+
+    messages.appendChild(msg);
+
+    messagesArea.scrollTop = messagesArea.scrollHeight;
     }
 }
