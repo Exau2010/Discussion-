@@ -81,7 +81,7 @@ if(document.getElementById("userList")){
             pro.className = "pro";
             const button=document.createElement("button");
             button.innerText="Voir le profil";
-            li.innerText = u.username + (u.online ? " (en ligne)" : " (hors ligne)");
+            li.innerText = u.username;
             const goToProfile = () => {
                 localStorage.setItem("selectedUser", u.username);
                 window.location.href = "profile.html";
