@@ -455,10 +455,11 @@
   }
 
   #userList {    
-    display: grid;
+    display: flex;
     font-size: 11px;
     text-align: center;    
-    overflow-x: auto;
+    overflow-y: auto;
+    gap: 20px;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -467,6 +468,7 @@
     margin-left: 20px;
     cursor: pointer;
     display: grid;
+    wrap: 10px;
   }
 
   #userList .pro .li {
