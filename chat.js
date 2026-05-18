@@ -88,38 +88,83 @@ if (document.getElementById("toUser")) {
   });
 
   function showMessage(m){
-    if ((m.from === user && m.to === toUser) || (m.from === toUser && m.to === user)) {
 
-      const div = document.createElement("div");
-      div.id = "msg-" + m.id;
-      div.classList.add("message");
-      div.classList.add(m.from === user ? "sent" : "received");
+  if (
+    (m.from === user && m.to === toUser) ||
+    (m.from === toUser && m.to === user)
+  ) {
 
-      let content = `<b>${m.from}</b> : ${m.text || ""}<br>`;
+    const messages = document.getElementById("messages");
+    const messagesArea = document.getElementById("messages-area");
 
-      if (m.file) {
-        if (m.fileType === "image") {
-          content += `<img src="${m.file}" style="max-width:200px;border-radius:10px;">`;
-        } else {
-          content += `<video controls style="max-width:200px;border-radius:10px;">
-                        <source src="${m.file}">
-                      </video>`;
-        }
+    const msg = document.createElement("div");
+    msg.id = "msg-" + m.id;
+
+    msg.className = "msg " + (m.from === user ? "me" : "them");
+
+    const avatar = document.createElement("div");
+    avatar.className = "msg-avatar";
+
+    const content = document.createElement("div");
+
+    const sender = document.createElement("div");
+    sender.className = "msg-sender";
+    sender.innerText = m.from;
+
+    const bubble = document.createElement("div");
+    bubble.className = "msg-bubble";
+
+    let html = `${m.text || ""}`;
+
+    if (m.file) {
+
+      if (m.fileType === "image") {
+
+        html += `
+          <br><br>
+          <img src="${m.file}"
+          style="max-width:200px;border-radius:12px;">
+        `;
+
+      } else {
+
+        html += `
+          <br><br>
+          <video controls
+          style="max-width:200px;border-radius:12px;">
+            <source src="${m.file}">
+          </video>
+        `;
       }
-
-      content += `
-      <br>
-      <small class="seen"></small>
-      ${m.from === user ? `<button onclick="deleteMsg('${m.id}')">🗑️</button>` : ""}
-      `;
-
-      div.innerHTML = content;
-
-      document.getElementById("messages").appendChild(div);
-      document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
-
-      if(m.from === toUser) socket.emit("seen", { from: toUser, to: user });
     }
+
+    html += `
+      <br><br>
+      <small class="seen"></small>
+      ${m.from === user
+        ? `<button onclick="deleteMsg('${m.id}')">🗑️</button>`
+        : ""}
+    `;
+
+    bubble.innerHTML = html;
+
+    content.appendChild(sender);
+    content.appendChild(bubble);
+
+    msg.appendChild(avatar);
+    msg.appendChild(content);
+
+    messages.appendChild(msg);
+
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+
+    if(m.from === toUser){
+      socket.emit("seen", {
+        from: toUser,
+        to: user
+      });
+    }
+  }
   }
 }
 
