@@ -171,10 +171,17 @@ if(document.getElementById("toUser")){
     
     function showMessage(m){
 
+  if (
+    (m.from === user && m.to === toUser) ||
+    (m.from === toUser && m.to === user)
+  ) {
+
     const messages = document.getElementById("messages");
     const messagesArea = document.getElementById("messages-area");
 
     const msg = document.createElement("div");
+    msg.id = "msg-" + m.id;
+
     msg.className = "msg " + (m.from === user ? "me" : "them");
 
     const avatar = document.createElement("div");
@@ -188,7 +195,40 @@ if(document.getElementById("toUser")){
 
     const bubble = document.createElement("div");
     bubble.className = "msg-bubble";
-    bubble.innerText = m.text;
+
+    let html = `${m.text || ""}`;
+
+    if (m.file) {
+
+      if (m.fileType === "image") {
+
+        html += `
+          <br><br>
+          <img src="${m.file}"
+          style="max-width:200px;border-radius:12px;">
+        `;
+
+      } else {
+
+        html += `
+          <br><br>
+          <video controls
+          style="max-width:200px;border-radius:12px;">
+            <source src="${m.file}">
+          </video>
+        `;
+      }
+    }
+
+    html += `
+      <br><br>
+      <small class="seen"></small>
+      ${m.from === user
+        ? `<button onclick="deleteMsg('${m.id}')">🗑️</button>`
+        : ""}
+    `;
+
+    bubble.innerHTML = html;
 
     content.appendChild(sender);
     content.appendChild(bubble);
@@ -199,5 +239,14 @@ if(document.getElementById("toUser")){
     messages.appendChild(msg);
 
     messagesArea.scrollTop = messagesArea.scrollHeight;
+
+    if(m.from === toUser){
+      socket.emit("seen", {
+        from: toUser,
+        to: user
+      });
     }
+  }
+}
+
 }
