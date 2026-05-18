@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="discussion, réseau">
+<meta name="keywords" content="profil JR">
+<meta property="og:title" content="JEXREY">
+<link rel="icon" type="image/jpg" sizes="16x16" href="jexrey.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JEXREY — Profil</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:      #080a0c;
+  --surface: rgba(255,255,255,0.04);
+  --border:  rgba(255,255,255,0.08);
+  --accent:  #00e5a0;
+  --accent2: #00b4d8;
+  --text:    #e8eaed;
+  --muted:   #6b7280;
+  --online:  #22c55e;
+  --offline: #4b5563;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 40% at 50% 0%,
+    rgba(0,229,160,0.07) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  height: 60px;
+  background: rgba(8,10,12,0.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  z-index: 100;
+}
+
+header #user1 {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  font-weight: 700;
+  flex: 1;
+}
+
+header button {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+header button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* HERO */
+section {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 40px auto 0;
+  padding: 0 24px;
+  animation: fadeUp 0.5s ease;
+  background: transparent;
+  display: block;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity:0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity:1;
+    transform: translateY(0);
+  }
+}
+
+section::before {
+  content:'';
+  display:block;
+  height:160px;
+  border-radius:20px 20px 0 0;
+  background:
+    radial-gradient(
+      ellipse 70% 70% at 50% -10%,
+      rgba(0,229,160,0.18) 0%,
+      transparent 65%
+    ),
+    linear-gradient(135deg, #0a2a1a, #0a1a2a);
+  position: relative;
+  overflow: hidden;
+}
+
+section::after {
+  content:'';
+  position:absolute;
+  top:0;
+  left:24px;
+  right:24px;
+  height:160px;
+  border-radius:20px 20px 0 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+}
+
+.un {
+  position: absolute;
+  top: 110px;
+  left: 52px;
+  z-index: 3;
+}
+
+/* Avatar div replacing iframe — same size/style */
+.un .avatar-box {
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  border: 3px solid var(--bg);
+  background-image: url("bk.png");
+  background-size: cover;
+  background-position: center;
+  background-color: #1a2a2a;
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 8px 24px rgba(0,0,0,0.5);
+}
+
+.un h3 {
+  display:none;
+}
+
+.nom {
+  background: rgba(10,12,15,0.97);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+  padding: 56px 28px 28px;
+  position: relative;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  min-height: 150px;
+}
+
+.nom div:first-child {
+  flex:1;
+}
+
+#profileUsernameDetail {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'Cinzel', serif;
+  margin-bottom: 4px;
+}
+
+#profileStatus {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display:block;
+}
+
+#profileUsername {
+  font-size:13px;
+}
+
+#startChatBtn {
+  padding: 13px 28px;
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    var(--accent2)
+  );
+  border: none;
+  border-radius: 14px;
+  color: #080a0c;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,229,160,0.2);
+}
+
+#startChatBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,229,160,0.35);
+}
+
+/* INFO GRID */
+.info {
+  max-width: 760px;
+  margin: 20px auto 40px;
+  padding: 0 24px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+
+  position: relative;
+  z-index: 1;
+}
+
+.info .indispo {
+  background: rgba(10,12,15,0.97);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  transition: border-color 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.info .indispo::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:2px;
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    var(--accent2)
+  );
+  opacity:0;
+  transition: opacity 0.3s;
+}
+
+.info .indispo:hover {
+  border-color: rgba(0,229,160,0.2);
+}
+
+.info .indispo:hover::before {
+  opacity:1;
+}
+
+.info .indispo h2 {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  transform:none;
+}
+
+.b {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.b:last-child {
+  border-bottom:none;
+}
+
+.b h4 {
+  color: var(--text);
+  font-size:13px;
+  min-width:120px;
+}
+
+.b p {
+  color: var(--muted);
+  font-size:13px;
+}
+
+@media (max-width: 600px) {
+
+  section {
+    padding: 0 12px;
+    margin-top: 20px;
+  }
+
+  .info {
+    padding: 0 12px;
+  }
+
+  section::before {
+    height:120px;
+  }
+
+  section::after {
+    height:120px;
+    left:12px;
+    right:12px;
+  }
+
+  .un {
+    top:70px;
+    left:28px;
+  }
+
+  .nom {
+    padding-top:60px;
+  }
+
+  #startChatBtn {
+    width:100%;
+  }
+
+  header {
+    padding:0 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <button onclick="goHome()">← Retour</button>
+
+  <span id="user1"></span>
+
+  <button onclick="logout()">Déconnexion</button>
+</header>
+
+<section>
+
+  <div class="un">
+    <!-- Avatar box replaces iframe (preview removed) -->
+    <div class="avatar-box"></div>
+    <h3>
+      Profil de
+      <span id="profileUsername"></span>
+    </h3>
+  </div>
+
+  <div class="nom">
+
+    <div>
+      <div id="profileUsernameDetail"></div>
+
+      <span id="profileStatus"></span>
+
+      <div>
+        <span id="profileUsername"></span>
+      </div>
+    </div>
+
+    <button id="startChatBtn">
+      💬 Envoyer un message
+    </button>
+
+  </div>
+
+</section>
+
+<div class="info">
+
+  <div class="indispo">
+    <h2>📊 Statistiques</h2>
+
+    <div class="b">
+      <h4>Amis</h4>
+      <p>—</p>
+    </div>
+
+    <div class="b">
+      <h4>Posts</h4>
+      <p>—</p>
+    </div>
+
+    <div class="b">
+      <h4>Vues</h4>
+      <p>—</p>
+    </div>
+
+    <div class="b">
+      <h4>Likes</h4>
+      <p>—</p>
+    </div>
+  </div>
+
+  <div class="indispo">
+    <h2>ℹ️ Informations</h2>
+
+    <div class="b"><h4>Profession</h4><p>Non renseigné</p></div>
+    <div class="b"><h4>Ville</h4><p>Non renseigné</p></div>
+    <div class="b"><h4>Anniversaire</h4><p>Non renseigné</p></div>
+    <div class="b"><h4>Situation</h4><p>Non renseigné</p></div>
+  </div>
+
+  <div class="indispo">
+    <h2>📝 Publications</h2>
+  </div>
+
+  <div class="indispo">
+    <h2>👥 Partenaires</h2>
+  </div>
+
+  <div class="indispo">
+    <h2>🎬 Shorts</h2>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
