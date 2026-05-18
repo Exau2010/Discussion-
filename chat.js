@@ -59,6 +59,8 @@ if (document.getElementById("toUser")) {
     };
 
     socket.emit("privateMessage", msg);
+    
+    showMessage(msg);
 
     msgInput.value = "";
     selectedFile = null;
