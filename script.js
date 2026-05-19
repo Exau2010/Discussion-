@@ -345,6 +345,7 @@ async function adminDeleteUser(targetUsername) {
 // ===== HOME USERS =====
 
 if (document.getElementById("userList")) {
+    socket.emit("join", user);
 
     socket.emit("getUsers");
 
