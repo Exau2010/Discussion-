@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JEXREY — Télécharger l'application</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#080a0c;
+    --surface:rgba(255,255,255,0.04);
+    --surface2:rgba(255,255,255,0.07);
+    --border:rgba(255,255,255,0.08);
+    --accent:#00e5a0;
+    --accent2:#00b4d8;
+    --text:#e8eaed;
+    --muted:#6b7280;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    overflow-y: auto;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+/* Background glow */
+body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:
+    radial-gradient(circle at 20% 20%, rgba(0,229,160,0.08), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(0,180,216,0.08), transparent 40%);
+    z-index:0;
+}
+
+/* Stars */
+.stars{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    z-index:0;
+}
+
+.star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    opacity:.7;
+    animation:blink 3s infinite ease-in-out;
+}
+
+@keyframes blink{
+    0%,100%{
+        opacity:.2;
+        transform:scale(1);
+    }
+    50%{
+        opacity:1;
+        transform:scale(1.7);
+    }
+}
+
+/* Main card */
+.card{
+    width:100%;
+    max-width:650px;
+    background:rgba(10,12,15,0.92);
+    border:1px solid var(--border);
+    border-radius:32px;
+    padding:40px 32px;
+    position:relative;
+    z-index:2;
+    backdrop-filter:blur(18px);
+    box-shadow:
+    0 0 50px rgba(0,229,160,0.08),
+    0 30px 60px rgba(0,0,0,0.45);
+    overflow:hidden;
+}
+
+.card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,
+    rgba(0,229,160,0.06),
+    rgba(0,180,216,0.03));
+    pointer-events:none;
+}
+
+.logo{
+    font-family:'Cinzel',serif;
+    font-size:34px;
+    letter-spacing:8px;
+    text-align:center;
+    color:var(--accent);
+    margin-bottom:8px;
+    position:relative;
+    z-index:2;
+}
+
+.subtitle{
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:30px;
+    position:relative;
+    z-index:2;
+}
+
+.version{
+    width:fit-content;
+    margin:0 auto 24px;
+    padding:8px 18px;
+    border-radius:999px;
+    background:rgba(0,229,160,0.08);
+    border:1px solid rgba(0,229,160,0.18);
+    color:var(--accent);
+    font-size:13px;
+    font-weight:700;
+    position:relative;
+    z-index:2;
+}
+
+.app-preview{
+    width:170px;
+    height:340px;
+    margin:0 auto 28px;
+    border-radius:34px;
+    border:2px solid rgba(255,255,255,0.08);
+    background:
+    linear-gradient(180deg,
+    rgba(0,229,160,0.15),
+    rgba(0,180,216,0.12)),
+    #0b0f13;
+    box-shadow:
+    inset 0 0 25px rgba(0,229,160,0.15),
+    0 20px 40px rgba(0,0,0,0.5);
+    position:relative;
+    overflow:hidden;
+}
+
+.app-preview::before{
+    content:'';
+    position:absolute;
+    top:12px;
+    left:50%;
+    transform:translateX(-50%);
+    width:70px;
+    height:8px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.08);
+}
+
+.screen{
+    position:absolute;
+    inset:25px 10px 10px 10px;
+    border-radius:24px;
+    background:
+    radial-gradient(circle at top left, rgba(0,229,160,0.2), transparent 50%),
+    radial-gradient(circle at bottom right, rgba(0,180,216,0.2), transparent 50%),
+    #080a0c;
+    padding:18px;
+}
+
+.screen-title{
+    font-family:'Cinzel',serif;
+    font-size:20px;
+    letter-spacing:4px;
+    color:var(--accent);
+    margin-bottom:16px;
+}
+
+.msg{
+    height:16px;
+    border-radius:999px;
+    margin-bottom:12px;
+    background:rgba(255,255,255,0.06);
+}
+
+.msg:nth-child(2){
+    width:90%;
+}
+
+.msg:nth-child(3){
+    width:65%;
+    background:rgba(0,229,160,0.16);
+}
+
+.msg:nth-child(4){
+    width:78%;
+}
+
+.msg:nth-child(5){
+    width:50%;
+    background:rgba(0,180,216,0.16);
+}
+
+.description{
+    line-height:1.8;
+    color:#d8dce0;
+    font-size:15px;
+    text-align:center;
+    margin-bottom:24px;
+    position:relative;
+    z-index:2;
+}
+
+.highlight{
+    color:var(--accent);
+    font-weight:700;
+}
+
+.info{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:24px;
+    position:relative;
+    z-index:2;
+}
+
+.info p{
+    margin-bottom:12px;
+    color:#d8dce0;
+    font-size:14px;
+    line-height:1.7;
+}
+
+.info p:last-child{
+    margin-bottom:0;
+}
+
+.download-btn{
+    width:100%;
+    border:none;
+    border-radius:18px;
+    padding:18px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#081015;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.25s;
+    box-shadow:0 10px 25px rgba(0,229,160,0.22);
+    position:relative;
+    z-index:2;
+}
+
+.download-btn:hover{
+    transform:translateY(-3px) scale(1.01);
+    box-shadow:0 16px 35px rgba(0,229,160,0.32);
+}
+
+.small{
+    margin-top:16px;
+    text-align:center;
+    font-size:11px;
+    color:var(--muted);
+    line-height:1.6;
+    position:relative;
+    z-index:2;
+}
+
+.footer{
+    margin-top:20px;
+    text-align:center;
+    font-size:12px;
+    color:var(--muted);
+    position:relative;
+    z-index:2;
+}
+
+@media(max-width:600px){
+
+    .card{
+        padding:30px 20px;
+        border-radius:24px;
+    }
+
+    .logo{
+        font-size:26px;
+    }
+
+    .app-preview{
+        transform:scale(.92);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="stars">
+    <div class="star" style="top:5%;left:10%;"></div>
+    <div class="star" style="top:15%;left:70%;"></div>
+    <div class="star" style="top:22%;left:40%;"></div>
+    <div class="star" style="top:35%;left:90%;"></div>
+    <div class="star" style="top:50%;left:15%;"></div>
+    <div class="star" style="top:65%;left:55%;"></div>
+    <div class="star" style="top:72%;left:85%;"></div>
+    <div class="star" style="top:88%;left:35%;"></div>
+    <div class="star" style="top:45%;left:30%;"></div>
+    <div class="star" style="top:30%;left:60%;"></div>
+    <div class="star" style="top:80%;left:75%;"></div>
+    <div class="star" style="top:10%;left:90%;"></div>
+</div>
+
+<div class="card">
+
+    <div class="logo">JEXREY</div>
+
+    <div class="subtitle">
+        Réseau social privé • Communauté intime
+    </div>
+
+    <div class="version">
+        Version 1.8
+    </div>
+
+    <div class="app-preview">
+        <div class="screen">
+            <div class="screen-title">JEXREY</div>
+
+            <div class="msg"></div>
+            <div class="msg"></div>
+            <div class="msg"></div>
+            <div class="msg"></div>
+            <div class="msg"></div>
+        </div>
+    </div>
+
+    <div class="description">
+        Découvrez <span class="highlight">JEXREY</span>, un réseau social moderne
+        conçu uniquement pour les intimes. Une expérience élégante,
+        immersive et futuriste créée pour connecter votre cercle privé.
+    </div>
+
+    <div class="info">
+        <p>
+            <strong>Application créée par :</strong>
+            JEXREY (JEX-corporation)
+        </p>
+
+        <p>
+            <strong>Développeur & co-fondateur :</strong>
+            BOB Exaucé et TCHABY Ariel
+        </p>
+
+        <p>
+            <strong>Entreprise :</strong>
+            Société spécialisée dans la création digitale et les contenus numériques.
+            Réputée dans le milieu pour la création de sites web modernes et performants.
+        </p>
+
+        <p>
+            <strong>Email principal :</strong>
+            olaezose@gmail.com
+        </p>
+    </div>
+
+    <button class="download-btn" onclick="downloadAPK()">
+        ⬇ Télécharger l'application Android
+    </button>
+
+    <div class="small">
+        * L'application peut actuellement rencontrer quelques bugs
+        et certaines lenteurs selon votre appareil ou connexion.
+    </div>
+
+    <div class="footer">
+        © 2026 JEXREY — Tous droits réservés
+    </div>
+
+</div>
+
+<script>
+function downloadAPK(){
+
+    const link = document.createElement('a');
+
+    link.href = 'jexrey.apk';
+
+    link.download = 'jexrey.apk';
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+}
+</script>
+
+</body>
+</html>
