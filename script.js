@@ -478,7 +478,7 @@ if (document.getElementById("userList")) {
 
             // ===== ADMIN DELETE BTN =====
 
-            if (isAdmin) {
+            if (localStorage.getItem("isAdmin") === "true") {
 
                 const delBtn = document.createElement("button");
 
