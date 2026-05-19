@@ -224,7 +224,6 @@ function goHome() {
 }
 
 // ===== LOGIN =====
-
 async function login() {
 
     let username = document.getElementById("login-username").value.trim();
@@ -254,15 +253,22 @@ async function login() {
 
     localStorage.setItem("user", username);
 
-    if (data.isAdmin) {
+    // ===== ADMIN =====
+
+    if (data.isAdmin === true) {
+
         localStorage.setItem("isAdmin", "true");
+
     } else {
+
         localStorage.removeItem("isAdmin");
+
     }
 
     window.location.href = "home.html";
 
-}
+        }
+
 
 // ===== REGISTER =====
 
