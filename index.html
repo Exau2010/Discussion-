@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,340 +8,330 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JEXREY — Connexion</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg:        #080a0c;
-    --surface:   rgba(255,255,255,0.04);
-    --border:    rgba(255,255,255,0.08);
-    --accent:    #00e5a0;
-    --accent2:   #00b4d8;
-    --text:      #e8eaed;
-    --muted:     #6b7280;
-    --danger:    #ff4d6d;
-    --glow:      0 0 40px rgba(0,229,160,0.15);
-  }
+*, *::before, *::after{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
+:root{
+--bg:#080a0c;
+--surface:rgba(255,255,255,0.04);
+--border:rgba(255,255,255,0.08);
+--accent:#00e5a0;
+--accent2:#00b4d8;
+--text:#e8eaed;
+--muted:#6b7280;
+--danger:#ff4d6d;
+--glow:0 0 40px rgba(0,229,160,0.15);
+}
 
-  /* Ambient background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 10% 20%, rgba(0,180,216,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(0,229,160,0.07) 0%, transparent 60%);
-    pointer-events: none;
-  }
+body{
+background:var(--bg);
+color:var(--text);
+font-family:'DM Sans',sans-serif;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+position:relative;
+}
 
-  /* Grid lines */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-  }
+body::before{
+content:'';
+position:fixed;
+inset:0;
+background:
+radial-gradient(ellipse 60% 50% at 10% 20%, rgba(0,180,216,0.08) 0%, transparent 60%),
+radial-gradient(ellipse 50% 60% at 90% 80%, rgba(0,229,160,0.07) 0%, transparent 60%);
+pointer-events:none;
+}
 
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    padding: 20px 40px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 10;
-  }
+body::after{
+content:'';
+position:fixed;
+inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+background-size:60px 60px;
+pointer-events:none;
+}
 
-  nav img { border-radius: 8px; width: 32px; height: 32px; object-fit: cover; }
+nav{
+position:fixed;
+top:0;
+left:0;
+right:0;
+padding:20px 40px;
+display:flex;
+align-items:center;
+gap:12px;
+z-index:10;
+}
 
-  nav .brand {
-    font-family: 'Cinzel', serif;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 4px;
-    color: var(--accent);
-    text-transform: uppercase;
-  }
+nav img{
+border-radius:8px;
+width:32px;
+height:32px;
+object-fit:cover;
+}
 
-  .page {
-    width: 100%;
-    max-width: 420px;
-    padding: 20px;
-    animation: fadeUp 0.6s ease both;
-    position: relative;
-    z-index: 1;
-  }
+nav .brand{
+font-family:'Cinzel',serif;
+font-size:18px;
+font-weight:700;
+letter-spacing:4px;
+color:var(--accent);
+text-transform:uppercase;
+}
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+.page{
+width:100%;
+max-width:420px;
+padding:20px;
+position:relative;
+z-index:1;
+}
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 40px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 32px 64px rgba(0,0,0,0.4), var(--glow);
-  }
+.card{
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:24px;
+padding:40px;
+backdrop-filter:blur(20px);
+box-shadow:0 32px 64px rgba(0,0,0,0.4), var(--glow);
+}
 
-  .card-header {
-    text-align: center;
-    margin-bottom: 36px;
-  }
+.card-header{
+text-align:center;
+margin-bottom:36px;
+}
 
-  .card-header .logo-wrap {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 56px; height: 56px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 16px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0,229,160,0.3);
-  }
+.card-header .logo-wrap{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:56px;
+height:56px;
+background:linear-gradient(135deg,var(--accent),var(--accent2));
+border-radius:16px;
+margin-bottom:20px;
+}
 
-  .card-header .logo-wrap img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+.card-header .logo-wrap img{
+width:36px;
+height:36px;
+border-radius:8px;
+object-fit:cover;
+}
 
-  .card-header h1 {
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    letter-spacing: 5px;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
+.card-header h1{
+font-family:'Cinzel',serif;
+font-size:13px;
+letter-spacing:5px;
+color:var(--accent);
+text-transform:uppercase;
+margin-bottom:8px;
+}
 
-  .card-header p {
-    font-size: 14px;
-    color: var(--muted);
-    transition: all 0.3s;
-  }
+.card-header p{
+font-size:14px;
+color:var(--muted);
+}
 
-  .field {
-    position: relative;
-    margin-bottom: 16px;
-  }
+.field{
+margin-bottom:16px;
+}
 
-  .field label {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
+.field label{
+display:block;
+font-size:11px;
+letter-spacing:2px;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:8px;
+font-weight:500;
+}
 
-  .field input {
-    width: 100%;
-    padding: 14px 18px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
+.field input{
+width:100%;
+padding:14px 18px;
+background:rgba(255,255,255,0.04);
+border:1px solid var(--border);
+border-radius:12px;
+color:var(--text);
+font-family:'DM Sans',sans-serif;
+font-size:14px;
+outline:none;
+}
 
-  .field input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(0,229,160,0.1);
-  }
+.btn{
+width:100%;
+padding:15px;
+border:none;
+border-radius:12px;
+font-family:'DM Sans',sans-serif;
+font-size:14px;
+font-weight:500;
+cursor:pointer;
+letter-spacing:1px;
+margin-top:8px;
+}
 
-  .field input::placeholder { color: var(--muted); }
+.btn-primary{
+background:linear-gradient(135deg,var(--accent),var(--accent2));
+color:#080a0c;
+font-weight:700;
+}
 
-  .password-wrap {
-    position: relative;
-  }
+.btn-ghost{
+background:transparent;
+border:1px solid var(--border);
+color:var(--muted);
+}
 
-  .password-wrap input { padding-right: 50px; }
+.btn-danger{
+background:transparent;
+border:1px solid rgba(255,77,109,0.3);
+color:var(--danger);
+}
 
-  .password-wrap .toggle-pw {
-    position: absolute;
-    right: 14px; top: 50%;
-    transform: translateY(-50%);
-    background: none; border: none;
-    color: var(--muted); cursor: pointer;
-    font-size: 16px; padding: 4px;
-    transition: color 0.2s;
-  }
+.divider{
+display:flex;
+align-items:center;
+gap:12px;
+margin:20px 0;
+color:var(--muted);
+font-size:12px;
+}
 
-  .password-wrap .toggle-pw:hover { color: var(--accent); }
+.divider::before,
+.divider::after{
+content:'';
+flex:1;
+height:1px;
+background:var(--border);
+}
 
-  #email-field { display: none; }
+.register-section{
+display:none;
+}
 
-  .btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-    margin-top: 8px;
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #080a0c;
-    font-weight: 700;
-    box-shadow: 0 4px 20px rgba(0,229,160,0.25);
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 28px rgba(0,229,160,0.35);
-  }
-
-  .btn-primary:active { transform: translateY(0); }
-
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-
-  .btn-ghost:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .btn-danger {
-    background: transparent;
-    border: 1px solid rgba(255,77,109,0.3);
-    color: var(--danger);
-    display: none;
-  }
-
-  .btn-danger:hover {
-    background: rgba(255,77,109,0.08);
-  }
-
-  .divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 20px 0;
-    color: var(--muted);
-    font-size: 12px;
-  }
-
-  .divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .register-section { display: none; }
 </style>
 </head>
+
 <body>
 
 <nav>
-  <img src="jexrey.jpg" alt="logo">
-  <span class="brand">JEXREY</span>
+<img src="jexrey.jpg" alt="logo">
+<span class="brand">JEXREY</span>
 </nav>
 
 <div class="page">
-  <div class="card">
-    <div class="card-header">
-      <div class="logo-wrap">
-        <img src="jexrey.jpg" alt="logo">
-      </div>
-      <h1>JEXREY</h1>
-      <p id="prest">Bienvenue sur notre plateforme</p>
-    </div>
 
-    <!-- Login fields -->
-    <div id="login-section">
-      <div class="field">
-        <label>Pseudo</label>
-        <input id="username" type="text" placeholder="Votre pseudo...">
-      </div>
+<div class="card">
 
-      <div class="field">
-        <label>Mot de passe</label>
-        <div class="password-wrap">
-          <input type="password" id="password" placeholder="Votre mot de passe...">
-          <button class="toggle-pw" onclick="togglePw()" type="button">👁</button>
-        </div>
-      </div>
+<div class="card-header">
 
-      <button class="btn btn-primary" id="login" onclick="login()">Se connecter</button>
+<div class="logo-wrap">
+<img src="jexrey.jpg" alt="logo">
+</div>
 
-      <div class="divider">ou</div>
+<h1>JEXREY</h1>
 
-      <button class="btn btn-ghost" id="regis" onclick="regis()">Créer un compte</button>
-    </div>
+<p id="prest">
+Bienvenue sur notre plateforme
+</p>
 
-    <!-- Register extra fields -->
-    <div class="register-section" id="register-section">
-      <div class="field">
-        <label>Pseudo</label>
-        <input id="username" type="text" placeholder="Choisissez un pseudo...">
-      </div>
-      <div class="field">
-        <label>Mot de passe</label>
-        <div class="password-wrap">
-          <input type="password" id="password" placeholder="Créez un mot de passe...">
-          <button class="toggle-pw" onclick="togglePw()" type="button">👁</button>
-        </div>
-      </div>
-      <div class="field" id="email-field" style="display:block;">
-        <label>E-mail</label>
-        <input type="email" id="email" placeholder="votre@email.com">
-      </div>
-      <button class="btn btn-primary" id="register" onclick="register()">Créer le compte</button>
-      <button class="btn btn-danger" id="anul" style="display:block; margin-top:10px;" onclick="anul()">Annuler</button>
-    </div>
+</div>
 
-  </div>
+<!-- LOGIN -->
+
+<div id="login-section">
+
+<div class="field">
+<label>Pseudo</label>
+<input id="login-username" type="text" placeholder="Votre pseudo...">
+</div>
+
+<div class="field">
+<label>Mot de passe</label>
+<input id="login-password" type="password" placeholder="Votre mot de passe...">
+</div>
+
+<button class="btn btn-primary" onclick="login()">
+Se connecter
+</button>
+
+<div class="divider">ou</div>
+
+<button class="btn btn-ghost" onclick="regis()">
+Créer un compte
+</button>
+
+</div>
+
+<!-- REGISTER -->
+
+<div class="register-section" id="register-section">
+
+<div class="field">
+<label>Pseudo</label>
+<input id="register-username" type="text" placeholder="Choisissez un pseudo...">
+</div>
+
+<div class="field">
+<label>Mot de passe</label>
+<input id="register-password" type="password" placeholder="Choisissez un mot de passe...">
+</div>
+
+<button class="btn btn-primary" onclick="register()">
+Créer le compte
+</button>
+
+<button class="btn btn-danger" onclick="anul()">
+Annuler
+</button>
+
+</div>
+
+</div>
+
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
+
 <script>
-function togglePw() {
-  const pw = document.getElementById('password');
-  pw.type = pw.type === 'password' ? 'text' : 'password';
+
+function regis(){
+
+document.getElementById("prest").innerText="Créez votre compte";
+
+document.getElementById("login-section").style.display="none";
+
+document.getElementById("register-section").style.display="block";
+
 }
 
-function regis() {
-  document.getElementById('prest').textContent = 'Créez votre compte';
-  document.getElementById('login-section').style.display = 'none';
-  document.getElementById('register-section').style.display = 'block';
+function anul(){
+
+document.getElementById("prest").innerText="Bienvenue sur notre plateforme";
+
+document.getElementById("login-section").style.display="block";
+
+document.getElementById("register-section").style.display="none";
+
 }
 
-function anul() {
-  document.getElementById('prest').textContent = 'Bienvenue sur notre plateforme';
-  document.getElementById('login-section').style.display = 'block';
-  document.getElementById('register-section').style.display = 'none';
-}
 </script>
+
 </body>
-</html>
+ </html>
