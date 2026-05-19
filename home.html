@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta name="description" content="JEXREY, discussion, réseau">
+<meta name="keywords" content="JEXREY">
+<meta name="author" content="JEXREY">
+<link rel="icon" type="image/jpg" sizes="16x16" href="jexrey.jpg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEXREY — Accueil</title>
+<!-- Preconnect pour Google Fonts (non-bloquant) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #080a0c;
+    --surface: rgba(255,255,255,0.04);
+    --surface2: rgba(255,255,255,0.07);
+    --border:  rgba(255,255,255,0.08);
+    --accent:  #00e5a0;
+    --accent2: #00b4d8;
+    --text:    #e8eaed;
+    --muted:   #6b7280;
+    --online:  #22c55e;
+    --offline: #4b5563;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100%;
+    display: flex;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 60% at 5% 10%, rgba(0,180,216,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 50% at 95% 90%, rgba(0,229,160,0.06) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: rgba(10,12,15,0.95);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 8px;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    backdrop-filter: blur(20px);
+  }
+
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+
+  .sidebar-brand {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .sidebar-close {
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 20px; padding: 4px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .sidebar-close:hover { color: var(--text); background: var(--surface); }
+
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .sidebar-profile:hover { border-color: var(--accent); }
+
+  .sidebar-avatar {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px var(--accent);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .sidebar-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .sidebar-profile-info { flex: 1; min-width: 0; }
+
+  .sidebar-profile-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sidebar-profile-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .sidebar-nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .nav-item.active {
+    background: rgba(0,229,160,0.08);
+    color: var(--accent);
+    border-color: rgba(0,229,160,0.2);
+  }
+
+  .nav-item img {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .nav-item:hover img, .nav-item.active img { opacity: 1; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sidebar-stats {
+    display: flex;
+    gap: 16px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+
+  .stat { text-align: center; flex: 1; }
+  .stat-value { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .btn-logout {
+    width: 100%;
+    padding: 12px;
+    background: none;
+    border: 1px solid rgba(255,77,109,0.25);
+    border-radius: 12px;
+    color: #ff4d6d;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-logout:hover { background: rgba(255,77,109,0.08); border-color: #ff4d6d; }
+
+  .btn-delete-account {
+    width: 100%;
+    padding: 10px;
+    background: none;
+    border: 1px solid rgba(255,77,109,0.15);
+    border-radius: 12px;
+    color: rgba(255,77,109,0.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    margin-top: 8px;
+  }
+
+  .btn-delete-account:hover { background: rgba(255,77,109,0.08); border-color: #ff4d6d; color: #ff4d6d; }
+
+  /* Overlay */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 90;
+    display: none;
+    backdrop-filter: blur(4px);
+  }
+
+  .overlay.show { display: block; }
+
+  /* ===== HEADER ===== */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: rgba(8,10,12,0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+    z-index: 80;
+  }
+
+  .header-brand {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .header-brand img { width: 28px; height: 28px; border-radius: 6px; margin-right: 10px; vertical-align: middle; }
+
+  .menu-btn {
+    background: none; border: none;
+    color: var(--text); cursor: pointer;
+    padding: 8px;
+    border-radius: 10px;
+    transition: background 0.2s;
+    display: flex; align-items: center;
+  }
+
+  .menu-btn:hover { background: var(--surface); }
+  .menu-btn svg { width: 20px; height: 20px; }
+
+  .search-wrap {
+    flex: 1;
+    max-width: 340px;
+    position: relative;
+    margin-left: auto;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,160,0.1);
+  }
+
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 15px;
+    pointer-events: none;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  main {
+    overflow-x: hidden;
+    margin-top: 64px;
+    margin-right: 280px;
+    flex: 1;
+    padding: 24px;
+    min-height: calc(100vh - 64px);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 24px;
+  }
+
+  .my-avatar { position: relative; cursor: pointer; }
+
+  .my-avatar .avatar-img {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+    background-color: #1a1a2e;
+    border: 2px solid var(--accent);
+    overflow: hidden;
+  }
+
+  .my-avatar .avatar-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .add-story-btn {
+    position: absolute;
+    bottom: -4px; right: -4px;
+    width: 20px; height: 20px;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    color: var(--bg);
+    font-weight: 900;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .add-story-btn:hover { transform: scale(1.2); }
+
+  .status-info { flex: 1; }
+  .status-name { font-size: 15px; font-weight: 600; color: var(--accent); margin-bottom: 2px; }
+  .status-sub { font-size: 12px; color: var(--muted); }
+
+  .compose-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #080a0c;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .compose-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,229,160,0.3); }
+
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* ===== USER LIST ===== */
+  #userList {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 10px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 32px;
+  }
+
+  #userList::-webkit-scrollbar { display: none; }
+
+  .user-card-item {
+    flex: 0 0 auto;
+    width: 130px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+
+  .user-card-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,229,160,0.15);
+  }
+
+  .user-card-avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-color: #1a2a2a;
+    position: relative;
+    border: 2px solid var(--border);
+    overflow: hidden;
+  }
+
+  .user-card-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .user-card-item:hover .user-card-avatar { border-color: var(--accent); }
+
+  .status-dot {
+    position: absolute;
+    bottom: 2px; right: 2px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+
+  .status-dot.online { background: var(--online); }
+  .status-dot.offline { background: var(--offline); }
+
+  .user-card-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  .user-card-sub {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ===== NEWS FEED ===== */
+  .news-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    margin-top: 8px;
+  }
+
+  .news-section-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  #newsFeed {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .news-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeSlideIn 0.3s ease;
+  }
+
+  @keyframes skpulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .news-card:hover {
+    border-color: rgba(0,229,160,0.3);
+    box-shadow: 0 8px 32px rgba(0,229,160,0.08);
+  }
+
+  .news-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .news-card-avatar {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background-size: cover;
+    background-position: center;
+    background-color: #1a2a2a;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .news-card-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 9px;
+  }
+
+  .news-card-author { font-size: 13px; font-weight: 600; color: var(--accent); }
+  .news-card-time { font-size: 11px; color: var(--muted); }
+
+  .news-card-body {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    word-break: break-word;
+    cursor: pointer;
+  }
+
+  .news-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Boutons footer news */
+  .news-action-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .news-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .news-action-btn.liked {
+    border-color: #ff4d6d;
+    color: #ff4d6d;
+    background: rgba(255,77,109,0.06);
+  }
+
+  .news-delete-btn {
+    background: none;
+    border: 1px solid rgba(255,77,109,0.2);
+    border-radius: 8px;
+    color: rgba(255,77,109,0.7);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    margin-left: auto;
+  }
+
+  .news-delete-btn:hover { border-color: #ff4d6d; color: #ff4d6d; background: rgba(255,77,109,0.06); }
+
+  /* Comments section */
+  .news-comments {
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    display: none;
+  }
+
+  .news-comments.open { display: block; }
+
+  .comment-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .comment-avatar {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background-color: #1a2a2a;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .comment-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 7px;
+  }
+
+  .comment-bubble {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    flex: 1;
+  }
+
+  .comment-author {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 3px;
+  }
+
+  .comment-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .comment-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .comment-input {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .comment-input:focus { border-color: var(--accent); }
+  .comment-input::placeholder { color: var(--muted); }
+
+  .comment-send-btn {
+    padding: 8px 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #080a0c;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .comment-send-btn:hover { box-shadow: 0 4px 14px rgba(0,229,160,0.3); }
+
+  /* ===== FULLSCREEN NEWS VIEWER ===== */
+  #newsViewer {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: #000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #newsViewer.open { display: flex; }
+
+  .news-viewer-side {
+    flex: 1;
+    background: #000;
+    height: 100%;
+    min-width: 60px;
+    max-width: 200px;
+  }
+
+  .news-viewer-center {
+    width: 420px;
+    max-width: 100%;
+    max-height: 100vh;
+    background: #0f1115;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  .news-viewer-header {
+    padding: 20px 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    background: #0f1115;
+    z-index: 2;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .news-viewer-avatar {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background-size: cover;
+    background-position: center;
+    background-color: #1a2a2a;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .news-viewer-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 9px;
+  }
+
+  .news-viewer-close {
+    margin-left: auto;
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 22px; padding: 4px 8px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .news-viewer-close:hover { background: var(--surface); color: var(--text); }
+
+  .news-viewer-body {
+    padding: 24px;
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.7;
+    flex: 1;
+  }
+
+  .news-viewer-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .viewers-list {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .viewer-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  /* ===== RIGHT PANEL ===== */
+  .right-panel {
+    position: fixed;
+    right: 0; top: 64px; bottom: 0;
+    width: 280px;
+    background: rgba(10,12,15,0.9);
+    border-left: 1px solid var(--border);
+    padding: 20px 16px;
+    backdrop-filter: blur(20px);
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    z-index: 70;
+  }
+
+  .right-panel::-webkit-scrollbar { display: none; }
+
+  .panel-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .notif-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .notif-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
+
+  .news-notif {
+    background: rgba(0,229,160,0.08);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    animation: slideInRight 0.4s ease;
+    cursor: pointer;
+  }
+
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .news-notif-icon { font-size: 20px; flex-shrink: 0; }
+  .news-notif-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+  .news-notif-text strong { color: var(--accent); }
+
+  /* ===== POST COMPOSER (modal) ===== */
+  .composer-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .composer-modal.open { display: flex; }
+
+  .composer-modal .modal-bg {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+  }
+
+  .composer-box {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 580px;
+    background: #0f1115;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .composer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .composer-header h3 { font-size: 16px; font-weight: 600; color: var(--text); }
+
+  .composer-close {
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 20px; padding: 4px 8px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .composer-close:hover { background: var(--surface); color: var(--text); }
+
+  .composer-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+    margin-bottom: 16px;
+  }
+
+  .composer-textarea:focus { border-color: var(--accent); }
+  .composer-textarea::placeholder { color: var(--muted); }
+
+  .composer-palettes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .palette-swatch {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .palette-swatch:hover { transform: scale(1.15); border-color: white; }
+  .palette-swatch.active { border-color: white; transform: scale(1.1); }
+
+  .composer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .publish-btn {
+    padding: 11px 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #080a0c;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .publish-btn:hover { box-shadow: 0 6px 20px rgba(0,229,160,0.35); }
+
+  /* ===== PROFILE PICTURE MODAL ===== */
+  .avatar-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .avatar-modal.open { display: flex; }
+
+  .avatar-modal .modal-bg {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+  }
+
+  .avatar-box {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    background: #0f1115;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    text-align: center;
+  }
+
+  .avatar-box h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .avatar-preview {
+    width: 100px; height: 100px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    margin: 0 auto 20px;
+    border: 3px solid var(--accent);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .avatar-preview img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-file-input { display: none; }
+
+  .avatar-upload-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px dashed var(--accent);
+    border-radius: 12px;
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 14px;
+  }
+
+  .avatar-upload-btn:hover { background: rgba(0,229,160,0.06); }
+
+  .avatar-save-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 12px;
+    color: #080a0c;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+  }
+
+  .avatar-save-btn:hover { box-shadow: 0 6px 20px rgba(0,229,160,0.35); }
+
+  .avatar-cancel-btn {
+    width: 100%;
+    padding: 10px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .avatar-cancel-btn:hover { border-color: var(--text); color: var(--text); }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .right-panel { width: 240px; }
+    main { margin-right: 240px; }
+  }
+
+  @media (max-width: 768px) {
+    .right-panel { display: none; }
+    main { margin-right: 0; }
+    .news-viewer-side { display: none; }
+    .news-viewer-center { width: 100%; border: none; }
+  }
+
+  @media (max-width: 480px) {
+    main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Overlay for sidebar -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-brand">JEXREY</span>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+
+  <div class="sidebar-profile" onclick="openAvatarModal()">
+    <div class="sidebar-avatar" id="sidebarAvatarWrap">
+      <img id="sidebarAvatarImg" src="" alt="" style="display:none;">
+    </div>
+    <div class="sidebar-profile-info">
+      <div class="sidebar-profile-name" id="user"></div>
+      <div class="sidebar-profile-sub">Changer ma photo de profil</div>
+    </div>
+  </div>
+
+  <div class="sidebar-stats">
+    <div class="stat">
+      <div class="stat-value" id="ami">133</div>
+      <div class="stat-label">Amis</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="pub">0</div>
+      <div class="stat-label">News</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item active" onclick="window.location.href='home.html'">
+      <img src="icone accueil.png" alt=""> Accueil
+    </a>
+    <a class="nav-item" onclick="window.location.href='chat.html'">
+      <img src="icone msg.png" alt=""> Messages
+    </a>
+    <a class="nav-item">
+      <img src="icone para.png" alt=""> Paramètres
+    </a>
+    <a class="nav-item" onclick="window.location.href='short.html'">
+      <img src="icone short.png" alt=""> Shorts
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">Se déconnecter</button>
+    <button class="btn-delete-account" onclick="deleteOwnAccount()">Supprimer mon compte</button>
+  </div>
+</aside>
+
+<!-- HEADER -->
+<header>
+  <button class="menu-btn" onclick="openSidebar()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <span class="header-brand">
+    <img src="jexrey.jpg" alt="logo">JEXREY
+  </span>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="search" list="mylist" type="text" placeholder="Rechercher un profil...">
+    <datalist id="mylist"></datalist>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="my-avatar" onclick="openAvatarModal()">
+      <div class="avatar-img" id="myAvatarDiv">
+        <img id="myAvatarImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px;">
+      </div>
+      <div class="add-story-btn" onclick="openComposer(event)" title="Publier une news">+</div>
+    </div>
+    <div class="status-info">
+      <div class="status-name" id="user1"></div>
+      <div class="status-sub">Partagez une actualité avec la communauté</div>
+    </div>
+    <button class="compose-btn" onclick="openComposer()">📰 Publier une News</button>
+  </div>
+
+  <!-- USERS -->
+  <div class="section-title">Membres de la communauté</div>
+  <div id="userList">
+    <!-- Skeleton loader utilisateurs -->
+    <div class="skeleton-wrap" id="userSkeleton" style="display:flex;gap:10px;flex-wrap:wrap;padding:8px 0;">
+      <div style="width:80px;height:90px;border-radius:14px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite;"></div>
+      <div style="width:80px;height:90px;border-radius:14px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite 0.1s;"></div>
+      <div style="width:80px;height:90px;border-radius:14px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite 0.2s;"></div>
+    </div>
+  </div>
+
+  <!-- NEWS FEED -->
+  <div class="news-section-header">
+    <div class="news-section-title">📰 News</div>
+  </div>
+  <div id="newsFeed">
+    <!-- Skeleton loader news -->
+    <div id="newsSkeleton" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="height:110px;border-radius:18px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite;"></div>
+      <div style="height:110px;border-radius:18px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite 0.15s;"></div>
+      <div style="height:110px;border-radius:18px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite 0.3s;"></div>
+    </div>
+  </div>
+</main>
+
+<!-- RIGHT PANEL -->
+<aside class="right-panel" id="rightPanel">
+  <div class="panel-title">🔔 Notifications</div>
+  <div id="notifContent">
+    <div class="notif-empty">
+      <div class="notif-icon">🔔</div>
+      Aucune notification
+    </div>
+  </div>
+</aside>
+
+<!-- COMPOSER MODAL -->
+<div class="composer-modal" id="composerModal">
+  <div class="modal-bg" onclick="closeComposer()"></div>
+  <div class="composer-box">
+    <div class="composer-header">
+      <h3>📰 Nouvelle News</h3>
+      <button class="composer-close" onclick="closeComposer()">✕</button>
+    </div>
+    <textarea class="composer-textarea" id="txtnews" placeholder="Partagez quelque chose avec la communauté..."></textarea>
+    <div class="composer-palettes">
+      <div class="palette-swatch" style="background:#080a0c;border:1px solid rgba(255,255,255,0.2)" onclick="setBg('','#080a0c',this)" title="Défaut"></div>
+      <div class="palette-swatch" style="background:#0765b3" onclick="setBg('#0765b3','#e8eaed',this)"></div>
+      <div class="palette-swatch" style="background:#ca07a0" onclick="setBg('#ca07a0','#fff',this)"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#0fdb53,#0aaaaf)" onclick="setBg('linear-gradient(135deg,#0fdb53,#0aaaaf)','#fff',this)"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#034190,#163445)" onclick="setBg('linear-gradient(135deg,#034190,#163445)','#fff',this)"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#FFC107,#FF8C00)" onclick="setBg('linear-gradient(135deg,#FFC107,#FF8C00)','#000',this)"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#ff4d6d,#c1121f)" onclick="setBg('linear-gradient(135deg,#ff4d6d,#c1121f)','#fff',this)"></div>
+      <div class="palette-swatch" style="background:linear-gradient(135deg,#7c3aed,#1d4ed8)" onclick="setBg('linear-gradient(135deg,#7c3aed,#1d4ed8)','#fff',this)"></div>
+    </div>
+    <div class="composer-actions">
+      <button class="publish-btn" onclick="publishNews()">Publier</button>
+    </div>
+  </div>
+</div>
+
+<!-- AVATAR MODAL -->
+<div class="avatar-modal" id="avatarModal">
+  <div class="modal-bg" onclick="closeAvatarModal()"></div>
+  <div class="avatar-box">
+    <h3>📷 Ma photo de profil</h3>
+    <div class="avatar-preview" id="avatarPreview">
+      <img id="avatarPreviewImg" src="" alt="" style="display:none;">
+    </div>
+    <input type="file" accept="image/*" class="avatar-file-input" id="avatarFileInput" onchange="previewAvatar(event)">
+    <button class="avatar-upload-btn" onclick="document.getElementById('avatarFileInput').click()">
+      📁 Choisir une photo
+    </button>
+    <button class="avatar-save-btn" onclick="saveAvatar()">✓ Enregistrer</button>
+    <button class="avatar-cancel-btn" onclick="closeAvatarModal()">Annuler</button>
+  </div>
+</div>
+
+<!-- FULLSCREEN NEWS VIEWER -->
+<div id="newsViewer">
+  <div class="news-viewer-side"></div>
+  <div class="news-viewer-center">
+    <div class="news-viewer-header">
+      <div class="news-viewer-avatar" id="viewerAvatar">
+        <img id="viewerAvatarImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--accent)" id="viewerAuthor"></div>
+        <div style="font-size:11px;color:var(--muted)" id="viewerTime"></div>
+      </div>
+      <button class="news-viewer-close" onclick="closeNewsViewer()">✕</button>
+    </div>
+    <div class="news-viewer-body" id="viewerBody"></div>
+    <div class="news-viewer-footer">
+      <div style="color:var(--muted);font-size:12px;margin-bottom:6px;">👁️ Vu par</div>
+      <div class="viewers-list" id="viewerViewsList"></div>
+    </div>
+  </div>
+  <div class="news-viewer-side"></div>
+</div>
+
+<script src="/socket.io/socket.io.js" defer></script>
+<script src="script.js" defer></script>
+<script>
+// ===== STATE =====
+let newsData = [];
+let currentNewsBg = '';
+let currentNewsColor = '#e8eaed';
+const currentUser = localStorage.getItem('user') || '';
+const isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+// Cache des avatars : { username: base64 }
+let avatarCache = {};
+
+// ===== AVATAR HELPERS =====
+function getAvatar(username) {
+  return avatarCache[username] || '';
+}
+
+function setAvatarEl(imgEl, username) {
+  const av = getAvatar(username);
+  if (av) {
+    imgEl.src = av;
+    imgEl.style.display = 'block';
+  } else {
+    imgEl.style.display = 'none';
+  }
+}
+
+function updateMyAvatarUI() {
+  const av = getAvatar(currentUser);
+  // Sidebar
+  const sImg = document.getElementById('sidebarAvatarImg');
+  if (sImg) { sImg.src = av || ''; sImg.style.display = av ? 'block' : 'none'; }
+  // Status bar
+  const mImg = document.getElementById('myAvatarImg');
+  if (mImg) { mImg.src = av || ''; mImg.style.display = av ? 'block' : 'none'; }
+  // Avatar preview modal
+  const pImg = document.getElementById('avatarPreviewImg');
+  if (pImg) { pImg.src = av || ''; pImg.style.display = av ? 'block' : 'none'; }
+}
+
+// Charger tous les avatars depuis le serveur
+async function loadAvatars(usernames) {
+  const toLoad = usernames.filter(u => !(u in avatarCache));
+  if (toLoad.length === 0) return;
+  try {
+    // Un seul appel HTTP pour tous les avatars (batch)
+    const r = await fetch('/api/avatars/batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usernames: toLoad })
+    });
+    const d = await r.json();
+    toLoad.forEach(u => { avatarCache[u] = d[u] || ''; });
+  } catch {
+    toLoad.forEach(u => { avatarCache[u] = ''; });
+  }
+}
+
+// ===== AVATAR MODAL =====
+let pendingAvatar = '';
+
+function openAvatarModal() {
+  closeSidebar();
+  pendingAvatar = getAvatar(currentUser);
+  const pImg = document.getElementById('avatarPreviewImg');
+  if (pendingAvatar) { pImg.src = pendingAvatar; pImg.style.display = 'block'; }
+  else pImg.style.display = 'none';
+  document.getElementById('avatarModal').classList.add('open');
+}
+
+function closeAvatarModal() {
+  document.getElementById('avatarModal').classList.remove('open');
+  pendingAvatar = '';
+}
+
+function previewAvatar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    pendingAvatar = reader.result;
+    const pImg = document.getElementById('avatarPreviewImg');
+    pImg.src = pendingAvatar;
+    pImg.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveAvatar() {
+  if (!pendingAvatar) return alert('Choisissez d\'abord une photo.');
+  try {
+    const r = await fetch('/api/avatar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: currentUser, avatar: pendingAvatar })
+    });
+    const d = await r.json();
+    if (d.success) {
+      avatarCache[currentUser] = pendingAvatar;
+      updateMyAvatarUI();
+      renderAllNews();
+      closeAvatarModal();
+    } else {
+      alert(d.error || 'Erreur');
+    }
+  } catch { alert('Erreur réseau'); }
+}
+
+// ===== SIDEBAR =====
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ===== COMPOSER =====
+function openComposer(e) {
+  if(e) e.stopPropagation();
+  document.getElementById('composerModal').classList.add('open');
+}
+function closeComposer() {
+  document.getElementById('composerModal').classList.remove('open');
+  document.getElementById('txtnews').value = '';
+  document.getElementById('txtnews').style.background = '';
+  document.getElementById('txtnews').style.color = '';
+  currentNewsBg = '';
+  currentNewsColor = '#e8eaed';
+  document.querySelectorAll('.palette-swatch').forEach(s => s.classList.remove('active'));
+}
+
+function setBg(bg, textColor, el) {
+  currentNewsBg = bg;
+  currentNewsColor = textColor || '#e8eaed';
+  const ta = document.getElementById('txtnews');
+  ta.style.background = bg || '';
+  ta.style.color = textColor || '';
+  document.querySelectorAll('.palette-swatch').forEach(s => s.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+
+// ===== PUBLISH NEWS (server) =====
+async function publishNews() {
+  const text = document.getElementById('txtnews').value.trim();
+  if (!text) return;
+
+  const news = {
+    id: Date.now().toString(),
+    author: currentUser,
+    text,
+    bg: currentNewsBg,
+    color: currentNewsColor,
+    time: new Date().toLocaleString('fr-FR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}),
+    likes: [],
+    comments: [],
+    views: []
+  };
+
+  try {
+    const r = await fetch('/api/news', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ news })
+    });
+    const d = await r.json();
+    if (d.success) {
+      closeComposer();
+      // La news sera ajoutée via socket "newNews"
+    }
+  } catch { alert('Erreur réseau'); }
+}
+
+// ===== LOAD NEWS FROM SERVER =====
+async function loadNews() {
+  try {
+    const r = await fetch('/api/news');
+    const data = await r.json();
+    newsData = data;
+    // Charger les avatars des auteurs
+    const authors = [...new Set(data.map(n => n.author))];
+    await loadAvatars(authors);
+    renderAllNews();
+    updatePubCount();
+  } catch {}
+}
+
+// ===== RENDER ALL NEWS =====
+function renderAllNews() {
+  const feed = document.getElementById('newsFeed');
+  const sk = document.getElementById('newsSkeleton');
+  if (sk) sk.remove(); // Retirer le skeleton
+  feed.innerHTML = '';
+  if(newsData.length === 0) {
+    feed.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;">Aucune news pour l\'instant. Soyez le premier à partager !</div>';
+    return;
+  }
+  newsData.forEach(n => feed.appendChild(createNewsCard(n)));
+}
+
+function createNewsCard(news) {
+  const div = document.createElement('div');
+  div.className = 'news-card';
+  div.id = 'news-' + news.id;
+  if(news.bg) div.style.background = news.bg;
+
+  const isOwner = news.author === currentUser || isAdmin;
+  const userLiked = (news.likes || []).includes(currentUser);
+  const likesCount = (news.likes || []).length;
+  const commentsCount = (news.comments || []).length;
+  const viewsCount = (news.views || []).length;
+
+  const authorColor = news.bg ? (news.color||'#00e5a0') : 'var(--accent)';
+  const textColor = news.bg ? (news.color||'#e8eaed') : 'var(--text)';
+
+  div.innerHTML = `
+    <div class="news-card-header">
+      <div class="news-card-avatar" id="news-av-${news.id}">
+        <img id="news-av-img-${news.id}" src="" alt="" style="display:none;">
+      </div>
+      <div>
+        <div class="news-card-author" style="color:${authorColor}">${escapeHtml(news.author)}</div>
+        <div class="news-card-time">${news.time}</div>
+      </div>
+    </div>
+    <div class="news-card-body" style="color:${textColor}" onclick="openNewsViewer('${news.id}')">${escapeHtml(news.text)}</div>
+    <div class="news-card-footer">
+      <button class="news-action-btn ${userLiked ? 'liked' : ''}" id="like-btn-${news.id}" onclick="toggleLike('${news.id}')">
+        ${userLiked ? '❤️' : '🤍'} <span id="like-count-${news.id}">${likesCount}</span>
+      </button>
+      <button class="news-action-btn" onclick="toggleComments('${news.id}')">
+        💬 <span id="comment-count-${news.id}">${commentsCount}</span>
+      </button>
+      <button class="news-action-btn" onclick="openNewsViewer('${news.id}')">
+        👁️ <span id="views-count-${news.id}">${viewsCount}</span>
+      </button>
+      ${isOwner ? `<button class="news-delete-btn" onclick="deleteNews('${news.id}')">🗑️ Supprimer</button>` : ''}
+    </div>
+    <div class="news-comments" id="comments-${news.id}">
+      <div id="comment-list-${news.id}"></div>
+      <div class="comment-input-row">
+        <input class="comment-input" id="comment-input-${news.id}" placeholder="Écrire un commentaire..." onkeydown="if(event.key==='Enter') sendComment('${news.id}')">
+        <button class="comment-send-btn" onclick="sendComment('${news.id}')">→</button>
+      </div>
+    </div>
+  `;
+
+  // Rendre l'avatar de l'auteur
+  const avImg = div.querySelector(`#news-av-img-${news.id}`);
+  if (avImg) setAvatarEl(avImg, news.author);
+
+  // Rendre les commentaires existants
+  const commentList = div.querySelector(`#comment-list-${news.id}`);
+  if (commentList) renderComments(commentList, news.comments || []);
+
+  return div;
+}
+
+function renderComments(container, comments) {
+  container.innerHTML = '';
+  comments.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'comment-item';
+    const av = getAvatar(c.author);
+    el.innerHTML = `
+      <div class="comment-avatar">
+        <img src="${av}" alt="" style="${av ? '' : 'display:none;'}width:100%;height:100%;object-fit:cover;border-radius:7px;">
+      </div>
+      <div class="comment-bubble">
+        <div class="comment-author">${escapeHtml(c.author)}</div>
+        <div class="comment-text">${escapeHtml(c.text)}</div>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function toggleComments(newsId) {
+  const el = document.getElementById('comments-' + newsId);
+  if (el) {
+    el.classList.toggle('open');
+    if (el.classList.contains('open')) {
+      const input = document.getElementById('comment-input-' + newsId);
+      if (input) input.focus();
+    }
+  }
+}
+
+// ===== LIKE =====
+async function toggleLike(newsId) {
+  try {
+    const r = await fetch('/api/news/like', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newsId, username: currentUser })
+    });
+    await r.json();
+    // Le socket "newsLiked" va mettre à jour l'UI
+  } catch {}
+}
+
+// ===== COMMENT =====
+async function sendComment(newsId) {
+  const input = document.getElementById('comment-input-' + newsId);
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+
+  const comment = {
+    author: currentUser,
+    text,
+    time: new Date().toLocaleTimeString('fr-FR').slice(0, 5),
+    avatar: getAvatar(currentUser)
+  };
+
+  input.value = '';
+
+  try {
+    await fetch('/api/news/comment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newsId, comment })
+    });
+    // Socket "newsCommented" met à jour l'UI
+  } catch {}
+}
+
+// ===== DELETE NEWS =====
+async function deleteNews(newsId) {
+  if(!confirm('Supprimer cette news ?')) return;
+  try {
+    const r = await fetch('/api/news/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newsId, username: currentUser, isAdmin })
+    });
+    const d = await r.json();
+    if (d.error) alert(d.error);
+    // Socket "newsDeleted" retire la carte
+  } catch {}
+}
+
+// ===== VIEWS MODAL (Fullscreen Viewer) =====
+async function openNewsViewer(id) {
+  const news = newsData.find(n => n.id === id);
+  if(!news) return;
+
+  // Enregistrer la vue
+  if(currentUser && !news.views.includes(currentUser) && news.author !== currentUser) {
+    fetch('/api/news/view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newsId: id, username: currentUser })
+    });
+  }
+
+  document.getElementById('viewerAuthor').textContent = news.author;
+  document.getElementById('viewerTime').textContent = news.time;
+  document.getElementById('viewerBody').textContent = news.text;
+  document.getElementById('viewerBody').style.background = news.bg || '';
+  document.getElementById('viewerBody').style.color = news.bg ? (news.color || '#e8eaed') : '';
+
+  // Avatar dans le viewer
+  const vAvImg = document.getElementById('viewerAvatarImg');
+  if (vAvImg) setAvatarEl(vAvImg, news.author);
+
+  const vList = document.getElementById('viewerViewsList');
+  vList.innerHTML = '';
+  if(news.views.length === 0) {
+    vList.innerHTML = '<span style="color:var(--muted);font-size:12px;">Aucune vue pour l\'instant</span>';
+  } else {
+    news.views.forEach(v => {
+      const el = document.createElement('div');
+      el.className = 'viewer-item';
+      el.innerHTML = `<span>👤</span> <span>${v}</span>`;
+      vList.appendChild(el);
+    });
+  }
+
+  document.getElementById('newsViewer').classList.add('open');
+}
+
+function closeNewsViewer() {
+  document.getElementById('newsViewer').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') { closeNewsViewer(); closeComposer(); closeAvatarModal(); }
+});
+
+// ===== NOTIFICATION PANEL =====
+function showNewsNotification(author, newsId) {
+  const notifContent = document.getElementById('notifContent');
+  const emptyNotif = notifContent.querySelector('.notif-empty');
+  if(emptyNotif) emptyNotif.remove();
+
+  const notif = document.createElement('div');
+  notif.className = 'news-notif';
+  notif.innerHTML = `
+    <div class="news-notif-icon">📰</div>
+    <div class="news-notif-text"><strong>${escapeHtml(author)}</strong> a partagé une news</div>
+  `;
+  notif.addEventListener('click', () => openNewsViewer(newsId));
+  notifContent.prepend(notif);
+
+  setTimeout(() => {
+    notif.style.opacity = '0';
+    notif.style.transition = 'opacity 0.5s';
+    setTimeout(() => {
+      notif.remove();
+      if(notifContent.children.length === 0) {
+        notifContent.innerHTML = '<div class="notif-empty"><div class="notif-icon">🔔</div>Aucune notification</div>';
+      }
+    }, 500);
+  }, 5 * 60 * 1000);
+}
+
+// ===== USERS RENDERING =====
+function renderUsersWithNews(users) {
+  const list = document.getElementById('userList');
+  if(!list) return;
+  const sk = document.getElementById('userSkeleton');
+  if (sk) sk.remove(); // Retirer le skeleton
+  list.innerHTML = '';
+
+  users.filter(u => u.username !== currentUser).forEach(u => {
+    const card = document.createElement('div');
+    card.className = 'user-card-item';
+    card.setAttribute('data-username', u.username);
+
+    const av = getAvatar(u.username);
+    card.innerHTML = `
+      <div class="user-card-avatar">
+        <img src="${av}" alt="" style="${av ? '' : 'display:none;'}width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        <span class="status-dot ${u.online ? 'online' : 'offline'}"></span>
+      </div>
+      <div class="user-card-name">${u.username}</div>
+      <div class="user-card-sub">${u.online ? 'En ligne' : 'Hors ligne'}</div>
+    `;
+
+    card.addEventListener('click', () => {
+      localStorage.setItem('selectedUser', u.username);
+      window.location.href = 'profile.html';
+    });
+
+    if(isAdmin) {
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑️';
+      delBtn.title = 'Supprimer le compte';
+      delBtn.style.cssText = 'background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.3);border-radius:8px;color:#ff4d6d;cursor:pointer;padding:4px 8px;font-size:12px;margin-top:4px;width:100%;transition:all 0.2s;';
+      delBtn.addEventListener('click', e => { e.stopPropagation(); adminDeleteUser(u.username); });
+      card.appendChild(delBtn);
+    }
+
+    list.appendChild(card);
+  });
+}
+
+function updatePubCount() {
+  const pubEl = document.getElementById('pub');
+  if(pubEl) pubEl.textContent = newsData.filter(n => n.author === currentUser).length;
+}
+
+function escapeHtml(text) {
+  const d = document.createElement('div');
+  d.textContent = text || '';
+  return d.innerHTML;
+}
+
+// ===== SOCKET EVENTS FOR NEWS =====
+function initNewsSocket() {
+  // Nouvelle news publiée
+  socket.on('newNews', async (news) => {
+    if (!avatarCache[news.author] && avatarCache[news.author] !== '') {
+      await loadAvatars([news.author]);
+    }
+    newsData.unshift(news);
+    updatePubCount();
+    renderAllNews();
+    if (news.author !== currentUser) {
+      showNewsNotification(news.author, news.id);
+    }
+  });
+
+  // News supprimée
+  socket.on('newsDeleted', (newsId) => {
+    newsData = newsData.filter(n => n.id !== newsId);
+    const el = document.getElementById('news-' + newsId);
+    if (el) { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }
+    updatePubCount();
+  });
+
+  // Like mis à jour
+  socket.on('newsLiked', ({ newsId, likes }) => {
+    const news = newsData.find(n => n.id === newsId);
+    if (news) news.likes = likes;
+
+    const btn = document.getElementById('like-btn-' + newsId);
+    const countEl = document.getElementById('like-count-' + newsId);
+    if (btn && countEl) {
+      const userLiked = likes.includes(currentUser);
+      btn.className = 'news-action-btn' + (userLiked ? ' liked' : '');
+      btn.innerHTML = (userLiked ? '❤️' : '🤍') + ' <span id="like-count-' + newsId + '">' + likes.length + '</span>';
+    }
+  });
+
+  // Commentaire ajouté
+  socket.on('newsCommented', async ({ newsId, comment, comments }) => {
+    const news = newsData.find(n => n.id === newsId);
+    if (news) news.comments = comments;
+
+    // Charger l'avatar du commentateur si pas en cache
+    if (!(comment.author in avatarCache)) {
+      await loadAvatars([comment.author]);
+    }
+
+    const countEl = document.getElementById('comment-count-' + newsId);
+    if (countEl) countEl.textContent = comments.length;
+
+    const listEl = document.getElementById('comment-list-' + newsId);
+    if (listEl) renderComments(listEl, comments);
+
+    // Ouvrir les commentaires si c'est mon commentaire
+    if (comment.author === currentUser) {
+      const commentsEl = document.getElementById('comments-' + newsId);
+      if (commentsEl) commentsEl.classList.add('open');
+    }
+  });
+
+  // Vue ajoutée
+  socket.on('newsViewed', ({ newsId, views }) => {
+    const news = newsData.find(n => n.id === newsId);
+    if (news) news.views = views;
+    const el = document.getElementById('views-count-' + newsId);
+    if (el) el.textContent = views.length;
+  });
+
+  // Avatar d'un user mis à jour
+  socket.on('avatarUpdated', ({ username, avatar }) => {
+    avatarCache[username] = avatar;
+    if (username === currentUser) updateMyAvatarUI();
+    // Mettre à jour les news cards
+    newsData.forEach(n => {
+      if (n.author === username) {
+        const img = document.getElementById('news-av-img-' + n.id);
+        if (img) setAvatarEl(img, username);
+      }
+    });
+    // Mettre à jour les user cards
+    const card = document.querySelector(`[data-username="${username}"] .user-card-avatar img`);
+    if (card) { card.src = avatar; card.style.display = avatar ? 'block' : 'none'; }
+  });
+
+  // Rechargement global
+  socket.on('newsUpdated', loadNews);
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', async () => {
+  // Charger avatar de l'utilisateur connecté d'abord
+  await loadAvatars([currentUser]);
+  updateMyAvatarUI();
+  // Charger toutes les news
+  await loadNews();
+  // Initialiser les events socket news
+  initNewsSocket();
+});
+
+function deleteOwnAccount() {
+  if(!confirm('Supprimer votre compte définitivement ?')) return;
+  fetch('/api/delete-account', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ username: currentUser })
+  }).then(r => r.json()).then(data => {
+    if(data.success) { localStorage.clear(); window.location.href='index.html'; }
+    else alert(data.error);
+  });
+}
+</script>
+</body>
+</html>
