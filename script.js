@@ -471,20 +471,19 @@ button.style.cssText = `
 
     socket.on("userDeleted", deletedUsername => {
 
-        if (deletedUsername === user) {
+    if (deletedUsername === user) {
 
-            localStorage.clear();
+        localStorage.clear();
 
-            alert("Votre compte a été supprimé");
+        alert("Votre compte a été supprimé");
 
-            window.location.href = "index.html";
+        window.location.href = "index.html";
 
-        } else {
+    } else {
 
-            socket.emit("getUsers");
+        socket.emit("getUsers");
 
-        }
-
+    }
     });
 
 }
