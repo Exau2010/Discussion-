@@ -363,13 +363,63 @@ if (document.getElementById("userList")) {
 
             pro.setAttribute("data-username", u.username);
 
-            const li = document.createElement("li");
+            pro.style.cssText = `
+    position:relative;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:14px;
+    cursor:pointer;
+    transition:0.2s;
+    backdrop-filter:blur(10px);
+`;
 
-            li.innerText = u.username;
+pro.addEventListener("mouseenter", () => {
 
-            const button = document.createElement("button");
+    pro.style.transform = "translateY(-2px)";
 
-            button.innerText = "Voir le profil";
+    pro.style.borderColor = "#00e5a0";
+
+});
+
+pro.addEventListener("mouseleave", () => {
+
+    pro.style.transform = "translateY(0px)";
+
+    pro.style.borderColor = "rgba(255,255,255,0.08)";
+
+});
+
+const li = document.createElement("li");
+
+li.style.listStyle = "none";
+
+li.innerHTML = `
+<span style="
+font-size:15px;
+font-weight:600;
+color:#e8eaed;
+letter-spacing:0.5px;
+">
+${u.username}
+</span>
+`;
+
+const button = document.createElement("button");
+
+button.innerText = "Voir le profil";
+
+button.style.cssText = `
+    margin-top:12px;
+    padding:10px 16px;
+    border:none;
+    border-radius:12px;
+    background:#00e5a0;
+    color:#080a0c;
+    cursor:pointer;
+    font-weight:bold;
+`;
 
             const goToProfile = () => {
 
