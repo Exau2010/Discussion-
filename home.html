@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta name="description" content="JEXREY, discussion, réseau">
+<meta name="keywords" content="JEXREY">
+<meta name="author" content="JEXREY">
+<link rel="icon" type="image/jpg" sizes="16x16" href="jexrey.jpg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEXREY — Accueil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #080a0c;
+    --surface: rgba(255,255,255,0.04);
+    --surface2: rgba(255,255,255,0.07);
+    --border:  rgba(255,255,255,0.08);
+    --accent:  #00e5a0;
+    --accent2: #00b4d8;
+    --text:    #e8eaed;
+    --muted:   #6b7280;
+    --online:  #22c55e;
+    --offline: #4b5563;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100%;
+    display: flex;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 60% at 5% 10%, rgba(0,180,216,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 50% at 95% 90%, rgba(0,229,160,0.06) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: rgba(10,12,15,0.95);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 8px;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    backdrop-filter: blur(20px);
+  }
+
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+
+  .sidebar-brand {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .sidebar-close {
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 20px; padding: 4px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .sidebar-close:hover { color: var(--text); background: var(--surface); }
+
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .sidebar-profile:hover { border-color: var(--accent); }
+
+  .sidebar-avatar {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px var(--accent);
+    overflow: hidden;
+    position: relative;
+  }
+  .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+
+  .sidebar-profile-info { flex: 1; min-width: 0; }
+  .sidebar-profile-name {
+    font-size: 14px; font-weight: 600; color: var(--accent);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sidebar-profile-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .sidebar-nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 12px; cursor: pointer;
+    color: var(--muted); font-size: 14px; font-weight: 500;
+    transition: all 0.2s; border: 1px solid transparent; text-decoration: none;
+  }
+  .nav-item:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
+  .nav-item.active { background: rgba(0,229,160,0.08); color: var(--accent); border-color: rgba(0,229,160,0.2); }
+  .nav-item img { width: 22px; height: 22px; border-radius: 6px; opacity: 0.7; transition: opacity 0.2s; }
+  .nav-item:hover img, .nav-item.active img { opacity: 1; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-logout {
+    width: 100%; padding: 12px; background: none;
+    border: 1px solid rgba(255,77,109,0.25); border-radius: 12px;
+    color: #ff4d6d; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .btn-logout:hover { background: rgba(255,77,109,0.08); border-color: #ff4d6d; }
+
+  .btn-delete-account {
+    width: 100%; padding: 10px; background: none;
+    border: 1px solid rgba(255,77,109,0.15); border-radius: 12px;
+    color: rgba(255,77,109,0.6); font-family: 'DM Sans', sans-serif; font-size: 12px;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px; margin-top: 8px;
+  }
+  .btn-delete-account:hover { background: rgba(255,77,109,0.08); border-color: #ff4d6d; color: #ff4d6d; }
+
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 90; display: none; backdrop-filter: blur(4px);
+  }
+  .overlay.show { display: block; }
+
+  /* ===== HEADER ===== */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; height: 64px;
+    background: rgba(8,10,12,0.9); border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px); display: flex; align-items: center;
+    padding: 0 20px; gap: 16px; z-index: 80;
+  }
+
+  .header-brand {
+    font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 4px;
+    color: var(--accent); font-weight: 700;
+  }
+  .header-brand img { width: 28px; height: 28px; border-radius: 6px; margin-right: 10px; vertical-align: middle; }
+
+  .menu-btn {
+    background: none; border: none; color: var(--text); cursor: pointer;
+    padding: 8px; border-radius: 10px; transition: background 0.2s; display: flex; align-items: center;
+  }
+  .menu-btn:hover { background: var(--surface); }
+  .menu-btn svg { width: 20px; height: 20px; }
+
+  .search-wrap { flex: 1; max-width: 340px; position: relative; margin-left: auto; }
+  .search-wrap input {
+    width: 100%; padding: 10px 16px 10px 40px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,160,0.1); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none; }
+
+  /* ===== NOTIF BADGE dans le header ===== */
+  .notif-header-btn {
+    position: relative;
+    background: none; border: 1px solid var(--border); border-radius: 10px;
+    color: var(--muted); cursor: pointer; padding: 8px 12px; font-size: 18px;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .notif-header-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .notif-header-badge {
+    position: absolute; top: -4px; right: -4px;
+    background: #ff4d6d; color: white; border-radius: 999px;
+    font-size: 10px; font-weight: 700; padding: 1px 5px;
+    border: 2px solid var(--bg); min-width: 18px; text-align: center;
+    display: none;
+  }
+  .notif-header-badge.visible { display: block; }
+
+  /* ===== NOTIF DROPDOWN ===== */
+  .notif-dropdown {
+    position: fixed; top: 70px; right: 20px;
+    width: 300px; max-height: 400px; overflow-y: auto;
+    background: rgba(10,12,15,0.98); border: 1px solid var(--border);
+    border-radius: 16px; padding: 14px; z-index: 9999;
+    display: none; flex-direction: column; gap: 8px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    scrollbar-width: none;
+  }
+  .notif-dropdown::-webkit-scrollbar { display: none; }
+  .notif-dropdown.open { display: flex; }
+  .notif-dropdown-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .notif-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px; background: rgba(255,255,255,0.03);
+    border-radius: 12px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.2s; animation: slideInRight 0.3s ease;
+  }
+  .notif-item:hover { border-color: var(--accent); background: rgba(0,229,160,0.05); }
+  @keyframes slideInRight { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+  .notif-dot { width: 8px; height: 8px; background: #ff4d6d; border-radius: 50%; flex-shrink: 0; }
+  .notif-text { flex: 1; color: var(--text); font-size: 13px; line-height: 1.4; }
+  .notif-text strong { color: var(--accent); }
+  .notif-count { background: #ff4d6d; color: white; border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 700; }
+  .notif-empty-text { text-align: center; padding: 20px; color: var(--muted); font-size: 13px; }
+
+  /* ===== MAIN ===== */
+  main {
+    overflow-x: hidden; margin-top: 64px; flex: 1;
+    padding: 24px; min-height: calc(100vh - 64px); position: relative; z-index: 1;
+  }
+
+  .section-title {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; margin-bottom: 16px;
+  }
+
+  /* ===== STATUS BAR (avatar only, no counts) ===== */
+  .status-bar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 16px; margin-bottom: 24px;
+  }
+
+  .my-avatar { position: relative; cursor: pointer; }
+  .my-avatar .avatar-img {
+    width: 48px; height: 48px; border-radius: 14px;
+    background-size: cover; background-position: center; background-color: #1a1a2e;
+    border: 2px solid var(--accent); overflow: hidden;
+  }
+  .my-avatar .avatar-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+
+  .status-info { flex: 1; }
+  .status-name { font-size: 15px; font-weight: 600; color: var(--accent); margin-bottom: 2px; }
+  .status-sub { font-size: 12px; color: var(--muted); }
+
+  /* ===== USER LIST ===== */
+  #userList {
+    display: flex; gap: 16px; width: 100%; max-width: 100%;
+    overflow-x: auto; overflow-y: hidden; padding-bottom: 10px;
+    scrollbar-width: none; -ms-overflow-style: none; margin-bottom: 32px;
+  }
+  #userList::-webkit-scrollbar { display: none; }
+
+  .user-card-item {
+    flex: 0 0 auto; width: 130px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 16px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer; transition: all 0.25s; position: relative;
+  }
+  .user-card-item:hover {
+    border-color: var(--accent); transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,229,160,0.15);
+  }
+
+  .user-card-avatar {
+    width: 60px; height: 60px; border-radius: 50%;
+    background-size: cover; background-position: center; background-color: #1a2a2a;
+    position: relative; border: 2px solid var(--border); overflow: hidden;
+  }
+  .user-card-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .user-card-item:hover .user-card-avatar { border-color: var(--accent); }
+
+  .status-dot {
+    position: absolute; bottom: 2px; right: 2px;
+    width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--bg);
+  }
+  .status-dot.online { background: var(--online); }
+  .status-dot.offline { background: var(--offline); }
+
+  .user-card-name { font-size: 12px; font-weight: 600; color: var(--text); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+  .user-card-sub { font-size: 10px; color: var(--muted); }
+
+  /* ===== AVATAR MODAL ===== */
+  .avatar-modal { display: none; position: fixed; inset: 0; z-index: 300; align-items: center; justify-content: center; padding: 20px; }
+  .avatar-modal.open { display: flex; }
+  .avatar-modal .modal-bg { position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); }
+  .avatar-box {
+    position: relative; z-index: 1; width: 100%; max-width: 420px;
+    background: #0f1115; border: 1px solid var(--border); border-radius: 24px;
+    padding: 28px; box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); text-align: center;
+  }
+  @keyframes popIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+  .avatar-box h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
+  .avatar-preview { width: 100px; height: 100px; border-radius: 24px; background: linear-gradient(135deg, var(--accent), var(--accent2)); margin: 0 auto 20px; border: 3px solid var(--accent); overflow: hidden; position: relative; }
+  .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar-file-input { display: none; }
+  .avatar-upload-btn { width: 100%; padding: 12px; background: var(--surface); border: 1px dashed var(--accent); border-radius: 12px; color: var(--accent); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; }
+  .avatar-upload-btn:hover { background: rgba(0,229,160,0.06); }
+  .avatar-save-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 12px; color: #080a0c; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
+  .avatar-save-btn:hover { box-shadow: 0 6px 20px rgba(0,229,160,0.35); }
+  .avatar-cancel-btn { width: 100%; padding: 10px; background: none; border: 1px solid var(--border); border-radius: 12px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .avatar-cancel-btn:hover { border-color: var(--text); color: var(--text); }
+
+  @keyframes skpulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  /* Responsive */
+  @media (max-width: 768px) { main { margin-right: 0; } }
+  @media (max-width: 480px) { main { padding: 16px; } }
+
+  /* ===== LOADING SCREEN ===== */
+  #app-loader { position:fixed;inset:0;background:#080a0c;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.4s ease; }
+  #app-loader.hidden{opacity:0;pointer-events:none;}
+  .ldr-brand{font-family:'DM Sans',sans-serif;font-size:22px;font-weight:700;color:#00e5a0;letter-spacing:5px;margin-bottom:20px;}
+  .ldr-bar{width:180px;height:3px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+  .ldr-fill{height:100%;width:0;background:linear-gradient(90deg,#00e5a0,#00b4d8);border-radius:99px;animation:ldfill 1.8s ease forwards;}
+  @keyframes ldfill{to{width:100%;}}
+</style>
+</head>
+<body>
+<div id="app-loader"><div class="ldr-brand">JEXREY</div><div class="ldr-bar"><div class="ldr-fill"></div></div></div>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-brand">JEXREY</span>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+
+  <div class="sidebar-profile" onclick="openAvatarModal()">
+    <div class="sidebar-avatar" id="sidebarAvatarWrap">
+      <img id="sidebarAvatarImg" src="" alt="" style="display:none;">
+    </div>
+    <div class="sidebar-profile-info">
+      <div class="sidebar-profile-name" id="user"></div>
+      <div class="sidebar-profile-sub">Changer ma photo de profil</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item active" onclick="window.location.href='home.html'">
+      <img src="icone accueil.png" alt=""> Accueil
+    </a>
+    <a class="nav-item" onclick="window.location.href='chat.html'">
+      <img src="icone msg.png" alt=""> Messages
+    </a>
+    <a class="nav-item" onclick="window.location.href='short.html'">
+      <img src="icone short.png" alt=""> Shorts
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">Se déconnecter</button>
+    <button class="btn-delete-account" onclick="deleteOwnAccount()">Supprimer mon compte</button>
+  </div>
+</aside>
+
+<!-- HEADER -->
+<header>
+  <button class="menu-btn" onclick="openSidebar()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <span class="header-brand">
+    <img src="jexrey.jpg" alt="logo">JEXREY
+  </span>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="search" list="mylist" type="text" placeholder="Rechercher un profil..." oninput="handleSearch(this.value)" autocomplete="off">
+    <datalist id="mylist"></datalist>
+  </div>
+
+  <!-- Bouton notifications -->
+  <button class="notif-header-btn" onclick="toggleNotifDropdown()" id="notifBtn" title="Notifications">
+    🔔
+    <span class="notif-header-badge" id="notifBadge">0</span>
+  </button>
+</header>
+
+<!-- NOTIF DROPDOWN -->
+<div class="notif-dropdown" id="notifDropdown">
+  <div class="notif-dropdown-title">🔔 Notifications</div>
+  <div id="notifList">
+    <div class="notif-empty-text">Aucune notification</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <!-- Status bar (avatar + nom seulement) -->
+  <div class="status-bar">
+    <div class="my-avatar" onclick="openAvatarModal()">
+      <div class="avatar-img" id="myAvatarDiv">
+        <img id="myAvatarImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px;">
+      </div>
+    </div>
+    <div class="status-info">
+      <div class="status-name" id="user1"></div>
+      <div class="status-sub">Bienvenue sur JEXREY</div>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="section-title">Membres de la communauté</div>
+  <div id="userList">
+    <div id="userSkeleton" style="display:flex;gap:10px;flex-wrap:wrap;padding:8px 0;">
+      <div style="width:80px;height:90px;border-radius:14px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite;"></div>
+      <div style="width:80px;height:90px;border-radius:14px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite 0.1s;"></div>
+      <div style="width:80px;height:90px;border-radius:14px;background:rgba(255,255,255,0.07);animation:skpulse 1.2s infinite 0.2s;"></div>
+    </div>
+  </div>
+</main>
+
+<!-- AVATAR MODAL -->
+<div class="avatar-modal" id="avatarModal">
+  <div class="modal-bg" onclick="closeAvatarModal()"></div>
+  <div class="avatar-box">
+    <h3>📷 Ma photo de profil</h3>
+    <div class="avatar-preview" id="avatarPreview">
+      <img id="avatarPreviewImg" src="" alt="" style="display:none;">
+    </div>
+    <input type="file" accept="image/*" class="avatar-file-input" id="avatarFileInput" onchange="previewAvatar(event)">
+    <button class="avatar-upload-btn" onclick="document.getElementById('avatarFileInput').click()">
+      📁 Choisir une photo
+    </button>
+    <button class="avatar-save-btn" onclick="saveAvatar()">✓ Enregistrer</button>
+    <button class="avatar-cancel-btn" onclick="closeAvatarModal()">Annuler</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js" defer></script>
+<script src="script.js" defer></script>
+<script>
+const currentUser = localStorage.getItem('user') || '';
+const isAdmin = localStorage.getItem('isAdmin') === 'true';
+let avatarCache = {};
+
+// ===== HIDE LOADER =====
+function checkHideLoader() {
+  const l = document.getElementById('app-loader');
+  if (l) { l.classList.add('hidden'); setTimeout(() => l.remove(), 500); }
+}
+setTimeout(checkHideLoader, 5000);
+
+// ===== AVATAR =====
+function getAvatar(username) { return avatarCache[username] || ''; }
+
+function updateMyAvatarUI() {
+  const av = getAvatar(currentUser);
+  const sImg = document.getElementById('sidebarAvatarImg');
+  if (sImg) { sImg.src = av || ''; sImg.style.display = av ? 'block' : 'none'; }
+  const mImg = document.getElementById('myAvatarImg');
+  if (mImg) { mImg.src = av || ''; mImg.style.display = av ? 'block' : 'none'; }
+  const pImg = document.getElementById('avatarPreviewImg');
+  if (pImg) { pImg.src = av || ''; pImg.style.display = av ? 'block' : 'none'; }
+}
+
+async function loadAvatars(usernames) {
+  const toLoad = usernames.filter(u => !(u in avatarCache));
+  if (!toLoad.length) return;
+  try {
+    const r = await fetch('/api/avatars/batch', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usernames: toLoad })
+    });
+    const d = await r.json();
+    toLoad.forEach(u => { avatarCache[u] = d[u] || ''; });
+  } catch { toLoad.forEach(u => { avatarCache[u] = ''; }); }
+}
+
+// ===== AVATAR MODAL =====
+let pendingAvatar = '';
+function openAvatarModal() {
+  closeSidebar();
+  pendingAvatar = getAvatar(currentUser);
+  const pImg = document.getElementById('avatarPreviewImg');
+  if (pendingAvatar) { pImg.src = pendingAvatar; pImg.style.display = 'block'; }
+  else pImg.style.display = 'none';
+  document.getElementById('avatarModal').classList.add('open');
+}
+function closeAvatarModal() { document.getElementById('avatarModal').classList.remove('open'); pendingAvatar = ''; }
+function previewAvatar(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { pendingAvatar = reader.result; const pImg = document.getElementById('avatarPreviewImg'); pImg.src = pendingAvatar; pImg.style.display = 'block'; };
+  reader.readAsDataURL(file);
+}
+async function saveAvatar() {
+  if (!pendingAvatar) return alert('Choisissez d\'abord une photo.');
+  try {
+    const r = await fetch('/api/avatar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser, avatar: pendingAvatar }) });
+    const d = await r.json();
+    if (d.success) { avatarCache[currentUser] = pendingAvatar; updateMyAvatarUI(); closeAvatarModal(); }
+    else alert(d.error || 'Erreur');
+  } catch { alert('Erreur réseau'); }
+}
+
+// ===== SIDEBAR =====
+function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+
+// ===== USERS RENDERING =====
+function renderUsers(users) {
+  const list = document.getElementById('userList');
+  if (!list) return;
+  const sk = document.getElementById('userSkeleton');
+  if (sk) sk.remove();
+  list.innerHTML = '';
+
+  users.filter(u => u.username !== currentUser).forEach(u => {
+    const card = document.createElement('div');
+    card.className = 'user-card-item';
+    card.setAttribute('data-username', u.username);
+    const av = avatarCache[u.username] || '';
+    card.innerHTML = `
+      <div class="user-card-avatar">
+        <img src="${av}" alt="" style="${av ? '' : 'display:none;'}width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        <span class="status-dot ${u.online ? 'online' : 'offline'}"></span>
+      </div>
+      <div class="user-card-name">${u.username}</div>
+      <div class="user-card-sub">${u.online ? 'En ligne' : 'Hors ligne'}</div>
+    `;
+    card.addEventListener('click', () => { localStorage.setItem('selectedUser', u.username); window.location.href = 'profile.html'; });
+    if (isAdmin) {
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑️'; delBtn.title = 'Supprimer le compte';
+      delBtn.style.cssText = 'background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.3);border-radius:8px;color:#ff4d6d;cursor:pointer;padding:4px 8px;font-size:12px;margin-top:4px;width:100%;';
+      delBtn.addEventListener('click', e => { e.stopPropagation(); adminDeleteUser(u.username); });
+      card.appendChild(delBtn);
+    }
+    list.appendChild(card);
+  });
+  checkHideLoader();
+}
+
+// ===== NOTIFICATIONS AMÉLIORÉES =====
+let unreadFrom = JSON.parse(localStorage.getItem('unreadFrom') || '{}');
+function saveUnread() { localStorage.setItem('unreadFrom', JSON.stringify(unreadFrom)); }
+
+function getTotalUnread() { return Object.values(unreadFrom).reduce((a, b) => a + b, 0); }
+
+function updateNotifBadge() {
+  const badge = document.getElementById('notifBadge');
+  const total = getTotalUnread();
+  if (!badge) return;
+  if (total > 0) { badge.textContent = total > 99 ? '99+' : total; badge.classList.add('visible'); }
+  else { badge.classList.remove('visible'); }
+}
+
+function renderNotifList() {
+  const list = document.getElementById('notifList');
+  if (!list) return;
+  list.innerHTML = '';
+  const keys = Object.keys(unreadFrom).filter(k => unreadFrom[k] > 0);
+  if (!keys.length) {
+    list.innerHTML = '<div class="notif-empty-text">Aucune notification</div>';
+    return;
+  }
+  keys.forEach(fromUser => {
+    const item = document.createElement('div');
+    item.className = 'notif-item';
+    item.setAttribute('data-from', fromUser);
+    item.innerHTML = `
+      <div class="notif-dot"></div>
+      <div class="notif-text"><strong>${fromUser}</strong> vous a envoyé un message</div>
+      <span class="notif-count">${unreadFrom[fromUser]}</span>
+    `;
+    item.addEventListener('click', () => { localStorage.setItem('toUser', fromUser); window.location.href = 'chat.html'; });
+    list.appendChild(item);
+  });
+}
+
+function toggleNotifDropdown() {
+  const dd = document.getElementById('notifDropdown');
+  dd.classList.toggle('open');
+  if (dd.classList.contains('open')) renderNotifList();
+}
+
+// Fermer dropdown si clic hors
+document.addEventListener('click', e => {
+  const dd = document.getElementById('notifDropdown');
+  const btn = document.getElementById('notifBtn');
+  if (dd && btn && !dd.contains(e.target) && !btn.contains(e.target)) {
+    dd.classList.remove('open');
+  }
+});
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', async () => {
+  setTimeout(checkHideLoader, 8000);
+  fetch('/api/warmup').catch(() => {});
+
+  await loadAvatars([currentUser]);
+  updateMyAvatarUI();
+  updateNotifBadge();
+  renderNotifList();
+
+  // Socket
+  if (typeof socket !== 'undefined' && socket) {
+    socket.on('connect', () => { socket.emit('join', currentUser); socket.emit('getUsers'); });
+    if (socket.connected) { socket.emit('join', currentUser); socket.emit('getUsers'); }
+
+    socket.on('users', async users => {
+      const usernames = users.map(u => u.username);
+      await loadAvatars(usernames);
+      renderUsers(users);
+      const dl = document.getElementById('mylist');
+      if (dl) { dl.innerHTML = ''; users.forEach(u => { const opt = document.createElement('option'); opt.value = u.username; dl.appendChild(opt); }); }
+    });
+
+    socket.on('newMessageNotification', ({ from, to }) => {
+      if (to !== currentUser) return;
+      const onChatPage = document.getElementById('toUser') !== null;
+      if (onChatPage && localStorage.getItem('toUser') === from) return;
+      if (!unreadFrom[from]) unreadFrom[from] = 0;
+      unreadFrom[from]++;
+      saveUnread();
+      updateNotifBadge();
+      // Mise à jour en direct dans le dropdown s'il est ouvert
+      const dd = document.getElementById('notifDropdown');
+      if (dd && dd.classList.contains('open')) renderNotifList();
+      // Red dot sur la carte
+      updateRedDot(from);
+    });
+
+    socket.on('messagesRead', ({ from }) => {
+      if (unreadFrom[from]) { delete unreadFrom[from]; saveUnread(); updateNotifBadge(); removeRedDot(from); }
+    });
+
+    socket.on('avatarUpdated', ({ username, avatar }) => {
+      avatarCache[username] = avatar;
+      if (username === currentUser) updateMyAvatarUI();
+      const card = document.querySelector(`[data-username="${username}"] .user-card-avatar img`);
+      if (card) { card.src = avatar; card.style.display = avatar ? 'block' : 'none'; }
+    });
+
+    socket.on('userDeleted', deletedUsername => {
+      if (deletedUsername === currentUser) { localStorage.clear(); alert('Votre compte a été supprimé'); window.location.href = 'index.html'; }
+      else socket.emit('getUsers');
+    });
+
+    // Fallback HTTP si socket lent
+    setTimeout(async () => {
+      const list = document.getElementById('userList');
+      if (list && list.querySelector('.user-card-item') === null) {
+        try {
+          const r = await fetch('/api/users');
+          if (r.ok) {
+            const users = await r.json();
+            await loadAvatars(users.map(u => u.username));
+            renderUsers(users);
+          }
+        } catch {}
+      }
+    }, 3000);
+  }
+
+  // Restaurer red dots existants
+  Object.keys(unreadFrom).forEach(fromUser => { if (unreadFrom[fromUser] > 0) updateRedDot(fromUser); });
+});
+
+// ===== RED DOT sur les cartes =====
+function updateRedDot(fromUser) {
+  document.querySelectorAll(`.red-dot[data-user="${fromUser}"]`).forEach(d => d.remove());
+  document.querySelectorAll(`[data-username="${fromUser}"]`).forEach(card => {
+    const dot = document.createElement('div');
+    dot.className = 'red-dot'; dot.setAttribute('data-user', fromUser);
+    dot.style.cssText = 'position:absolute;top:6px;right:6px;width:12px;height:12px;background:#ff4d6d;border-radius:50%;border:2px solid #080a0c;z-index:100;';
+    card.appendChild(dot);
+  });
+}
+function removeRedDot(fromUser) {
+  document.querySelectorAll(`.red-dot[data-user="${fromUser}"]`).forEach(d => { d.style.opacity = '0'; d.style.transition = 'opacity 0.3s'; setTimeout(() => d.remove(), 300); });
+}
+
+// ===== SEARCH =====
+function handleSearch(val) {
+  const v = val.trim(); if (!v) return;
+  const opts = document.querySelectorAll('#mylist option');
+  for (const opt of opts) {
+    if (opt.value.toLowerCase() === v.toLowerCase()) {
+      document.getElementById('search').value = '';
+      localStorage.setItem('selectedUser', opt.value);
+      window.location.href = 'profile.html'; return;
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const searchEl = document.getElementById('search');
+  if (searchEl) {
+    searchEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const v = e.target.value.trim(); if (!v) return;
+        const opts = document.querySelectorAll('#mylist option');
+        for (const opt of opts) {
+          if (opt.value.toLowerCase().includes(v.toLowerCase())) {
+            e.target.value = ''; localStorage.setItem('selectedUser', opt.value); window.location.href = 'profile.html'; return;
+          }
+        }
+      }
+    });
+  }
+});
+
+// ===== DELETE OWN ACCOUNT =====
+function deleteOwnAccount() {
+  if (!confirm('Supprimer votre compte définitivement ?')) return;
+  fetch('/api/delete-account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser }) })
+    .then(r => r.json()).then(data => {
+      if (data.success) { localStorage.clear(); window.location.href = 'index.html'; }
+      else alert(data.error);
+    });
+}
+
+function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text || ''; return d.innerHTML; }
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAvatarModal(); document.getElementById('notifDropdown').classList.remove('open'); } });
+</script>
+</body>
+</html>

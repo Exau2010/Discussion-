@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEXREY — Profil</title>
+<link rel="icon" type="image/jpg" href="jexrey.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #080a0c;
+    --surface: rgba(255,255,255,0.04);
+    --border:  rgba(255,255,255,0.08);
+    --accent:  #00e5a0;
+    --accent2: #00b4d8;
+    --text:    #e8eaed;
+    --muted:   #6b7280;
+  }
+
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100dvh; padding-bottom: 40px;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,229,160,0.06) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0;
+    display: flex; align-items: center; gap: 14px;
+    padding: 0 20px; height: 64px;
+    background: rgba(8,10,12,0.92); border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px); z-index: 80;
+  }
+  .back-btn {
+    background: none; border: 1px solid var(--border); border-radius: 10px;
+    color: var(--muted); cursor: pointer; padding: 8px 14px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .header-title { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 3px; color: var(--accent); }
+
+  /* MAIN */
+  main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 28px 20px; }
+
+  /* PROFILE CARD */
+  .profile-card {
+    background: rgba(12,14,18,0.95); border: 1px solid var(--border);
+    border-radius: 24px; padding: 32px; margin-bottom: 20px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .profile-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 100px;
+    background: linear-gradient(135deg, rgba(0,229,160,0.06), rgba(0,180,216,0.04));
+  }
+
+  .profile-avatar-wrap {
+    position: relative; width: 100px; height: 100px; margin: 0 auto 16px;
+  }
+  .profile-avatar {
+    width: 100px; height: 100px; border-radius: 50%;
+    border: 3px solid var(--accent);
+    background: linear-gradient(135deg, #1a3a3a, #1a1a3a);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-size: 36px; color: var(--accent); font-weight: 700;
+    position: relative; z-index: 1;
+    box-shadow: 0 0 0 6px rgba(0,229,160,0.1);
+  }
+  .profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+  .status-ring {
+    position: absolute; bottom: 4px; right: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 3px solid var(--bg); z-index: 2;
+    background: #4b5563;
+  }
+  .status-ring.online { background: #22c55e; }
+
+  .profile-username {
+    font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px;
+  }
+  .profile-status-text { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+  .profile-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn-chat {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 14px; color: #080a0c;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-chat:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,160,0.3); }
+
+  /* INFO SECTION */
+  .info-section {
+    background: rgba(12,14,18,0.95); border: 1px solid var(--border);
+    border-radius: 20px; padding: 24px; margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; margin-bottom: 16px;
+  }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .info-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px;
+  }
+  .info-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .info-value { font-size: 14px; color: var(--text); font-weight: 500; }
+  .info-value.empty { color: var(--muted); font-style: italic; font-size: 13px; }
+
+  .bio-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; margin-top: 12px;
+  }
+  .bio-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+  .bio-text.empty { color: var(--muted); font-style: italic; font-size: 13px; }
+
+  /* EDIT FORM (seulement pour son propre profil) */
+  .edit-section {
+    background: rgba(12,14,18,0.95); border: 1px solid var(--border);
+    border-radius: 20px; padding: 24px; margin-bottom: 16px;
+    display: none;
+  }
+  .edit-section.visible { display: block; }
+  .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .edit-input {
+    width: 100%; padding: 11px 14px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .edit-input:focus { border-color: var(--accent); }
+  .edit-input::placeholder { color: var(--muted); }
+  .edit-textarea {
+    width: 100%; padding: 11px 14px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+    resize: vertical; min-height: 80px; transition: border-color 0.2s;
+  }
+  .edit-textarea:focus { border-color: var(--accent); }
+  .edit-textarea::placeholder { color: var(--muted); }
+  .btn-save {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 12px; color: #080a0c;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-save:hover { box-shadow: 0 6px 20px rgba(0,229,160,0.3); }
+  .btn-toggle-edit {
+    padding: 10px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px; color: var(--muted);
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-toggle-edit:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Admin badge */
+  .admin-badge {
+    display: none; padding: 16px; background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.2); border-radius: 16px; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .admin-badge-text { font-size: 13px; color: #fbbf24; }
+  .btn-admin-del {
+    padding: 10px 18px; background: rgba(255,77,109,0.1);
+    border: 1px solid rgba(255,77,109,0.3); border-radius: 10px;
+    color: #ff4d6d; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-admin-del:hover { background: rgba(255,77,109,0.2); }
+
+  @media (max-width: 480px) {
+    .info-grid, .edit-grid { grid-template-columns: 1fr; }
+    .profile-actions { flex-direction: column; }
+    .btn-chat, .btn-toggle-edit { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="back-btn" onclick="window.location.href='home.html'">← Retour</button>
+  <span class="header-title">PROFIL</span>
+</header>
+
+<main>
+  <!-- Admin panel -->
+  <div class="admin-badge" id="adminBadge" style="display:none;">
+    <span class="admin-badge-text">👑 Mode admin — Vous pouvez supprimer ce compte</span>
+    <button class="btn-admin-del" id="adminDelBtn" onclick="adminDeleteUser()">🗑️ Supprimer</button>
+  </div>
+
+  <!-- Profile card -->
+  <div class="profile-card">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar" id="profileAvatar">
+        <img id="profileAvatarImg" src="" alt="" style="display:none;">
+        <span id="profileAvatarInitial"></span>
+      </div>
+      <div class="status-ring" id="statusRing"></div>
+    </div>
+    <div class="profile-username" id="profileUsernameDetail">—</div>
+    <div class="profile-status-text" id="profileStatus">Chargement...</div>
+    <div class="profile-actions">
+      <button class="btn-chat" id="startChatBtn" onclick="startChat()">💬 Envoyer un message</button>
+      <button class="btn-toggle-edit" id="editToggleBtn" style="display:none;" onclick="toggleEdit()">✏️ Modifier mon profil</button>
+    </div>
+  </div>
+
+  <!-- Info section -->
+  <div class="info-section" id="infoSection">
+    <div class="section-title">Informations</div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">Prénom</div><div class="info-value" id="infoPrenom">—</div></div>
+      <div class="info-item"><div class="info-label">Âge</div><div class="info-value" id="infoAge">—</div></div>
+      <div class="info-item"><div class="info-label">Profession</div><div class="info-value" id="infoProfession">—</div></div>
+      <div class="info-item"><div class="info-label">Ville</div><div class="info-value" id="infoVille">—</div></div>
+      <div class="info-item"><div class="info-label">Anniversaire</div><div class="info-value" id="infoAnniversaire">—</div></div>
+      <div class="info-item"><div class="info-label">Situation</div><div class="info-value" id="infoSituation">—</div></div>
+    </div>
+    <div class="bio-box">
+      <div class="info-label" style="margin-bottom:8px;">Bio</div>
+      <div class="bio-text" id="infoBio">Aucune bio renseignée.</div>
+    </div>
+  </div>
+
+  <!-- Edit section (propre profil seulement) -->
+  <div class="edit-section" id="editSection">
+    <div class="section-title">✏️ Modifier mon profil</div>
+    <div class="edit-grid">
+      <input class="edit-input" id="editPrenom" type="text" placeholder="Prénom">
+      <input class="edit-input" id="editAge" type="text" placeholder="Âge">
+      <input class="edit-input" id="editProfession" type="text" placeholder="Profession">
+      <input class="edit-input" id="editVille" type="text" placeholder="Ville">
+      <input class="edit-input" id="editAnniversaire" type="text" placeholder="Anniversaire (ex: 25 décembre)">
+      <input class="edit-input" id="editSituation" type="text" placeholder="Situation (ex: Célibataire)">
+    </div>
+    <textarea class="edit-textarea" id="editBio" placeholder="Parlez de vous..."></textarea>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+      <button class="btn-save" onclick="saveProfile()">✓ Enregistrer</button>
+      <button class="btn-toggle-edit" onclick="toggleEdit()">Annuler</button>
+    </div>
+  </div>
+</main>
+
+<script src="/socket.io/socket.io.js" defer></script>
+<script src="script.js" defer></script>
+<script>
+const currentUser   = localStorage.getItem('user') || '';
+const isAdmin       = localStorage.getItem('isAdmin') === 'true';
+const selectedUser  = localStorage.getItem('selectedUser') || '';
+
+if (!currentUser) location.href = 'index.html';
+if (!selectedUser) location.href = 'home.html';
+
+const isOwnProfile = (currentUser === selectedUser);
+
+// ===== Init =====
+window.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('profileUsernameDetail').textContent = selectedUser;
+  document.getElementById('profileAvatarInitial').textContent  = selectedUser[0]?.toUpperCase() || '?';
+
+  // Boutons
+  if (isOwnProfile) {
+    document.getElementById('startChatBtn').style.display = 'none';
+    document.getElementById('editToggleBtn').style.display = 'inline-flex';
+  }
+
+  // Admin
+  if (isAdmin && !isOwnProfile) {
+    document.getElementById('adminBadge').style.display = 'flex';
+  }
+
+  // Charger avatar + profil
+  await loadProfileData();
+});
+
+async function loadProfileData() {
+  try {
+    // Avatar
+    const avRes = await fetch(`/api/avatar/${encodeURIComponent(selectedUser)}`);
+    if (avRes.ok) {
+      const avData = await avRes.json();
+      if (avData.avatar) {
+        const img = document.getElementById('profileAvatarImg');
+        img.src = avData.avatar;
+        img.style.display = 'block';
+        document.getElementById('profileAvatarInitial').style.display = 'none';
+      }
+    }
+    // Profil info
+    const pRes = await fetch(`/api/profile/${encodeURIComponent(selectedUser)}`);
+    if (pRes.ok) {
+      const data = await pRes.json();
+      if (!data.error) fillProfile(data);
+    }
+  } catch {}
+}
+
+function fillProfile(data) {
+  setInfo('infoPrenom', data.prenom);
+  setInfo('infoAge', data.age);
+  setInfo('infoProfession', data.profession);
+  setInfo('infoVille', data.ville);
+  setInfo('infoAnniversaire', data.anniversaire);
+  setInfo('infoSituation', data.situation);
+  const bioEl = document.getElementById('infoBio');
+  if (data.bio) { bioEl.textContent = data.bio; bioEl.classList.remove('empty'); }
+  else { bioEl.textContent = 'Aucune bio renseignée.'; bioEl.classList.add('empty'); }
+
+  // Pré-remplir édition
+  document.getElementById('editPrenom').value       = data.prenom || '';
+  document.getElementById('editAge').value          = data.age || '';
+  document.getElementById('editProfession').value   = data.profession || '';
+  document.getElementById('editVille').value        = data.ville || '';
+  document.getElementById('editAnniversaire').value = data.anniversaire || '';
+  document.getElementById('editSituation').value    = data.situation || '';
+  document.getElementById('editBio').value          = data.bio || '';
+}
+
+function setInfo(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (val) { el.textContent = val; el.classList.remove('empty'); }
+  else { el.textContent = 'Non renseigné'; el.classList.add('empty'); }
+}
+
+// Status en ligne via socket
+if (typeof socket !== 'undefined' && socket) {
+  socket.on('users', users => {
+    const found = users.find(u => u.username === selectedUser);
+    const ring  = document.getElementById('statusRing');
+    const statusEl = document.getElementById('profileStatus');
+    if (found && found.online) {
+      ring.classList.add('online');
+      statusEl.textContent = 'En ligne';
+      statusEl.style.color = '#22c55e';
+    } else {
+      ring.classList.remove('online');
+      statusEl.textContent = 'Hors ligne';
+      statusEl.style.color = '';
+    }
+  });
+
+  socket.on('avatarUpdated', ({ username, avatar }) => {
+    if (username !== selectedUser) return;
+    const img = document.getElementById('profileAvatarImg');
+    if (avatar) { img.src = avatar; img.style.display = 'block'; document.getElementById('profileAvatarInitial').style.display = 'none'; }
+  });
+}
+
+// Edit toggle
+let editOpen = false;
+function toggleEdit() {
+  editOpen = !editOpen;
+  document.getElementById('editSection').classList.toggle('visible', editOpen);
+  const btn = document.getElementById('editToggleBtn');
+  btn.textContent = editOpen ? '✕ Fermer' : '✏️ Modifier mon profil';
+}
+
+// Save profile
+async function saveProfile() {
+  const data = {
+    username:     currentUser,
+    prenom:       document.getElementById('editPrenom').value.trim(),
+    age:          document.getElementById('editAge').value.trim(),
+    profession:   document.getElementById('editProfession').value.trim(),
+    anniversaire: document.getElementById('editAnniversaire').value.trim(),
+    ville:        document.getElementById('editVille').value.trim(),
+    situation:    document.getElementById('editSituation').value.trim(),
+    bio:          document.getElementById('editBio').value.trim(),
+  };
+  try {
+    const res = await fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const json = await res.json();
+    if (json.success) { fillProfile(data); toggleEdit(); }
+    else alert(json.error || 'Erreur');
+  } catch { alert('Erreur réseau'); }
+}
+
+// Start chat
+function startChat() {
+  localStorage.setItem('toUser', selectedUser);
+  window.location.href = 'chat.html';
+}
+
+// Admin delete
+async function adminDeleteUser() {
+  if (!confirm(`Supprimer le compte de ${selectedUser} ?`)) return;
+  try {
+    const res = await fetch('/api/admin/delete-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser, targetUsername: selectedUser }) });
+    const json = await res.json();
+    if (json.success) { alert('Compte supprimé.'); window.location.href = 'home.html'; }
+    else alert(json.error);
+  } catch { alert('Erreur réseau'); }
+}
+</script>
+</body>
+</html>

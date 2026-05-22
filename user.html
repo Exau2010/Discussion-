@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta name="description" content="discussion, réseau">
-<meta name="keywords" content="JEXREY">
-<link rel="icon" type="image/jpg" sizes="16x16" href="jexrey.jpg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JEXREY — Mon Profil</title>
+<title>JEXREY — Membres</title>
+<link rel="icon" type="image/jpg" href="jexrey.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -25,348 +20,300 @@
     --accent2: #00b4d8;
     --text:    #e8eaed;
     --muted:   #6b7280;
-    --danger:  #ff4d6d;
+    --online:  #22c55e;
+    --offline: #4b5563;
   }
 
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
+    min-height: 100dvh;
   }
-
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,229,160,0.07) 0%, transparent 60%);
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse 50% 40% at 90% 10%, rgba(0,180,216,0.06), transparent 60%);
     pointer-events: none;
-    z-index: 0;
   }
 
+  /* HEADER */
   header {
     position: sticky; top: 0;
-    display: flex; align-items: center; gap: 16px;
-    padding: 0 24px; height: 60px;
-    background: rgba(8,10,12,0.9);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(20px);
-    z-index: 100;
+    display: flex; align-items: center; gap: 14px;
+    padding: 0 20px; height: 64px;
+    background: rgba(8,10,12,0.92); border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px); z-index: 80;
   }
-
-  .header-brand { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 4px; color: var(--accent); font-weight: 700; flex: 1; }
-  .header-user { font-size: 14px; font-weight: 600; color: var(--accent); }
-
-  .header-btn {
-    padding: 8px 18px;
+  .header-brand { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 3px; color: var(--accent); flex: 1; }
+  .back-btn {
     background: none; border: 1px solid var(--border); border-radius: 10px;
-    color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px;
-    cursor: pointer; transition: all 0.2s;
+    color: var(--muted); cursor: pointer; padding: 8px 14px; font-size: 14px;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
   }
-  .header-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .header-btn.danger { border-color: rgba(255,77,109,0.3); color: var(--danger); }
-  .header-btn.danger:hover { background: rgba(255,77,109,0.08); border-color: var(--danger); }
-
-  .profile-hero { position: relative; z-index: 1; max-width: 860px; margin: 32px auto 0; padding: 0 24px; }
-
-  .hero-banner {
-    height: 180px; border-radius: 20px 20px 0 0;
-    background: linear-gradient(135deg, #0a1a2a, #0d2a1a);
-    background-image: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(0,229,160,0.15) 0%, transparent 60%), linear-gradient(135deg, #0a1a2a, #0d2a1a);
-    position: relative; overflow: hidden;
+  .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .search-wrap { position: relative; }
+  .search-wrap input {
+    padding: 10px 16px 10px 38px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+    transition: border-color 0.2s; min-width: 180px;
   }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
 
-  .hero-banner::after {
-    content: ''; position: absolute; inset: 0;
-    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
+  /* MAIN */
+  main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 28px 20px; }
+
+  .page-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 20px; }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 8px 16px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
   }
+  .filter-btn.active { background: rgba(0,229,160,0.1); border-color: rgba(0,229,160,0.3); color: var(--accent); }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-  .hero-body {
-    background: rgba(10,12,15,0.97); border: 1px solid var(--border); border-top: none;
-    border-radius: 0 0 20px 20px; padding: 60px 28px 28px; position: relative;
-  }
-
-  .hero-avatar {
-    position: absolute; top: -52px; left: 28px;
-    width: 100px; height: 100px; border-radius: 24px;
-    background-image: url("bk.png"); background-size: cover; background-position: center; background-color: #1a2a2a;
-    border: 3px solid var(--bg);
-    box-shadow: 0 0 0 2px var(--accent), 0 8px 24px rgba(0,0,0,0.4);
-  }
-
-  .hero-info { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-  .hero-name { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-  .hero-handle { font-size: 13px; color: var(--accent); margin-bottom: 8px; }
-  .hero-bio { font-size: 13px; color: var(--muted); max-width: 400px; }
-  .hero-stats { display: flex; gap: 24px; }
-  .hero-stat { text-align: center; }
-  .hero-stat-value { font-size: 22px; font-weight: 700; color: var(--accent); line-height: 1; }
-  .hero-stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
-
-  .profile-content {
-    max-width: 860px; margin: 20px auto 40px; padding: 0 24px;
-    display: grid; grid-template-columns: 260px 1fr; gap: 20px; position: relative; z-index: 1;
+  /* GRID */
+  .users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
   }
 
-  .profile-sidebar { display: flex; flex-direction: column; gap: 16px; }
-
-  .info-card {
-    background: rgba(10,12,15,0.97); border: 1px solid var(--border); border-radius: 18px; padding: 20px;
+  .user-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 20px 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    cursor: pointer; transition: all 0.25s; position: relative;
+  }
+  .user-card:hover {
+    border-color: var(--accent); transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,229,160,0.12);
   }
 
-  .info-card-title {
-    font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
-    font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  .user-card-avatar {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: linear-gradient(135deg, #1a3a3a, #1a1a3a);
+    border: 2px solid var(--border); overflow: hidden;
+    position: relative; transition: border-color 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 700; color: var(--accent);
   }
+  .user-card:hover .user-card-avatar { border-color: var(--accent); }
+  .user-card-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; inset: 0; }
 
-  .info-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .info-row:last-child { border-bottom: none; }
-
-  .info-icon { width: 32px; height: 32px; background: var(--surface); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-  .info-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-
-  .info-value {
-    width: 100%; background: none; border: none; outline: none;
-    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
-    padding: 0; transition: color 0.2s;
+  .status-dot {
+    position: absolute; bottom: 3px; right: 3px;
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid var(--bg);
   }
-  .info-value::placeholder { color: var(--muted); font-style: italic; }
-  .info-value:focus { color: var(--accent); }
+  .status-dot.online  { background: var(--online); }
+  .status-dot.offline { background: var(--offline); }
 
-  .profile-main { display: flex; flex-direction: column; gap: 16px; }
+  .user-card-name { font-size: 13px; font-weight: 600; color: var(--text); text-align: center; word-break: break-word; }
+  .user-card-status { font-size: 11px; color: var(--muted); }
+  .user-card-status.online { color: var(--online); }
 
-  .content-card {
-    background: rgba(10,12,15,0.97); border: 1px solid var(--border); border-radius: 18px; padding: 20px; min-height: 100px;
-    position: relative; overflow: hidden; transition: border-color 0.3s;
+  .user-card-actions { display: flex; gap: 6px; margin-top: 4px; width: 100%; }
+  .card-action-btn {
+    flex: 1; padding: 8px 6px; background: none;
+    border: 1px solid var(--border); border-radius: 10px;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;
   }
-  .content-card:hover { border-color: rgba(0,229,160,0.2); }
-  .content-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity: 0; transition: opacity 0.3s; }
-  .content-card:hover::before { opacity: 1; }
+  .card-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .card-action-btn.chat:hover { background: rgba(0,229,160,0.06); }
+  .card-action-btn.del { border-color: rgba(255,77,109,0.2); color: rgba(255,77,109,0.7); }
+  .card-action-btn.del:hover { border-color: #ff4d6d; color: #ff4d6d; background: rgba(255,77,109,0.06); }
 
-  .card-tag { display: inline-block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.2); border-radius: 20px; padding: 3px 10px; margin-bottom: 12px; font-weight: 600; }
-  .card-empty { text-align: center; padding: 20px; color: var(--muted); font-size: 13px; }
-  .card-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.4; }
+  /* Skeleton */
+  .skel-card { height: 190px; background: rgba(255,255,255,0.04); border-radius: 20px; animation: skpulse 1.2s infinite; }
+  @keyframes skpulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
-  .badge-wip { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; margin-top: 8px; }
-  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+  /* Empty */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+  .empty-text { font-size: 15px; }
 
-  @media (max-width: 768px) { .profile-content { grid-template-columns: 1fr; } .hero-info { flex-direction: column; } }
-  @media (max-width: 480px) { .profile-hero { padding: 0 12px; margin-top: 16px; } .profile-content { padding: 0 12px; } .hero-banner { height: 120px; } header { padding: 0 16px; gap: 8px; } }
-
-  .save-bar {
-    position: sticky; bottom: 0;
-    background: rgba(8,10,12,0.95);
-    border-top: 1px solid var(--border);
-    padding: 12px 24px;
-    display: flex; justify-content: flex-end;
-    z-index: 50;
-    backdrop-filter: blur(10px);
-  }
-  .save-btn {
-    padding: 11px 28px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none; border-radius: 12px;
-    color: #080a0c; font-family: 'DM Sans', sans-serif;
-    font-size: 14px; font-weight: 700; cursor: pointer;
-    transition: all 0.2s;
-  }
-  .save-btn:hover { box-shadow: 0 6px 20px rgba(0,229,160,0.35); }
-  .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .toast {
-    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-    background: rgba(0,229,160,0.12); border: 1px solid rgba(0,229,160,0.3);
-    color: var(--accent); padding: 12px 24px; border-radius: 12px;
-    font-size: 14px; font-weight: 500; z-index: 9999;
-    opacity: 0; transition: opacity 0.3s;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; }
-
-  /* bio field */
-  .bio-wrap textarea.info-value {
-    resize: vertical; min-height: 60px; line-height: 1.5;
-    padding: 4px 0;
+  @media (max-width: 500px) {
+    .search-wrap input { min-width: 130px; }
+    .users-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-brand">JEXREY</div>
-  <span class="header-user" id="user"></span>
-  <button class="header-btn" onclick="goHome()">🏠 Accueil</button>
-  <button class="header-btn danger" onclick="deleteOwnAccount()">Supprimer mon compte</button>
-  <button class="header-btn danger" onclick="logout()">Déconnexion</button>
+  <button class="back-btn" onclick="window.location.href='home.html'">← Accueil</button>
+  <span class="header-brand">MEMBRES</span>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Rechercher..." oninput="filterUsers(this.value)">
+  </div>
 </header>
 
-<div class="profile-hero">
-  <div class="hero-banner"></div>
-  <div class="hero-body">
-    <div class="hero-avatar"></div>
-    <div class="hero-info">
-      <div>
-        <div class="hero-name" id="user1"></div>
-        <div class="hero-handle">@<span id="hero-handle-text"></span></div>
-        <div class="hero-bio">Membre de la communauté JEXREY</div>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hero-stat-value">133</div><div class="hero-stat-label">Amis</div></div>
-        <div class="hero-stat"><div class="hero-stat-value">15</div><div class="hero-stat-label">Pubs</div></div>
-        <div class="hero-stat"><div class="hero-stat-value">0</div><div class="hero-stat-label">Vues</div></div>
-      </div>
-    </div>
-  </div>
-</div>
+<main>
+  <div class="page-title">Communauté JEXREY</div>
 
-<div class="profile-content">
-  <div class="profile-sidebar">
-    <div class="info-card">
-      <div class="info-card-title">Mes informations</div>
-      <div class="info-row">
-        <div class="info-icon">👤</div>
-        <div style="flex:1"><div class="info-label">Prénom</div><input class="info-value" id="field-prenom" type="text" placeholder="Votre prénom..."></div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon">🎂</div>
-        <div style="flex:1"><div class="info-label">Âge</div><input class="info-value" id="field-age" type="text" placeholder="Votre âge..."></div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon">💼</div>
-        <div style="flex:1"><div class="info-label">Profession</div><input class="info-value" id="field-profession" type="text" placeholder="Votre métier..."></div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon">📅</div>
-        <div style="flex:1"><div class="info-label">Anniversaire</div><input class="info-value" id="field-anniversaire" type="text" placeholder="JJ / MM / AAAA"></div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon">📍</div>
-        <div style="flex:1"><div class="info-label">Ville</div><input class="info-value" id="field-ville" type="text" placeholder="Votre ville..."></div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon">❤️</div>
-        <div style="flex:1"><div class="info-label">Situation</div><input class="info-value" id="field-situation" type="text" placeholder="Célib / En couple..."></div>
-      </div>
-    </div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all', this)">Tous</button>
+    <button class="filter-btn" onclick="setFilter('online', this)">🟢 En ligne</button>
+    <button class="filter-btn" onclick="setFilter('offline', this)">⚫ Hors ligne</button>
   </div>
 
-  <div class="profile-main">
-    <div class="content-card bio-wrap">
-      <div class="card-tag">Bio</div>
-      <textarea class="info-value" id="field-bio" placeholder="Parlez de vous en quelques mots..." style="width:100%;background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;resize:vertical;min-height:80px;line-height:1.6;"></textarea>
-    </div>
-    <div class="content-card" id="my-news-card">
-      <div class="card-tag">Mes News</div>
-      <div id="my-news-list"><div class="card-empty"><div class="card-empty-icon">📰</div>Aucune news partagée</div></div>
-    </div>
+  <div class="users-grid" id="usersGrid">
+    <!-- Skeletons -->
+    <div class="skel-card"></div>
+    <div class="skel-card"></div>
+    <div class="skel-card"></div>
+    <div class="skel-card"></div>
+    <div class="skel-card"></div>
+    <div class="skel-card"></div>
   </div>
-</div>
+</main>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="script.js"></script>
+<script src="/socket.io/socket.io.js" defer></script>
+<script src="script.js" defer></script>
 <script>
-  const rawUser = localStorage.getItem('user') || '';
-  const handleEl = document.getElementById('hero-handle-text');
-  if (handleEl) handleEl.textContent = rawUser.toLowerCase().replace(/\s+/g, '_');
-</script>
+const currentUser = localStorage.getItem('user') || '';
+const isAdmin     = localStorage.getItem('isAdmin') === 'true';
+let allUsers      = [];
+let avatarCache   = {};
+let activeFilter  = 'all';
+let searchQuery   = '';
 
-<div class="save-bar">
-  <button class="save-btn" id="saveProfileBtn" onclick="saveProfile()">💾 Enregistrer mon profil</button>
-</div>
-<div class="toast" id="toast">✓ Profil enregistré !</div>
-
-
-<script>
-const _me = localStorage.getItem('user') || '';
-
-// Charger le profil au démarrage
-async function loadMyProfile() {
-  if (!_me) return;
+// ===== FETCH AVATARS =====
+async function fetchAvatars(usernames) {
+  const toLoad = usernames.filter(u => !(u in avatarCache));
+  if (!toLoad.length) return;
   try {
-    const r = await fetch('/api/profile/' + encodeURIComponent(_me));
+    const r = await fetch('/api/avatars/batch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ usernames: toLoad }) });
     const d = await r.json();
-    if (d.error) return;
-    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-    setVal('field-prenom',       d.prenom);
-    setVal('field-age',          d.age);
-    setVal('field-profession',   d.profession);
-    setVal('field-anniversaire', d.anniversaire);
-    setVal('field-ville',        d.ville);
-    setVal('field-situation',    d.situation);
-    setVal('field-bio',          d.bio);
-
-    // Mettre à jour le hero
-    const handleEl = document.getElementById('hero-handle-text');
-    if (handleEl) handleEl.textContent = _me.toLowerCase().replace(/\s+/g,'_');
-  } catch {}
+    toLoad.forEach(u => { avatarCache[u] = d[u] || ''; });
+  } catch { toLoad.forEach(u => { avatarCache[u] = ''; }); }
 }
 
-// Sauvegarder
-async function saveProfile() {
-  const btn = document.getElementById('saveProfileBtn');
-  btn.disabled = true; btn.textContent = '⏳ Enregistrement...';
-  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-  try {
-    const r = await fetch('/api/profile', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username:     _me,
-        prenom:       getVal('field-prenom'),
-        age:          getVal('field-age'),
-        profession:   getVal('field-profession'),
-        anniversaire: getVal('field-anniversaire'),
-        ville:        getVal('field-ville'),
-        situation:    getVal('field-situation'),
-        bio:          getVal('field-bio'),
-      })
-    });
-    const d = await r.json();
-    if (d.success) {
-      showToast('✓ Profil enregistré !');
-    } else {
-      showToast('❌ ' + (d.error || 'Erreur'));
-    }
-  } catch { showToast('❌ Erreur réseau'); }
-  btn.disabled = false; btn.textContent = '💾 Enregistrer mon profil';
+// ===== FILTER =====
+function setFilter(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+function filterUsers(val) {
+  searchQuery = val.toLowerCase();
+  renderGrid();
 }
 
-// Charger mes news perso
-async function loadMyNews() {
-  try {
-    const r = await fetch('/api/news?limit=50');
-    const all = await r.json();
-    const mine = all.filter(n => n.author === _me);
-    const container = document.getElementById('my-news-list');
-    if (!container) return;
-    if (mine.length === 0) {
-      container.innerHTML = '<div class="card-empty"><div class="card-empty-icon">📰</div>Aucune news partagée</div>';
-      return;
-    }
-    container.innerHTML = mine.map(n => `
-      <div style="padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);line-height:1.5;">
-        <div style="color:var(--muted);font-size:11px;margin-bottom:4px;">${n.time}</div>
-        <div>${n.text.length > 120 ? n.text.slice(0,120)+'…' : n.text}</div>
-        <div style="margin-top:6px;font-size:11px;color:var(--muted);">❤️ ${(n.likes||[]).length} &nbsp; 💬 ${(n.comments||[]).length} &nbsp; 👁️ ${(n.views||[]).length}</div>
+function getFiltered() {
+  return allUsers.filter(u => {
+    if (u.username === currentUser) return false;
+    const matchSearch = !searchQuery || u.username.toLowerCase().includes(searchQuery);
+    const matchFilter = activeFilter === 'all' ||
+      (activeFilter === 'online' && u.online) ||
+      (activeFilter === 'offline' && !u.online);
+    return matchSearch && matchFilter;
+  });
+}
+
+// ===== RENDER =====
+function renderGrid() {
+  const grid    = document.getElementById('usersGrid');
+  const filtered = getFiltered();
+  grid.innerHTML = '';
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">👥</div><div class="empty-text">Aucun membre trouvé</div></div>`;
+    return;
+  }
+
+  filtered.forEach(u => {
+    const av       = avatarCache[u.username] || '';
+    const initial  = u.username[0]?.toUpperCase() || '?';
+    const card = document.createElement('div');
+    card.className = 'user-card';
+    card.setAttribute('data-username', u.username);
+    card.innerHTML = `
+      <div class="user-card-avatar">
+        ${av ? `<img src="${av}" alt="">` : `<span>${initial}</span>`}
+        <span class="status-dot ${u.online ? 'online' : 'offline'}"></span>
       </div>
-    `).join('');
-  } catch {}
+      <div class="user-card-name">${u.username}</div>
+      <div class="user-card-status ${u.online ? 'online' : ''}">${u.online ? '● En ligne' : '● Hors ligne'}</div>
+      <div class="user-card-actions">
+        <button class="card-action-btn chat" onclick="startChat(event,'${u.username}')">💬 Chat</button>
+        <button class="card-action-btn" onclick="viewProfile(event,'${u.username}')">👤 Profil</button>
+        ${isAdmin ? `<button class="card-action-btn del" onclick="deleteUser(event,'${u.username}')">🗑️</button>` : ''}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  loadMyProfile();
-  loadMyNews();
-});
-</script>
+function startChat(e, username) { e.stopPropagation(); localStorage.setItem('toUser', username); window.location.href = 'chat.html'; }
+function viewProfile(e, username) { e.stopPropagation(); localStorage.setItem('selectedUser', username); window.location.href = 'profile.html'; }
 
+async function deleteUser(e, username) {
+  e.stopPropagation();
+  if (!confirm(`Supprimer le compte de ${username} ?`)) return;
+  try {
+    const res = await fetch('/api/admin/delete-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adminUsername: currentUser, targetUsername: username }) });
+    const d   = await res.json();
+    if (d.success) alert('Compte supprimé.');
+    else alert(d.error);
+  } catch { alert('Erreur réseau'); }
+}
+
+// ===== SOCKET =====
+if (typeof socket !== 'undefined' && socket) {
+  function joinAndGet() { socket.emit('join', currentUser); socket.emit('getUsers'); }
+  socket.on('connect', joinAndGet);
+  if (socket.connected) joinAndGet();
+
+  socket.on('users', async users => {
+    allUsers = users;
+    await fetchAvatars(users.map(u => u.username));
+    renderGrid();
+  });
+
+  socket.on('avatarUpdated', ({ username, avatar }) => {
+    avatarCache[username] = avatar;
+    const img = document.querySelector(`[data-username="${username}"] .user-card-avatar img`);
+    if (img) { img.src = avatar; }
+    else {
+      const span = document.querySelector(`[data-username="${username}"] .user-card-avatar span`);
+      if (span && avatar) {
+        const newImg = document.createElement('img');
+        newImg.src = avatar; newImg.alt = '';
+        span.replaceWith(newImg);
+      }
+    }
+  });
+
+  socket.on('userDeleted', deletedUser => {
+    if (deletedUser === currentUser) { localStorage.clear(); location.href = 'index.html'; }
+    else { socket.emit('getUsers'); }
+  });
+
+  // Fallback HTTP
+  setTimeout(async () => {
+    if (!allUsers.length) {
+      try {
+        const r = await fetch('/api/users');
+        if (r.ok) {
+          allUsers = await r.json();
+          await fetchAvatars(allUsers.map(u => u.username));
+          renderGrid();
+        }
+      } catch {}
+    }
+  }, 3000);
+}
+</script>
 </body>
 </html>
