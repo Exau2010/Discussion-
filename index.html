@@ -1,354 +1,391 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta name="description" content="JEXREY — Connexion">
+<meta name="description" content="discussion, réseau">
+<meta name="keywords" content="JEXREY">
+<link rel="icon" type="image/jpg" sizes="16x16" href="jexrey.jpg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JEXREY</title>
-<link rel="icon" type="image/jpg" sizes="16x16" href="jexrey.jpg">
+<title>JEXREY — Connexion</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg:     #080a0c;
-    --surface: rgba(255,255,255,0.04);
-    --border:  rgba(255,255,255,0.08);
-    --accent:  #00e5a0;
-    --accent2: #00b4d8;
-    --text:    #e8eaed;
-    --muted:   #6b7280;
-  }
+*, *::before, *::after{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100dvh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 20px;
-    position: relative; overflow-x: hidden;
-  }
+:root{
+--bg:#080a0c;
+--surface:rgba(255,255,255,0.04);
+--border:rgba(255,255,255,0.08);
+--accent:#00e5a0;
+--accent2:#00b4d8;
+--text:#e8eaed;
+--muted:#6b7280;
+--danger:#ff4d6d;
+--glow:0 0 40px rgba(0,229,160,0.14);
+}
 
-  /* Ambient glow */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 10% 20%, rgba(0,180,216,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(0,229,160,0.07) 0%, transparent 60%);
-    pointer-events: none;
-  }
+body{
+background:var(--bg);
+color:var(--text);
+font-family:'DM Sans',sans-serif;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+position:relative;
+}
 
-  /* Floating particles */
-  .particles {
-    position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
-  }
-  .particle {
-    position: absolute; border-radius: 50%;
-    background: var(--accent); opacity: 0;
-    animation: float linear infinite;
-  }
-  @keyframes float {
-    0%   { opacity: 0; transform: translateY(0) scale(0); }
-    10%  { opacity: 0.3; }
-    90%  { opacity: 0.1; }
-    100% { opacity: 0; transform: translateY(-100vh) scale(1); }
-  }
+body::before{
+content:'';
+position:fixed;
+inset:0;
+background:
+radial-gradient(ellipse 60% 50% at 10% 20%, rgba(0,180,216,0.08) 0%, transparent 60%),
+radial-gradient(ellipse 50% 60% at 90% 80%, rgba(0,229,160,0.07) 0%, transparent 60%);
+pointer-events:none;
+}
 
-  .container {
-    position: relative; z-index: 1;
-    width: 100%; max-width: 400px;
-  }
+body::after{
+content:'';
+position:fixed;
+inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+background-size:60px 60px;
+pointer-events:none;
+}
 
-  /* Brand */
-  .brand {
-    text-align: center; margin-bottom: 40px;
-  }
-  .brand-logo {
-    width: 64px; height: 64px; border-radius: 18px;
-    margin: 0 auto 16px;
-    box-shadow: 0 0 0 3px rgba(0,229,160,0.2), 0 12px 40px rgba(0,0,0,0.5);
-    display: block;
-    object-fit: cover;
-  }
-  .brand-name {
-    font-family: 'Cinzel', serif;
-    font-size: 28px; letter-spacing: 8px; font-weight: 700;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: block; margin-bottom: 6px;
-  }
-  .brand-sub {
-    font-size: 13px; color: var(--muted); letter-spacing: 1px;
-  }
+nav{
+position:fixed;
+top:0;
+left:0;
+right:0;
+padding:20px 40px;
+display:flex;
+align-items:center;
+gap:12px;
+z-index:10;
+}
 
-  /* Card */
-  .card {
-    background: rgba(12,14,18,0.9);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 32px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 40px 80px rgba(0,0,0,0.4);
-  }
+nav img{
+border-radius:8px;
+width:32px;
+height:32px;
+object-fit:cover;
+}
 
-  /* Tabs */
-  .tabs {
-    display: flex; gap: 0; margin-bottom: 28px;
-    background: var(--surface); border-radius: 14px;
-    border: 1px solid var(--border); overflow: hidden;
-  }
-  .tab-btn {
-    flex: 1; padding: 12px; background: none;
-    border: none; font-family: 'DM Sans', sans-serif;
-    font-size: 14px; font-weight: 600; color: var(--muted);
-    cursor: pointer; transition: all 0.25s;
-    border-radius: 12px; margin: 3px;
-  }
-  .tab-btn.active {
-    background: rgba(0,229,160,0.1);
-    color: var(--accent);
-    box-shadow: 0 0 0 1px rgba(0,229,160,0.2);
-  }
+nav .brand{
+font-family:'Cinzel',serif;
+font-size:18px;
+font-weight:700;
+letter-spacing:4px;
+color:var(--accent);
+text-transform:uppercase;
+}
 
-  /* Panels */
-  .panel { display: none; }
-  .panel.active { display: block; }
+.page{
+width:100%;
+max-width:420px;
+padding:20px;
+position:relative;
+z-index:1;
+}
 
-  .panel-title {
-    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--muted); font-weight: 600; margin-bottom: 20px;
-  }
+.card{
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:24px;
+padding:40px;
+backdrop-filter:blur(20px);
+box-shadow:0 32px 64px rgba(0,0,0,0.4), var(--glow);
+}
 
-  /* Form */
-  .form-group { margin-bottom: 14px; }
-  .form-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: block; font-weight: 500; letter-spacing: 0.5px; }
-  .form-input {
-    width: 100%; padding: 13px 16px;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,160,0.08); }
-  .form-input::placeholder { color: var(--muted); }
+.card-header{
+text-align:center;
+margin-bottom:36px;
+}
 
-  /* Button */
-  .btn-primary {
-    width: 100%; padding: 14px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none; border-radius: 14px;
-    color: #080a0c; font-family: 'DM Sans', sans-serif;
-    font-size: 15px; font-weight: 700; cursor: pointer;
-    transition: all 0.25s; letter-spacing: 0.5px;
-    margin-top: 6px;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,229,160,0.3); }
-  .btn-primary:active { transform: translateY(0); }
+.card-header .logo-wrap{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:56px;
+height:56px;
+background:linear-gradient(135deg,var(--accent),var(--accent2));
+border-radius:16px;
+margin-bottom:20px;
+}
 
-  .btn-primary.loading {
-    opacity: 0.7; pointer-events: none;
-  }
-  .btn-primary.loading::after {
-    content: ' ⏳';
-  }
+.card-header .logo-wrap img{
+width:36px;
+height:36px;
+border-radius:8px;
+object-fit:cover;
+}
 
-  /* Error */
-  .error-msg {
-    display: none; padding: 10px 14px;
-    background: rgba(255,77,109,0.08);
-    border: 1px solid rgba(255,77,109,0.2);
-    border-radius: 10px; color: #ff4d6d;
-    font-size: 13px; margin-bottom: 14px;
-    animation: shake 0.3s ease;
-  }
-  .error-msg.show { display: block; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 25%,75%{transform:translateX(-6px)} 50%{transform:translateX(6px)} }
+.card-header h1{
+font-family:'Cinzel',serif;
+font-size:13px;
+letter-spacing:5px;
+color:var(--accent);
+text-transform:uppercase;
+margin-bottom:8px;
+}
 
-  /* Success */
-  .success-msg {
-    display: none; padding: 10px 14px;
-    background: rgba(0,229,160,0.08);
-    border: 1px solid rgba(0,229,160,0.2);
-    border-radius: 10px; color: var(--accent);
-    font-size: 13px; margin-bottom: 14px;
-  }
-  .success-msg.show { display: block; }
+.card-header p{
+font-size:14px;
+color:var(--muted);
+}
 
-  /* Divider */
-  .divider {
-    display: flex; align-items: center; gap: 12px; margin: 20px 0;
-  }
-  .divider-line { flex: 1; height: 1px; background: var(--border); }
-  .divider-text { font-size: 12px; color: var(--muted); }
+.field{
+margin-bottom:16px;
+}
 
-  .footer-text { text-align: center; font-size: 12px; color: var(--muted); margin-top: 24px; line-height: 1.6; }
+.field label{
+display:block;
+font-size:11px;
+letter-spacing:2px;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:8px;
+font-weight:500;
+}
 
-  @media (max-width: 440px) { .card { padding: 24px 20px; } }
+.field input{
+width:100%;
+padding:14px 18px;
+background:rgba(255,255,255,0.04);
+border:1px solid var(--border);
+border-radius:12px;
+color:var(--text);
+font-family:'DM Sans',sans-serif;
+font-size:14px;
+outline:none;
+}
+
+.btn{
+width:100%;
+padding:15px;
+border:none;
+border-radius:12px;
+font-family:'DM Sans',sans-serif;
+font-size:14px;
+font-weight:500;
+cursor:pointer;
+letter-spacing:1px;
+margin-top:8px;
+}
+
+.btn-primary{
+background:linear-gradient(135deg,var(--accent),var(--accent2));
+color:#080a0c;
+font-weight:700;
+}
+
+.btn-ghost{
+background:transparent;
+border:1px solid var(--border);
+color:var(--muted);
+}
+
+.btn-danger{
+background:transparent;
+border:1px solid rgba(255,77,109,0.3);
+color:var(--danger);
+}
+
+.divider{
+display:flex;
+align-items:center;
+gap:12px;
+margin:20px 0;
+color:var(--muted);
+font-size:12px;
+}
+
+.divider::before,
+.divider::after{
+content:'';
+flex:1;
+height:1px;
+background:var(--border);
+}
+
+.register-section{
+display:none;
+}
+
+
+  /* Loading flash */
+  #page-loader { position:fixed;inset:0;background:#080a0c;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.3s; }
+  #page-loader.hidden { opacity:0;pointer-events:none; }
+  .pl-brand { font-family:'Cinzel',serif;font-size:20px;letter-spacing:6px;color:#00e5a0; }
+
+.password-wrap {
+  position: relative;
+}
+.password-wrap input {
+  padding-right: 44px;
+}
+.eye-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 17px;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.eye-btn:hover { color: var(--accent); }
 </style>
 </head>
+
 <body>
+<div id="page-loader"><div class="pl-brand">JEXREY</div></div>
+<nav>
+<img src="jexrey.jpg" alt="logo">
+<span class="brand">JEXREY</span>
+</nav>
 
-<div class="particles" id="particles"></div>
+<div class="page">
 
-<div class="container">
-  <div class="brand">
-    <img src="jexrey.jpg" alt="JEXREY" class="brand-logo" onerror="this.style.display='none'">
-    <span class="brand-name">JEXREY</span>
-    <span class="brand-sub">Votre espace de connexion</span>
-  </div>
+<div class="card">
 
-  <div class="card">
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('login', this)">Connexion</button>
-      <button class="tab-btn" onclick="switchTab('register', this)">Inscription</button>
-    </div>
+<div class="card-header">
 
-    <!-- LOGIN -->
-    <div class="panel active" id="panel-login">
-      <div class="panel-title">Bienvenue</div>
-      <div class="error-msg" id="login-error"></div>
-
-      <div class="form-group">
-        <label class="form-label">Nom d'utilisateur</label>
-        <input class="form-input" id="login-username" type="text" placeholder="Votre pseudo..." autocomplete="username" autofocus>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Mot de passe</label>
-        <input class="form-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <button class="btn-primary" id="login-btn" onclick="doLogin()">Se connecter →</button>
-    </div>
-
-    <!-- REGISTER -->
-    <div class="panel" id="panel-register">
-      <div class="panel-title">Créer un compte</div>
-      <div class="error-msg" id="register-error"></div>
-      <div class="success-msg" id="register-success"></div>
-
-      <div class="form-group">
-        <label class="form-label">Nom d'utilisateur</label>
-        <input class="form-input" id="register-username" type="text" placeholder="Choisissez un pseudo..." autocomplete="username">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Mot de passe</label>
-        <input class="form-input" id="register-password" type="password" placeholder="Minimum 6 caractères" autocomplete="new-password">
-      </div>
-      <button class="btn-primary" id="register-btn" onclick="doRegister()">Créer mon compte →</button>
-    </div>
-  </div>
-
-  <div class="footer-text">En utilisant JEXREY, vous acceptez nos conditions d'utilisation.<br>© 2024 JEXREY</div>
+<div class="logo-wrap">
+<img src="jexrey.jpg" alt="logo">
 </div>
 
+<h1>JEXREY</h1>
+
+<p id="prest">
+Bienvenue sur notre plateforme
+</p>
+
+</div>
+
+<!-- LOGIN -->
+
+<div id="login-section">
+
+<div class="field">
+<label>Pseudo</label>
+<input id="login-username" type="text" placeholder="Votre pseudo...">
+</div>
+
+<div class="field">
+<label>Mot de passe</label>
+<div class="password-wrap">
+<input id="login-password" type="password" placeholder="Votre mot de passe...">
+<button type="button" class="eye-btn" onclick="togglePwd('login-password', this)" tabindex="-1">👁</button>
+</div>
+</div>
+
+<button class="btn btn-primary" onclick="login()">
+Se connecter
+</button>
+
+<div class="divider">ou</div>
+
+<button class="btn btn-ghost" onclick="regis()">
+Créer un compte
+</button>
+
+</div>
+
+<!-- REGISTER -->
+
+<div class="register-section" id="register-section">
+
+<div class="field">
+<label>Pseudo</label>
+<input id="register-username" type="text" placeholder="Choisissez un pseudo...">
+</div>
+
+<div class="field">
+<label>Mot de passe</label>
+<div class="password-wrap">
+<input id="register-password" type="password" placeholder="Choisissez un mot de passe...">
+<button type="button" class="eye-btn" onclick="togglePwd('register-password', this)" tabindex="-1">👁</button>
+</div>
+</div>
+
+<button class="btn btn-primary" onclick="register()">
+Créer le compte
+</button>
+
+<button class="btn btn-danger" onclick="anul()">
+Annuler
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="script.js" defer></script>
+
 <script>
-// Redirect si déjà connecté
-if (localStorage.getItem('user')) window.location.href = 'home.html';
 
-// Particles
-function createParticles() {
-  const container = document.getElementById('particles');
-  for (let i = 0; i < 20; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = Math.random() * 4 + 1;
-    p.style.width  = size + 'px';
-    p.style.height = size + 'px';
-    p.style.left   = Math.random() * 100 + 'vw';
-    p.style.bottom = '-10px';
-    p.style.animationDuration  = (Math.random() * 15 + 10) + 's';
-    p.style.animationDelay     = (Math.random() * 10) + 's';
-    p.style.background = Math.random() > 0.5 ? '#00e5a0' : '#00b4d8';
-    container.appendChild(p);
-  }
-}
-createParticles();
+function regis(){
 
-// Tabs
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('panel-' + tab).classList.add('active');
-  // Clear errors
-  document.querySelectorAll('.error-msg, .success-msg').forEach(el => el.classList.remove('show'));
+document.getElementById("prest").innerText="Créez votre compte";
+
+document.getElementById("login-section").style.display="none";
+
+document.getElementById("register-section").style.display="block";
+
 }
 
-// Enter key
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  const loginPanel = document.getElementById('panel-login');
-  if (loginPanel.classList.contains('active')) doLogin();
-  else doRegister();
+function anul(){
+
+document.getElementById("prest").innerText="Bienvenue sur notre plateforme";
+
+document.getElementById("login-section").style.display="block";
+
+document.getElementById("register-section").style.display="none";
+
+}
+
+</script>
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const l = document.getElementById("page-loader");
+  if(l){ l.classList.add("hidden"); setTimeout(()=>l.remove(),400); }
 });
+</script>
 
-// LOGIN
-async function doLogin() {
-  const username = document.getElementById('login-username').value.trim();
-  const password = document.getElementById('login-password').value;
-  const errEl    = document.getElementById('login-error');
-  const btn      = document.getElementById('login-btn');
-
-  errEl.classList.remove('show');
-  if (!username || !password) { errEl.textContent = 'Veuillez remplir tous les champs.'; errEl.classList.add('show'); return; }
-
-  btn.classList.add('loading'); btn.textContent = 'Connexion...';
-
-  try {
-    const res  = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
-    const data = await res.json();
-    if (data.error) {
-      errEl.textContent = data.error; errEl.classList.add('show');
-      btn.classList.remove('loading'); btn.textContent = 'Se connecter →'; return;
-    }
-    localStorage.setItem('user', username);
-    if (data.isAdmin) localStorage.setItem('isAdmin', 'true'); else localStorage.removeItem('isAdmin');
-    window.location.href = 'home.html';
-  } catch {
-    errEl.textContent = 'Erreur réseau, réessayez.'; errEl.classList.add('show');
-    btn.classList.remove('loading'); btn.textContent = 'Se connecter →';
-  }
-}
-
-// REGISTER
-async function doRegister() {
-  const username  = document.getElementById('register-username').value.trim();
-  const password  = document.getElementById('register-password').value;
-  const errEl     = document.getElementById('register-error');
-  const successEl = document.getElementById('register-success');
-  const btn       = document.getElementById('register-btn');
-
-  errEl.classList.remove('show'); successEl.classList.remove('show');
-  if (!username || !password) { errEl.textContent = 'Veuillez remplir tous les champs.'; errEl.classList.add('show'); return; }
-  if (password.length < 6) { errEl.textContent = 'Mot de passe trop court (min. 6 caractères).'; errEl.classList.add('show'); return; }
-
-  btn.classList.add('loading'); btn.textContent = 'Création...';
-
-  try {
-    const res  = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
-    const data = await res.json();
-    if (data.error) {
-      errEl.textContent = data.error; errEl.classList.add('show');
-      btn.classList.remove('loading'); btn.textContent = 'Créer mon compte →'; return;
-    }
-    successEl.textContent = '✓ Compte créé ! Connectez-vous maintenant.';
-    successEl.classList.add('show');
-    document.getElementById('register-username').value = '';
-    document.getElementById('register-password').value = '';
-    btn.classList.remove('loading'); btn.textContent = 'Créer mon compte →';
-    setTimeout(() => {
-      document.querySelector('[onclick="switchTab(\'login\', this)"]').click();
-      document.getElementById('login-username').value = username;
-    }, 1200);
-  } catch {
-    errEl.textContent = 'Erreur réseau, réessayez.'; errEl.classList.add('show');
-    btn.classList.remove('loading'); btn.textContent = 'Créer mon compte →';
+<script>
+function togglePwd(id, btn) {
+  const input = document.getElementById(id);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
   }
 }
 </script>
 </body>
-</html>
+ </html>
