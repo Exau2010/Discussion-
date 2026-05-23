@@ -403,139 +403,54 @@ section::after {
 <div class="info">
 
   <div class="indispo">
-    <h2>ℹ️ Informations</h2>
-    <div id="profile-info-list">
-      <div class="b"><h4>⏳</h4><p style="color:var(--muted)">Chargement...</p></div>
-    </div>
-  </div>
-
-  <div class="indispo">
     <h2>📊 Statistiques</h2>
-    <div id="profile-stats-list">
-      <div class="b"><h4>Posts</h4><p id="stat-posts">—</p></div>
-      <div class="b"><h4>Likes reçus</h4><p id="stat-likes">—</p></div>
-      <div class="b"><h4>Vues totales</h4><p id="stat-views">—</p></div>
-    </div>
-  </div>
 
-  <div class="indispo" id="profile-bio-card" style="display:none;">
-    <h2>📝 Bio</h2>
-    <p id="profile-bio-text" style="font-size:14px;color:var(--text);line-height:1.6;white-space:pre-wrap;"></p>
+    <div class="b">
+      <h4>Amis</h4>
+      <p>—</p>
+    </div>
+
+    <div class="b">
+      <h4>Posts</h4>
+      <p>—</p>
+    </div>
+
+    <div class="b">
+      <h4>Vues</h4>
+      <p>—</p>
+    </div>
+
+    <div class="b">
+      <h4>Likes</h4>
+      <p>—</p>
+    </div>
   </div>
 
   <div class="indispo">
-    <h2>📰 News publiées</h2>
-    <div id="profile-news-list">
-      <div class="b"><p style="color:var(--muted)">Chargement...</p></div>
-    </div>
+    <h2>ℹ️ Informations</h2>
+
+    <div class="b"><h4>Profession</h4><p>Non renseigné</p></div>
+    <div class="b"><h4>Ville</h4><p>Non renseigné</p></div>
+    <div class="b"><h4>Anniversaire</h4><p>Non renseigné</p></div>
+    <div class="b"><h4>Situation</h4><p>Non renseigné</p></div>
+  </div>
+
+  <div class="indispo">
+    <h2>📝 Publications</h2>
+  </div>
+
+  <div class="indispo">
+    <h2>👥 Partenaires</h2>
+  </div>
+
+  <div class="indispo">
+    <h2>🎬 Shorts</h2>
   </div>
 
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
-
-
-<script>
-const _selectedUser = localStorage.getItem('selectedUser') || '';
-const _myUser = localStorage.getItem('user') || '';
-
-async function loadProfileData() {
-  if (!_selectedUser) return;
-
-  try {
-    // Charger profil + news en parallèle
-    const [profRes, newsRes] = await Promise.all([
-      fetch('/api/profile/' + encodeURIComponent(_selectedUser)),
-      fetch('/api/news?limit=50')
-    ]);
-    const prof = await profRes.json();
-    const allNews = await newsRes.json();
-
-    // ===== Infos personnelles =====
-    const infoList = document.getElementById('profile-info-list');
-    const fields = [
-      { icon: '👤', label: 'Prénom',       val: prof.prenom },
-      { icon: '🎂', label: 'Âge',          val: prof.age },
-      { icon: '💼', label: 'Profession',   val: prof.profession },
-      { icon: '📅', label: 'Anniversaire', val: prof.anniversaire },
-      { icon: '📍', label: 'Ville',        val: prof.ville },
-      { icon: '❤️', label: 'Situation',    val: prof.situation },
-    ];
-    const filled = fields.filter(f => f.val && f.val.trim());
-    if (filled.length === 0) {
-      infoList.innerHTML = '<div class="b"><p style="color:var(--muted);font-style:italic;">Aucune information renseignée</p></div>';
-    } else {
-      infoList.innerHTML = filled.map(f => `
-        <div class="b">
-          <h4>${f.icon} ${f.label}</h4>
-          <p>${escapeHtml(f.val)}</p>
-        </div>
-      `).join('');
-    }
-
-    // ===== Bio =====
-    if (prof.bio && prof.bio.trim()) {
-      const bioCard = document.getElementById('profile-bio-card');
-      const bioText = document.getElementById('profile-bio-text');
-      bioCard.style.display = '';
-      bioText.textContent = prof.bio;
-    }
-
-    // ===== Stats depuis les news =====
-    const userNews = allNews.filter(n => n.author === _selectedUser);
-    const totalLikes = userNews.reduce((sum, n) => sum + (n.likes||[]).length, 0);
-    const totalViews = userNews.reduce((sum, n) => sum + (n.views||[]).length, 0);
-    document.getElementById('stat-posts').textContent = userNews.length || '0';
-    document.getElementById('stat-likes').textContent = totalLikes || '0';
-    document.getElementById('stat-views').textContent = totalViews || '0';
-
-    // ===== News publiées =====
-    const newsList = document.getElementById('profile-news-list');
-    if (userNews.length === 0) {
-      newsList.innerHTML = '<div class="b"><p style="color:var(--muted);font-style:italic;">Aucune news publiée</p></div>';
-    } else {
-      newsList.innerHTML = userNews.slice(0, 5).map(n => `
-        <div class="b" style="flex-direction:column;align-items:flex-start;gap:4px;">
-          <p style="font-size:13px;color:var(--text);line-height:1.5;">${escapeHtml(n.text.length > 100 ? n.text.slice(0,100)+'…' : n.text)}</p>
-          <span style="font-size:11px;color:var(--muted);">${n.time} &nbsp;·&nbsp; ❤️ ${(n.likes||[]).length} &nbsp; 💬 ${(n.comments||[]).length}</span>
-        </div>
-      `).join('');
-    }
-
-    // ===== Avatar =====
-    try {
-      const avRes = await fetch('/api/avatars/batch', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ usernames: [_selectedUser] })
-      });
-      const avData = await avRes.json();
-      const av = avData[_selectedUser];
-      if (av) {
-        const box = document.querySelector('.avatar-box');
-        if (box) {
-          box.style.backgroundImage = 'url(' + av + ')';
-          box.style.backgroundSize = 'cover';
-          box.style.backgroundPosition = 'center';
-        }
-      }
-    } catch {}
-
-  } catch(e) {
-    document.getElementById('profile-info-list').innerHTML =
-      '<div class="b"><p style="color:var(--muted);">Erreur de chargement</p></div>';
-  }
-}
-
-function escapeHtml(text) {
-  const d = document.createElement('div');
-  d.textContent = text || '';
-  return d.innerHTML;
-}
-
-window.addEventListener('DOMContentLoaded', loadProfileData);
-</script>
 
 </body>
 </html>
